@@ -1,0 +1,57 @@
+[
+    {
+      "brokerName": "First Mutual Insurance",
+      "policyDetails": [
+        {
+          "policyName": "Life Insurance",
+          "totalAmountUsd": 1000,
+          "totalAmountZig": 50,
+          "telOneCommissionUsd": 75,
+          "telOneCommissionZig": 1000,
+          "brokerRemmitanceUsd": 50,
+          "brokerRemmitanceZig": 75
+        },
+        {
+          "policyName": "Travel Insurance",
+          "totalAmountUsd": 100,
+          "totalAmountZig": 5000,
+          "telOneCommissionUsd": 75,
+          "telOneCommissionZig": 100,
+          "brokerRemmitanceUsd": 40,
+          "brokerRemmitanceZig": 750
+        },
+        {
+          "policyName": "Third Party",
+          "totalAmountUsd": 1200,
+          "totalAmountZig": 7550,
+          "telOneCommissionUsd": 75,
+          "telOneCommissionZig": 4000,
+          "brokerRemmitanceUsd": 150,
+          "brokerRemmitanceZig": 4500
+        }
+      ]
+    },
+    {
+        "brokerName": "Sanctuary Insurance",
+        "policyDetails": [
+          {
+            "policyName": "Life Insurance",
+            "totalAmountUsd": 1500,
+            "totalAmountZig": 350,
+            "telOneCommissionUsd": 275,
+            "telOneCommissionZig": 100,
+            "brokerRemmitanceUsd": 510,
+            "brokerRemmitanceZig": 7145
+          },
+          {
+            "policyName": "Travel Insurance",
+            "totalAmountUsd": 1400,
+            "totalAmountZig": 9000,
+            "telOneCommissionUsd": 755,
+            "telOneCommissionZig": 2600,
+            "brokerRemmitanceUsd": 970,
+            "brokerRemmitanceZig": 2500
+          }
+        ]
+      }
+  ]

@@ -1,0 +1,70 @@
+[
+    {
+        "productName": "Africa Travel",
+        "clientDetails": {
+          "name": "Blessing Masiya",
+          "occupation": "Software Engineer",
+          "passportNumber": "XYZ123ABC",
+          "physicalAddress": "123 Waterfalls Harare",
+          "emailAddress": "string@gmail.com",
+          "passportExpiry": "2026-12-12",
+          "passportScan": "blob"
+        },
+        "children": [
+          {
+            "name": "Takudzwa Masiya",
+            "passportNumber": "123ACBFDG",
+            "passportScan": "blob"
+          },
+          {
+            "name": "Blessing Masiya",
+            "passportNumber": "123ACBFDM",
+            "passportScan": "blob"
+          }
+        ],
+        "departureDate": "2024-04-06",
+        "returnDate": "2024-04-21",
+        "ailments": "string",
+        "residenceCountry": "Zimbabwe",
+        "destinationCountry": "Namibia",
+        "coverage": "string",
+        "comments": "string",
+        "dateCreated": "date",
+        "timeCreated": "time",
+        "isApproved": true
+    },
+    {
+        "productName": "Europe Travel",
+        "clientDetails": {
+          "name": "Jon Doe",
+          "occupation": "Farmer",
+          "passportNumber": "VGD143ABC",
+          "physicalAddress": "444 Mandara Harare",
+          "emailAddress": "string@gmail.com",
+          "passportExpiry": "2026-12-12",
+          "passportScan": "blob"
+        },
+        "children": [
+          {
+            "name": "Tom Jones",
+            "passportNumber": "123ACBFDG",
+            "passportScan": "blob"
+          },
+          {
+            "name": "Patrick Paul",
+            "passportNumber": "123ACBFDM",
+            "passportScan": "blob"
+          }
+        ],
+        "departureDate": "2024-11-26",
+        "returnDate": "2025-02-23",
+        "ailments": "string",
+        "residenceCountry": "Zimbabwe",
+        "destinationCountry": "China",
+        "coverage": "string",
+        "comments": "string",
+        "dateCreated": "date",
+        "timeCreated": "time",
+        "isApproved": true
+    }    
+  ]

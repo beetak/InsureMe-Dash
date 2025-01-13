@@ -1,0 +1,22 @@
+[
+  {
+    "InsuranceType": 1,
+    "Code": "RTA",
+    "Description": "Road Traffic Act"
+  },
+  {
+    "InsuranceType": 2,
+    "Code": "FTP",
+    "Description": "Full Third Party"
+  },
+  {
+    "InsuranceType": 3,
+    "Code": "FTPF",
+    "Description": "Full Third Party, Fire and Theft"
+  },
+  {
+    "InsuranceType": 4,
+    "Code": "FTPFT",
+    "Description": "Comprehensive"
+  }
+]

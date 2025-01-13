@@ -1,0 +1,21 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+@import '@fortawesome/fontawesome-free/css/all.min.css';
+@import "react-datepicker/dist/react-datepicker.css";
+
+@layer utilities {
+    .hover-bg-main-color-20 {
+      @apply hover:bg-[rgb(var(--main-color-rgb))/0.2];
+    }
+}
+
+:root {
+    --main-color: #3B82F6; /* Default value */
+    --secondary-color: #fc0303; /* Default value */
+}
+
+.react-datepicker__input-container {
+    height: 15px;
+    padding: 0
+}

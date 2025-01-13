@@ -1,0 +1,46 @@
+[    
+    {
+        "name": "Home",
+        "class": "fas fa-home"
+    },
+    {
+        "name": "Car",
+        "class": "fas fa-car"
+    },
+    {
+        "name": "Bank",
+        "class": "fas fa-bank"
+    },
+    {
+        "name": "List",
+        "class": "fas fa-rectangle-list"
+    },
+    {
+        "name": "Car Burst",
+        "class": "fas fa-car-burst"
+    },
+    {
+        "name": "Briefcase",
+        "class": "fas fa-briefcase"
+    },
+    {
+        "name": "Life Star",
+        "class": "fas fa-star-of-life"
+    },
+    {
+        "name": "Medical",
+        "class": "fas fa-kit-medical"
+    },
+    {
+        "name": "Health",
+        "class": "fas fa-stethoscope"
+    },
+    {
+        "name": "Plane",
+        "class": "fas fa-plane"
+    },
+    {
+        "name": "Stock",
+        "class": "fas fa-cow"
+    }
+]
