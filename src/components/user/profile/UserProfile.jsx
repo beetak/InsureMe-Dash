@@ -183,7 +183,7 @@ export default function UserProfile() {
                 <div className='flex space-x-2 pt-10'>
                     <button
                         onClick={updateUserImage}
-                        className={`px-4 py-2 bg-secondary-color text-main-color rounded-full hover:text-white hover:bg-main-color w-40 transition-colors duration-300 ease-in-out`}
+                        className={`px-4 py-2 bg-secondary-color rounded-full text-white hover:bg-main-color w-40 transition-colors duration-300 ease-in-out`}
                     >
                         Save Changes
                     </button>

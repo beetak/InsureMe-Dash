@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { getInvoiceStatus, getQuoteStatus } from '../../store/nav-store';
-import SideBar from '../../components/navigation/sideBar/SideBar';
-import TopBar from '../../components/navigation/topBar/TopBar';
 import WindowCard from '../../components/windowCard/WindowCard';
 import SalesForm from '../../components/sales/SalesForm';
 import SalesInvoice from '../../components/sales/SalesInvoice';
@@ -15,6 +13,7 @@ import TravelVehicleQuote from '../../components/sales/TravelInsurance/TravelVeh
 import PropertyInsuranceSales from '../../components/sales/PropertyInsurance/PropertyInsuranceSalesForm';
 import useAuth from '../../hooks/useAuth';
 import InsuranceApi, { setupInterceptors } from '../../components/api/InsuranceApi';
+import DisplayLayout from '../../components/Layout/DisplayLayout';
 
 export default function Sales() {
 
@@ -80,11 +79,9 @@ export default function Sales() {
 
   return (
     <>
-      <SideBar />
-      <div className="flex-1 bg-white relative">
-        <TopBar/>
+      <DisplayLayout>
         {/* Main content */}
-        <div className="p-5 bg-gray-100">
+        <div className="bg-gray-100">
           <h2 className="text-2xl font-semibold mb-4">Product Sales</h2>                
           <WindowCard title="Insurance Sale By Type">
             <div className="flex space-x-2 xs:p-4 p-0">
@@ -201,7 +198,7 @@ export default function Sales() {
             </div>
           </WindowCard>
         </div>
-      </div>
+      </DisplayLayout>
     </>
   )
 }

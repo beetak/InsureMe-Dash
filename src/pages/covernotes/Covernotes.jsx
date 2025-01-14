@@ -13,6 +13,7 @@ import DailySales from '../../components/reports/DailySales';
 import PolicyReport from '../../components/reports/PolicyReport';
 import Commissions from '../../components/reports/Commissions';
 import useAuth from '../../hooks/useAuth';
+import DisplayLayout from '../../components/Layout/DisplayLayout';
 
 export default function Covernotes() {
 
@@ -74,11 +75,9 @@ export default function Covernotes() {
 
   return (
     <>
-      <SideBar/>
-      <div className="flex-1 bg-white relative">
-        <TopBar/>
+      <DisplayLayout>
         {/* Main content */}
-        <div className="p-5 bg-gray-100">
+        <div className="bg-gray-100">
           <h2 className="text-2xl font-semibold mb-4">Business Reports</h2>                
           <WindowCard title="Reports Classified as:">
             <div className="flex space-x-2 xs:p-4 p-0">
@@ -210,7 +209,7 @@ export default function Covernotes() {
             </div>
           </WindowCard>
         </div>
-      </div>
+      </DisplayLayout>
     </>
   )
 }

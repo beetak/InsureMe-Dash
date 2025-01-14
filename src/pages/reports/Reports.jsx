@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import WindowCard from '../../components/windowCard/WindowCard'
-import SideBar from '../../components/navigation/sideBar/SideBar';
-import TopBar from '../../components/navigation/topBar/TopBar';
 import SalesTable from '../../components/sales/SalesTable';
 import NationalSales from '../../components/reports/NationalSales';
 import ShopSales from '../../components/reports/ShopSales';
@@ -14,6 +12,7 @@ import Commissions from '../../components/reports/Commissions';
 import useAuth from '../../hooks/useAuth';
 import { useLocation } from 'react-router-dom';
 import { setupInterceptors } from '../../components/api/InsuranceApi';
+import DisplayLayout from '../../components/Layout/DisplayLayout';
 
 export default function Reports() {
 
@@ -87,11 +86,9 @@ export default function Reports() {
 
   return (
     <>
-      <SideBar/>
-      <div className="flex-1 bg-white relative">
-        <TopBar/>
+      <DisplayLayout>
         {/* Main content */}
-        <div className="p-5 bg-gray-100">
+        <div className="bg-gray-100">
           <h2 className="text-2xl font-semibold mb-4">Business Reports</h2>                
           <WindowCard title="Reports Classified as:">
             <div className="flex space-x-2 xs:p-4 p-0">
@@ -223,7 +220,7 @@ export default function Reports() {
             </div>
           </WindowCard>
         </div>
-      </div>
+      </DisplayLayout>
     </>
   )
 }

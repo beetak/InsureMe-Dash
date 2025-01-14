@@ -4,6 +4,7 @@ import SideBar from '../../components/navigation/sideBar/SideBar';
 import TopBar from '../../components/navigation/topBar/TopBar';
 import InternalUsersTable from '../../components/user/internal/InternalUsersTable';
 import InternalUserForm from '../../components/user/internal/InternalUserForm';
+import DisplayLayout from '../../components/Layout/DisplayLayout';
 
 export default function InternalUsers() {
 
@@ -20,11 +21,9 @@ export default function InternalUsers() {
 
   return (
     <>
-      <SideBar/>
-      <div className="flex-1 bg-white relative">
-        <TopBar/>
+      <DisplayLayout>
         {/* Main content */}
-        <div className="p-5 bg-gray-100">
+        <div className="bg-gray-100">
           <h2 className="text-2xl font-semibold mb-4">User Management</h2>                
           <WindowCard title="User Management Tabs">
             <div className="flex space-x-2 xs:p-4 p-0">
@@ -69,7 +68,7 @@ export default function InternalUsers() {
             </div>
           </WindowCard>
         </div>
-      </div>
+      </DisplayLayout>
     </>
   )
 }

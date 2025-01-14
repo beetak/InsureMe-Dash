@@ -4,6 +4,7 @@ import SideBar from '../../components/navigation/sideBar/SideBar';
 import TopBar from '../../components/navigation/topBar/TopBar';
 import InsurerUsersTable from '../../components/user/insurers/InsurerUsersTable';
 import InsurerUserForm from '../../components/user/insurers/InsurerUserForm';
+import DisplayLayout from '../../components/Layout/DisplayLayout';
 
 export default function InsurerUsers() {
 
@@ -20,11 +21,9 @@ export default function InsurerUsers() {
 
   return (
     <>
-      <SideBar/>
-      <div className="flex-1 bg-white relative">
-        <TopBar/>
+      <DisplayLayout>
         {/* Main content */}
-        <div className="p-5 bg-gray-100">
+        <div className="bg-gray-100">
           <h2 className="text-2xl font-semibold mb-4">Insurer Administrators</h2>                
           <WindowCard title="Insurance Company Admins">
             <div className="flex space-x-2 xs:p-4 p-0">
@@ -69,7 +68,7 @@ export default function InsurerUsers() {
             </div>
           </WindowCard>
         </div>
-      </div>
+      </DisplayLayout>
     </>
   )
 }

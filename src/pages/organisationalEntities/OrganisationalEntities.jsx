@@ -1,10 +1,8 @@
 import React, { useState } from 'react'
 import WindowCard from '../../components/windowCard/WindowCard'
-import SideBar from '../../components/navigation/sideBar/SideBar';
-import TopBar from '../../components/navigation/topBar/TopBar';
-import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import DisplayLayout from '../../components/Layout/DisplayLayout';
 
 export default function OrganisationalEntities() {
   const settings = {
@@ -13,8 +11,6 @@ export default function OrganisationalEntities() {
     infinite: true,
     // dots: true,
   };
-  
-  const insurer  = ["Credsure", "ZimNat", "Old Mutual", "Allied", "FBC", "CBZ", "First Mutual"]
 
   const data = [
     { item: 1, name: 'Product A', datecreated: '2022-01-01', producttype: 'Type A' },
@@ -113,11 +109,9 @@ export default function OrganisationalEntities() {
 
   return (
     <>
-      <SideBar/>
-      <div className="flex-1 bg-white relative">
-        <TopBar/>
+      <DisplayLayout>
         {/* Main content */}
-        <div className="p-5 bg-gray-100">
+        <div className="bg-gray-100">
           <h2 className="text-2xl font-semibold mb-4">Main Content</h2>                
           <WindowCard title="Insurance Type Management">
             <div className="flex space-x-2 xs:p-4 p-0">
@@ -320,7 +314,7 @@ export default function OrganisationalEntities() {
             </div>
           </WindowCard>
         </div>
-      </div>
+      </DisplayLayout>
     </>
   )
 }

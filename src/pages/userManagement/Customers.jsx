@@ -4,6 +4,7 @@ import SideBar from '../../components/navigation/sideBar/SideBar';
 import TopBar from '../../components/navigation/topBar/TopBar';
 import CustomerForm from '../../components/user/customers/CustomerForm';
 import CustomersTable from '../../components/user/customers/CustomersTable';
+import DisplayLayout from '../../components/Layout/DisplayLayout';
 
 export default function Customers() {
 
@@ -20,11 +21,9 @@ export default function Customers() {
 
   return (
     <>
-      <SideBar/>
-      <div className="flex-1 bg-white relative">
-        <TopBar/>
+      <DisplayLayout>
         {/* Main content */}
-        <div className="p-5 bg-gray-100">
+        <div className="bg-gray-100">
           <h2 className="text-2xl font-semibold mb-4">Customer Management</h2>                
           <WindowCard title="Customer Management Tabs">
             <div className="flex space-x-2 xs:p-4 p-0">
@@ -67,7 +66,7 @@ export default function Customers() {
             </div>
           </WindowCard>
         </div>
-      </div>
+      </DisplayLayout>
     </>
   )
 }

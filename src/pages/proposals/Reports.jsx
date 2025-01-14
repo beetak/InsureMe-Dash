@@ -1,8 +1,5 @@
 import React, { useState } from 'react'
 import WindowCard from '../../components/windowCard/WindowCard'
-import SideBar from '../../components/navigation/sideBar/SideBar';
-import TopBar from '../../components/navigation/topBar/TopBar';
-import ReportsTable from '../../components/reports/ReportsTable';
 import SalesTable from '../../components/sales/SalesTable';
 import NationalSales from '../../components/reports/NationalSales';
 import ShopSales from '../../components/reports/ShopSales';
@@ -14,6 +11,7 @@ import PolicyReport from '../../components/reports/PolicyReport';
 import Commissions from '../../components/reports/Commissions';
 import PropertyProposals from '../../components/policyProposals/PropertyProposals';
 import TravelProposals from '../../components/policyProposals/TravelProposals';
+import DisplayLayout from '../../components/Layout/DisplayLayout';
 
 const userRole = localStorage.getItem('role')
 
@@ -23,12 +21,6 @@ export default function Proposals() {
     { title: "Property", icon: "fas fa-home", tab:1 },
     { title: "Travel", icon: "fas fa-plane", tab:2 },
     { title: "Life", icon: "fas fa-pen", tab:3 },
-    // { title: "Agent Sales", icon: "fas fa-book", tab:userRole==='INSURER_ADMIN'?1:3 },
-    // { title: "Tax", icon: "fas fa-book", tab:5 },
-    // { title: "Policy", icon: "fas fa-book", tab:6 },
-    // { title: "Insurer", icon: "fas fa-book", tab:7 },
-    // { title: "Insurer", icon: "fas fa-book", tab:8 },
-    // { title: "Insurer", icon: "fas fa-book", tab:7 },
   ]
 
   const filteredMenus = menus.filter((menu) => {
@@ -41,24 +33,6 @@ export default function Proposals() {
     if (menu.title === "Life" && (userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN")) {
       return true;
     }
-    // if (menu.title === "Shop Sales" && (userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN")) {
-    //   return true;
-    // }
-    // if (menu.title === "Insurer" && (userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN")) {
-    //   return true;
-    // }
-    // if (menu.title === "Transaction" && (userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN" || userRole === "INSURER_ADMIN" || userRole === "SALES_AGENT")) {
-    //     return true;
-    // }
-    // if (menu.title === "Sales" && (userRole === "INSURER_ADMIN")) {
-    //     return true;
-    // }
-    // if (menu.title === "Daily Sales" && (userRole === "ADMIN" || userRole === "INSURER_ADMIN" || userRole === "SALES_AGENT")) {
-    //     return true;
-    // } 
-    // if (menu.title === "Commissions" && (userRole === "ADMIN" || userRole === "INSURER_ADMIN")) {
-    //     return true;
-    // } 
     return false;
   }); 
 
@@ -70,11 +44,9 @@ export default function Proposals() {
 
   return (
     <>
-      <SideBar/>
-      <div className="flex-1 bg-white relative">
-        <TopBar/>
+      <DisplayLayout>
         {/* Main content */}
-        <div className="p-5 bg-gray-100">
+        <div className="bg-gray-100">
           <h2 className="text-2xl font-semibold mb-4">Policy Proposals</h2>                
           <WindowCard title="Reports Classified as:">
             <div className="flex space-x-2 xs:p-4 p-0">
@@ -206,7 +178,7 @@ export default function Proposals() {
             </div>
           </WindowCard>
         </div>
-      </div>
+      </DisplayLayout>
     </>
   )
 }

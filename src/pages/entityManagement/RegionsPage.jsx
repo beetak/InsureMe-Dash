@@ -1,9 +1,8 @@
 import { useState } from "react";
-import SideBar from "../../components/navigation/sideBar/SideBar";
-import TopBar from "../../components/navigation/topBar/TopBar";
 import WindowCard from "../../components/windowCard/WindowCard";
 import RegionForm from "../../components/entities/regions/RegionForm";
 import RegionsTable from "../../components/entities/regions/RegionsTable";
+import DisplayLayout from "../../components/Layout/DisplayLayout";
 
 export default function RegionsPage() {
   const data = [
@@ -97,11 +96,9 @@ export default function RegionsPage() {
 
   return (
     <>
-      <SideBar/>
-      <div className="flex-1 bg-white relative">
-        <TopBar/>
+      <DisplayLayout>
         {/* Main content */}
-        <div className="p-5 bg-gray-100">
+        <div className="bg-gray-100">
           <h2 className="text-2xl font-semibold mb-4">TelOne Regions</h2>                
           <WindowCard title="Region Management">
             <div className="flex space-x-2 xs:p-4 p-0">
@@ -146,7 +143,7 @@ export default function RegionsPage() {
             </div>
           </WindowCard>
         </div>
-      </div>
+      </DisplayLayout>
     </>
   )
 }
