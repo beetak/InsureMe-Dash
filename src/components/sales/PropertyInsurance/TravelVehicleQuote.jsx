@@ -15,24 +15,6 @@ export default function TravelVehicleQuote() {
     const quotation = useSelector(getQuotation)
     const vehicleInfo = useSelector(getVehicleInformation)
 
-    const [firstname, setFirstname] = useState("Chengetai")
-    const [surname, setLastname] = useState("Meraki")
-    const [bpNumber, setBPNumber] = useState(200001412)
-    const [vatNumber, setVATNumber] = useState(10001509)
-    const [refNumber, setRefNumber] = useState(10001509)
-    const [vatPercentage, setVATPercentage] = useState(15)
-    const [insurerId, setInsurerId] = useState('')
-    const [productId, setProductId] = useState('')
-    const [createdAt, setCreatedAt] = useState('2024-05-22T11:29:11.463Z')
-    const [clientId, setClientId] = useState('')
-    const [salesAgentId, setSalesAgentId] = useState('')
-    const [propertyId, setPropertyId] = useState('')
-    const [amount, setAmount] = useState('')
-    const [method, setMethod] = useState('')
-    const [startDate, setStartDate] = useState('')
-    const [endDate, setEndDate] = useState('')
-    const [status, setStatus] = useState('')
-
     function formatAddress(address) {
         const parts = address.split(", ");
         return parts.join(",\n");

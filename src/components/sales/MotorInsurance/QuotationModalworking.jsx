@@ -10,7 +10,7 @@ import CoverNotePrinter from './CoverNotePrinter'
 import QuotationPrinter from './QuotationPrinter'
 import EmailApi from '../../api/EmailApi'
 import PaymentsApi from '../../api/PaymentsApi'
-// import PaymentPolling from './PaymentPolling'
+import PaymentPolling from './PaymentPolling'
 
 export default function QuotationModal({ setModal }) {
     const [loading, setLoading] = useState(false)
@@ -23,6 +23,7 @@ export default function QuotationModal({ setModal }) {
     const [processingPayment, setProcessingPayment] = useState(false)
     const [isSending, setIsSending] = useState(false)
     const [pollingMerchantRef, setPollingMerchantRef] = useState(null)
+    const [mobileNumber, setMobileNumber] = useState(null)
 
     const { vehicleData, policyData, setPolicyData, userData, subscriptionMethod } = useContext(StepperContext)
     const { user, setUser } = useAuth()
@@ -411,117 +412,53 @@ export default function QuotationModal({ setModal }) {
         }
     }, [subscriptionMethod, generateQuotes])
 
-    const handlePaymentSuccess = useCallback((quotation, currency) => {
-        setProcessingPayment(false)
-        setStatusMessage("Payment successful")
-        // policyApproval(quotations.find((q) => q.merchantRef === pollingMerchantRef))
-        cashPayment({quotation, currency, method: "ECOCASH"})
-    }, [policyApproval, quotations, pollingMerchantRef])
-    
-    const handlePaymentFailure = useCallback((error) => {
-        setProcessingPayment(false)
-        setStatusMessage("Payment failed: " + error)
-    }, [])
-
-    const mobilePayment = useCallback(
-        async (merchantRef, mobile, quotation) => {
-          console.log("mobile number: ", mobile)
-          setProcessingPayment(true)
-          setStatusMessage("Initiating payment...")
-          const body = {
+    const mobilePayment = useCallback(async (merchantRef, mobile, insuranceID) => {
+        console.log("mobile number: ", mobile)
+        setProcessingPayment(true); // Update 2
+        const body = {
             username: "InnovationEcocash",
-            password: "InnoEco@15022023#",
-          }
-          const paymentBody = {
-            customerMobileNumber: mobile ? `+263${mobile}` : userData.phoneNumber,
+            password: "InnoEco@15022023#"
+        }
+        const paymentBody = {
+            customerMobileNumber: mobile?`+263${mobile}`:userData.phoneNumber,
             merchantRef,
             amount: 0.01,
-            transactionDescription: "Insurance Payment",
-          }
-          try {
+            transactionDescription: "Insurance Payment"
+        }
+        try {
             const result = await PaymentsApi.post(`/Authenticate/login`, body)
             if (result && result.data.token) {
-              setPaymentToken(result.data.token)
-              const headers = {
-                Authorization: `Bearer ${result.data.token}`,
-                "Content-Type": "application/json",
-              }
-              const mobilePaymentUrl =
-                policyData.currency === "USD" ? "/Mobilemoney/PayUSDEcocash" : "/Mobilemoney/payEcocash"
-              const payResult = await PaymentsApi.post(mobilePaymentUrl, paymentBody, { headers })
-              console.log("payment currency", policyData.currency)
-              if (payResult.status === 200 && payResult.data.resultDescription === "PENDING SUBSCRIBER VALIDATION") {
-                setPollingMerchantRef(payResult.data.merchantReference)
-                setStatusMessage("Payment initiated. Waiting for subscriber validation...")
-                pollPayment(payResult.data.merchantReference, result.data.token, quotation)
-              } else {
-                setStatusMessage(`Payment failed for insurance ID: ${quotation.InsuranceID}`)
-                setProcessingPayment(false)
-              }
+                setPaymentToken(result.data.token);
+                const headers = {
+                    Authorization: `Bearer ${result.data.token}`,
+                    'Content-Type': 'application/json',
+                }
+                const mobilePaymentUrl = policyData.currency === "USD" ? "/Mobilemoney/PayUSDEcocash" : "/Mobilemoney/payEcocash"
+                const payResult = await PaymentsApi.post(mobilePaymentUrl, paymentBody, { headers })
+                console.log('payment currency', policyData.currency)
+                if (payResult.status === 200 && payResult.data.resultDescription === "PENDING SUBSCRIBER VALIDATION") {
+                    setPollingMerchantRef(payResult.data.merchantReference);
+                } else {
+                    setStatusMessage(`Payment failed for insurance ID: ${insuranceID}`);
+                    setProcessingPayment(false);
+                }
             } else {
-              setStatusMessage("Authentication failed")
-              setProcessingPayment(false)
+                setStatusMessage("Authentication failed")
+                setProcessingPayment(false);
             }
-          } catch (error) {
+        } catch (error) {
             console.error("Payment error:", error)
-            setStatusMessage(`Payment failed for insurance ID: ${quotation.InsuranceID}`)
-            setProcessingPayment(false)
-          }
-        },
-        [userData.phoneNumber, policyData.currency],
-    )
+            setStatusMessage(`Payment failed for insurance ID: ${insuranceID}`)
+            setProcessingPayment(false);
+        }
+    }, [userData.phoneNumber])
 
-    const pollPayment = useCallback(
-        async (merchantRef, token, quotation) => {
-          let attempts = 0
-          const maxAttempts = 30 // Poll for 5 minutes (10 seconds * 30)
-          const pollInterval = 10000 // 10 seconds
-    
-          const poll = async () => {
-            if (attempts >= maxAttempts) {
-              handlePaymentFailure("Payment timed out")
-              return
-            }
-    
-            try {
-              const headers = {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-              }
-              const result = await PaymentsApi.post(
-                `/Mobilemoney/CheckEcocashTransaction`,
-                {
-                  merchantRef: merchantRef,
-                },
-                { headers },
-              )
-    
-              if (result && result.data.resultDescription === "Successful") {
-                handlePaymentSuccess(quotation, policyData.currency)
-              } else if (result && result.data.resultDescription === "FAILED") {
-                handlePaymentFailure("Payment failed")
-              } else {
-                attempts++
-                setStatusMessage(`Checking payment status... Attempt ${attempts}`)
-                setTimeout(poll, pollInterval)
-              }
-            } catch (error) {
-              console.error("Polling error:", error)
-              handlePaymentFailure("Error while checking payment status")
-            }
-          }
-    
-          poll()
-        },
-        [handlePaymentSuccess, handlePaymentFailure],
-    )
-
-    const cashPayment = useCallback(async ({quotation, currency, method}) => {
+    const cashPayment = useCallback(async (quotation, currency) => {
         setProcessingPayment(true);
         const transactionDescription = {
             user: {
                 username: userData.fullname,
-                idNumber: userData.idNumber,
+                idNumber: userData.nationalId,
                 phone: userData.phoneNumber,
                 email: userData.email
             },
@@ -546,6 +483,7 @@ export default function QuotationModal({ setModal }) {
             }
         };
         
+        // Conditionally add zbc and zinara if they exist in the policy
         if (quotation.Licence) {
             transactionDescription.zbc = {
                 policyAmount: quotation.Policy.Amount,
@@ -579,7 +517,7 @@ export default function QuotationModal({ setModal }) {
             referenceNumber: quotation.merchantRef,
             mobileNumber: userData.phoneNumber,
             paymentStatus: "PENDING",
-            paymentMethod: method,
+            paymentMethod: "CASH",
             amount: quotation.amount
         }
         try {
@@ -630,6 +568,17 @@ export default function QuotationModal({ setModal }) {
         const typeInt = parseInt(type, 10)
         const insurance = insuranceTypes.find(item => item.InsuranceType === typeInt)
         return insurance ? insurance.Code : "Not found"
+    }, [])
+
+    const handlePaymentSuccess = useCallback(() => {
+        setProcessingPayment(false)
+        setStatusMessage("Payment successful")
+        policyApproval(quotations.find(q => q.merchantRef === pollingMerchantRef))
+    }, [policyApproval, quotations, pollingMerchantRef])
+
+    const handlePaymentFailure = useCallback((error) => {
+        setProcessingPayment(false)
+        setStatusMessage("Payment failed: " + error)
     }, [])
 
     const QuotationItem = useCallback(({ quotation, index }) => {
@@ -801,9 +750,9 @@ export default function QuotationModal({ setModal }) {
                         className="mt-2 py-1 px-3 rounded-full border border-gray-300 bg-green-500 text-white w-full disabled:opacity-50"
                         onClick={() => {
                             if (paymentMethod === 'cash') {
-                                cashPayment({quotation, currency: policyData.currency, method: "CASH"});
+                                cashPayment(quotation, policyData.currency);
                             } else if (paymentMethod === 'mobile') {
-                                mobilePayment(quotation.merchantRef, localMobile, quotation, policyData.currency);
+                                mobilePayment(quotation.merchantRef, localMobile, quotation.InsuranceID, policyData.currency);
                             } else if (paymentMethod === 'swipe') {
                                 mobilePayment(quotation.merchantRef, localMobile, quotation.InsuranceID, policyData.currency);
                             }
@@ -944,6 +893,14 @@ export default function QuotationModal({ setModal }) {
                     <div className="mt-4 p-2 bg-blue-100 text-blue-800 rounded-md">
                         {statusMessage}
                     </div>
+                )}
+                {pollingMerchantRef && (
+                    <PaymentPolling
+                        merchantReference={pollingMerchantRef}
+                        onSuccess={handlePaymentSuccess}
+                        onFailure={handlePaymentFailure}
+                        initialToken={paymentToken}
+                    />
                 )}
             </div>
         </div>
