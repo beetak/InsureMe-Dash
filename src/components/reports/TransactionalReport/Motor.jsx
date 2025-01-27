@@ -24,10 +24,8 @@ export default function Motor({sales}) {
                 >
                     <div className="bg-white rounded-xl shadow-md overflow-hidden md:w-1/2">
                         <div className="flex flex-col">
-                            <div className="bg-gray-700 text-white border-b-2 border-gray-700 py-3 px-6">
-                                <div className="flex justify-between items-center bg-gray-700 text-white">
-                                    <span className="font-semibold">Transaction Details</span>
-                                </div>
+                            <div className="bg-main-color text-white border-b-2 border-main-color py-3 px-6">
+                                <span className="font-semibold">Transaction Details</span>
                             </div>
                             <div className="py-4">
                                 <div className="space-y-4">
@@ -63,10 +61,8 @@ export default function Motor({sales}) {
                     </div>
                     <div className="bg-white rounded-xl shadow-md overflow-hidden md:w-1/2">
                         <div className="flex flex-col">
-                            <div className=" bg-gray-700 text-white border-b-2 border-gray-700 py-3 px-6">
-                                <div className="flex justify-between items-center bg-gray-700 text-white">
-                                    <span className="font-semibold">User Details</span>
-                                </div>
+                            <div className=" bg-main-color text-white border-b-2 border-main-color py-3 px-6">
+                                <span className="font-semibold">User Details</span>
                             </div>
                             <div className="px-6 py-4">
                                 <div className="space-y-4">
@@ -95,10 +91,8 @@ export default function Motor({sales}) {
                             className="bg-white rounded-xl shadow-md overflow-hidden"
                         >
                             <div className="flex flex-col">
-                                <div className=" bg-gray-700 text-white border-b-2 border-gray-700 py-3 px-6">
-                                    <div className="flex justify-between items-center bg-gray-700 text-white">
-                                        <span className="font-semibold">Ad Ons Details</span>
-                                    </div>
+                                <div className=" bg-main-color text-white border-b-2 border-main-color py-3 px-6">
+                                    <span className="font-semibold">Ad Ons Details</span>
                                 </div>
                                 <div className="px-6 py-4">
                                     <div className="space-y-1">
