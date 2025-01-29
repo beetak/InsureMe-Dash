@@ -398,6 +398,7 @@ export default function QuotationModal({ setModal }) {
             } else if (response.Result !== 1) {
                 setStatusMessage("Policy Approval Failed")
                 setPaymentStatus(true)
+                console.log(response)
                 setQuotations(prevData => prevData.filter(policy => policy.quotationId === quoteData.quotationId))
                 return { message: "failed" }
             } else {

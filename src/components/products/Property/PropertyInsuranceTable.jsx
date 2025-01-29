@@ -13,7 +13,6 @@ export default function PropertyInsuranceTable() {
   const [message, setMessage] = useState('')
   const [prodResponse, setProdResponse] = useState('')
   const [propertyInsurance, setPropertyInsurance] = useState([])
-  const [insurerResponse, setInsurerResponse] = useState('')
   const [insurers, setInsurers] = useState('')
   const [loading, setLoading] = useState(false)
   const [isOpen, setIsOpen] = useState(false)

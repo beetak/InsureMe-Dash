@@ -21,7 +21,6 @@ export default function InsurerTravelInsuranceTable() {
   const dispatch = useDispatch()  
 
   const vehicleInsurance = useSelector(getVehicleInsurance)
-  const insurers = useSelector(getInsurers)
 
   useEffect(()=>{
     setLoading(true)

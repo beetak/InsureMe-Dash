@@ -49,17 +49,6 @@ export default function InsurerMotorInsuranceTable() {
     })
   },[dispatch])
 
-  const getInsurerProducts = (insurerId) => {
-    setMessage("Loading...")
-    dispatch(fetchAsyncVehicleInsuranceByInsurer({insurerId}))
-    .then((response)=>{
-      console.log("respo: ", response)
-    })
-    .catch(()=>{
-
-    })
-  }
-
   const handleDelete = (insuranceId) => {
     setLoading(true)
     setMessage("Deleting...")

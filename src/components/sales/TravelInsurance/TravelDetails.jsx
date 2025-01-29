@@ -16,10 +16,22 @@ export default function TravelDetails() {
         }));
     };
 
+    // const handleDateChange = (name) => (date) => {
+    //   const formattedDate = date ? date.toISOString().split('T')[0] : null;
+    //   setTravelData({ ...travelData, [name]: formattedDate });
+    // };
+
     const handleDateChange = (name) => (date) => {
-      const formattedDate = date ? date.toISOString().split('T')[0] : null;
-      setTravelData({ ...travelData, [name]: formattedDate });
-    };
+      if (date) {
+        const year = date.getFullYear()
+        const month = String(date.getMonth() + 1).padStart(2, "0")
+        const day = String(date.getDate()).padStart(2, "0")
+        const formattedDate = `${year}-${month}-${day}`
+        setTravelData({ ...travelData, [name]: formattedDate })
+      } else {
+        setTravelData({ ...travelData, [name]: null })
+      }
+    }
 
     const handleCountryChange = (name) => (selectedCountry) => {
       if (name === 'destination') {
@@ -93,10 +105,10 @@ export default function TravelDetails() {
                     id="fromDate"
                     name="fromDate"
                     showPopperArrow
-                    selected={travelData.fromDate}
-                    onChange={handleDateChange('fromDate')}
+                    selected={travelData.fromDate ? new Date(travelData.fromDate) : null}
+                    onChange={handleDateChange("fromDate")}
                     minDate={new Date()}
-                    className='w-[105px] outline-none rounded-3xl bg-gray-200 px-3 cursor-pointer'
+                    className="w-[105px] outline-none rounded-3xl bg-gray-200 px-3 cursor-pointer"
                   />
                 </div>
                 <div className="flex p-1 px-2 border-r border-gray-300">
@@ -105,10 +117,10 @@ export default function TravelDetails() {
                     id="toDate"
                     name="toDate"
                     showPopperArrow
-                    selected={travelData.toDate}
-                    onChange={handleDateChange('toDate')}
+                    selected={travelData.toDate ? new Date(travelData.toDate) : null}
+                    onChange={handleDateChange("toDate")}
                     minDate={new Date()}
-                    className='w-[105px] outline-none rounded-3xl bg-gray-200 px-3 cursor-pointer'
+                    className="w-[105px] outline-none rounded-3xl bg-gray-200 px-3 cursor-pointer"
                   />
                 </div>
                 <div className="flex p-1 px-2">

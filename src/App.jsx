@@ -14,7 +14,7 @@ function App() {
     if (user) {
       updateColors(user)
     }
-  }, [user, updateColors]) // Added updateColors to dependencies
+  }, [user]) // Added updateColors to dependencies
 
   return (
     <Suspense fallback={<div>Loading...</div>}>

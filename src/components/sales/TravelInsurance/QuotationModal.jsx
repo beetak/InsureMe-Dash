@@ -315,6 +315,7 @@ export default function QuotationModal({ setModal }) {
             console.log("payment: ", payResult)
             if(payResult.data.code==="CREATED" && payResult.data.message==="Product payment created"){
                 setQuotations(prevData => prevData.filter(policy => policy.quotationId === quotation.quotationId))
+                setPaymentStatus(true)
                 setStatusMessage(`Payment successful for insurance ID: ${quotation.quotationId}`)
             }
         } catch (error) {
@@ -475,13 +476,13 @@ export default function QuotationModal({ setModal }) {
                                 Processing...
                             </span>
                         ) : (
-                            `Confirm ${paymentMethod.charAt(0).toUpperCase() + paymentMethod.slice(1)} Payment`
+                            paymentStatus? "Paid" : `Confirm ${paymentMethod.charAt(0).toUpperCase() + paymentMethod.slice(1)} Payment`
                         )}
                     </button>
                 )}
             </div>
         )
-    }, [paymentStates, handlePaymentOption, handleMobileChange, mobilePayment, cashPayment, processingPayment]) // Update 5
+    }, [paymentStates, handlePaymentOption, handleMobileChange, mobilePayment, cashPayment, processingPayment, paymentStatus]) // Update 5
 
     return (
         <div className='flex flex-col flex-1 h-screen justify-center bg-gray-200 bg-opacity-50 items-center fixed inset-0 z-50'
