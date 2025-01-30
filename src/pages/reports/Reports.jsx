@@ -31,7 +31,7 @@ export default function Reports() {
       const params = new URLSearchParams(location.search)
       const refId = params.get('referenceId')
       if (refId) {
-          setActiveTab(9)
+          setActiveTab((userRole==='INSURER_ADMIN' || userRole==='SALES_AGENT') ? 4 : 9)
       }
   }, [location])
 

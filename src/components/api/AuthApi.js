@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-  baseURL: 'http://insureme.co.zw:8082/api/v1',
+  baseURL: 'https://insureme.co.zw:8082/api/v1',
   // baseURL: 'http://localhost:8083/api/v1',
 });
 

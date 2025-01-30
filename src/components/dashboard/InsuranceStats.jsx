@@ -26,8 +26,8 @@ export default function InsuranceStats() {
                                 <h1 className='text-white text-sm font-bold'>Vehicle Insurance</h1>
                                 <h1  className='text-4xl text-bold text-white' ><i className='fa fa-car'/></h1>                                
                                 <div className="flex w-full text-white justify-around">
-                                    <p className='flex flex-col text-xs'>Vehicles<span className='text-lg'>200</span></p>
-                                    <p className='flex flex-col text-xs'>Premium<span className='text-lg'>200,222,444.00</span></p>
+                                    <p className='flex flex-col text-xs'>Vehicles<span className='text-lg'>0</span></p>
+                                    <p className='flex flex-col text-xs'>Premium<span className='text-lg'>0.00</span></p>
                                 </div>
                             </div>
                             <div className="w-[1px] bg-white h-16 m-0 bg-gradient-to-b from-[#656E70] to-[rgba(255,255,255,1)]"/>
@@ -46,7 +46,7 @@ export default function InsuranceStats() {
                                     <div className="flex flex-col px-4 space-y-4 w-1/2">
                                         <h1  className='text-xs text-bold text-white' ><i className='fa fa-car text-lg mr-4'/>Vehicle Insurance</h1>                                
                                         <div className="flex w-full text-white justify-between">
-                                            <p className='flex flex-col'>200<span className='text-xs'>Zig 200,000.00</span><span className='text-xs'>USD 12,000.00</span></p>
+                                            <p className='flex flex-col'>200<span className='text-xs'>Zig 0.00</span><span className='text-xs'>USD 0.00</span></p>
                                         </div>
                                     </div>
                                     <div className="flex flex-col px-4 space-y-4 w-1/2">
@@ -85,7 +85,7 @@ export default function InsuranceStats() {
                                 )
                             }
                         </h1>
-                        <div className="flex flex-col w-full rounded-md space-y-2 bg-white p-2">
+                        {/* <div className="flex flex-col w-full rounded-md space-y-2 bg-white p-2">
                             <div className="flex rounded-md justify-around items-center bg-gray-400 text-white py-1">
                                 <div className='rounded-full w-8 h-8 bg-gray-500 text-white flex justify-center items-center'>
                                     <i className='fas fa-check-square'/>
@@ -106,7 +106,7 @@ export default function InsuranceStats() {
                                 </div>
                                 <i className='fas fa-ellipsis-v'></i>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>

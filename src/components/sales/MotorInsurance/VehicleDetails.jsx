@@ -148,8 +148,11 @@ export default function VehicleDetails() {
     }
 
     const vehicleTPIQuote = async () =>{
+        setSearchStatus(false)
+        setVehicleData({...vehicleData, taxClass: "", make: "", model: "", YearManufacture: "", usage: "", vehicleType: ""})
         setLoading(true)
         try{
+            console.log("TPI", tpiQuote)
             const response = await IceCashApi.post(`/request/20500338/tpi/quotes`, tpiQuote)
             console.log("TPI RESP", response)
             if(response.statusText==="OK" && response.data.Response.Message=== "Partner Token has expired. "){

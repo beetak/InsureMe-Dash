@@ -1,10 +1,13 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import WindowCard from '../../components/windowCard/WindowCard'
 import InsurerTable from '../../components/insurer/InsurerTable';
 import InsurerForm from '../../components/insurer/InsurerForm';
 import DisplayLayout from '../../components/Layout/DisplayLayout';
+import { useLocation } from 'react-router-dom';
 
 export default function Insurers() {
+
+  const location = useLocation()
 
   const menus = [
     { title: "Insurer Creation", icon: "fas fa-pen-nib", tab:1 },
@@ -16,6 +19,14 @@ export default function Insurers() {
   const handleTabClick = (tabIndex) => {
     setActiveTab(tabIndex);
   };
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    const insTab = params.get('insurerTab')
+    if (insTab) {
+        setActiveTab(2)
+    }
+  }, [location])
 
   return (
     <>

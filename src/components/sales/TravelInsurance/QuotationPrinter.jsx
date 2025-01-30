@@ -83,8 +83,8 @@ const QuotationPrinter = ({ data }) => {
 
     // Policy details
     addText(50, 140, 'Policy Details', 12, 'bold')
-    addText(50, 150, `Policy Number:\nIssue Date:\nExpiry Date:`, 10, 'normal')
-    addText(130, 150, `${getInsuranceType(data[0].Policy.InsuranceType)}\n${formattedDate} ${curTime}\n${getDates(data[0].Policy.EndDate)}`, 10, 'normal')
+    addText(50, 150, `Travel Plan:\nIssue Date:`, 10, 'normal')
+    addText(130, 150, `${getInsuranceType(data[0].planName)}\n${formattedDate} ${curTime}}`, 10, 'normal')
 
     // Insured details
     addText(50, 180, 'Insured Details', 12, 'bold')

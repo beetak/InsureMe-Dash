@@ -287,8 +287,9 @@ export default function QuotationModal({ setModal }) {
                 }
 
                 try {
+                    console.log("quote: ", modifiedQuote)
                     const response = await quote(insurer.icecashId, modifiedQuote)
-                    console.log(response)
+                    console.log("respose: ",response)
                     if (response) {
                         const { quoteResult = [], merchantRef } = response
                         const modifiedResults = quoteResult.map(result => ({
@@ -614,17 +615,6 @@ export default function QuotationModal({ setModal }) {
             };
             return newStates;
         });
-    }, []);
-
-    const handleMobileChange = useCallback((quotationId, value) => {
-        console.log("mobile value: ", value, "quotationId: ", quotationId)
-        setPaymentStates(prevStates => ({
-            ...prevStates,
-            [quotationId]: {
-                ...prevStates[quotationId],
-                mobile: value
-            }
-        }));
     }, []);
 
     const getInsuranceType = useCallback((type) => {

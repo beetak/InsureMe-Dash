@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import SalesCharts from './SalesCharts'
 
 const shopName = localStorage.getItem('shopName')
@@ -11,6 +11,13 @@ const regionId = localStorage.getItem('regionId')
 const userRole = localStorage.getItem('role')
 
 export default function DashboardTop() {
+
+    const navigate = useNavigate()
+
+    const handleNavigate = () => {
+        navigate('/insurers?insurerTab=true');
+    };
+
     return (
         <>
             <div className="flex w-full space-x-3">
@@ -20,12 +27,12 @@ export default function DashboardTop() {
                             <div className="flex flex-col p-4 space-y-4">
                                 <h1 className='text-white text-sm font-bold'><span className='fas fa-user mr-2'/>Total Insurers</h1>
                                 <h1  className='text-4xl text-bold text-white' >12</h1>
-                                <Link 
+                                <button 
                                     className="rounded-full border border-white text-white py-1 px-4"
-                                    to={'/insurers'}
+                                    onClick={handleNavigate}
                                 >
                                     view insurers
-                                </Link>
+                                </button>
                             </div>
                             <div className="w-[1px] bg-white h-16 m-0 bg-gradient-to-b from-[#656E70] to-[rgba(255,255,255,1)]"/>
                             <div className="flex flex-col p-4 space-y-4">
@@ -69,7 +76,7 @@ export default function DashboardTop() {
                                 regionName?<span>{regionName} Shop</span>:"TelOne Pivate Limited"
                             }
                         </h1>
-                        <div className="flex flex-col w-full rounded-md space-y-2 bg-white p-2">
+                        {/* <div className="flex flex-col w-full rounded-md space-y-2 bg-white p-2">
                             <div className="flex rounded-md justify-around items-center bg-gray-400 text-white py-1">
                                 <div className='rounded-full w-8 h-8 bg-gray-500 text-white flex justify-center items-center'>
                                     <i className='fas fa-check-square'/>
@@ -90,7 +97,7 @@ export default function DashboardTop() {
                                 </div>
                                 <i className='fas fa-ellipsis-v'></i>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>
