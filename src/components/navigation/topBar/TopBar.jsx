@@ -1,8 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link, useNavigate } from 'react-router-dom'
+import useAuth from '../../../hooks/useAuth'
 
 export default function TopBar() {
+
+    const { setUser } = useAuth()
+
     const [dropdown, setDropdown] = useState(false)
     const [tab, setTab] = useState('')
     const [isFocused, setIsFocused] = useState(false)
@@ -45,7 +49,8 @@ export default function TopBar() {
     const isExpanded = isFocused || inputValue.length > 0
 
     const logout = () => {
-        window.location.href = '/login'
+        setUser(null)
+        navigate('/login')
     }
 
     useEffect(() => {
@@ -131,7 +136,7 @@ export default function TopBar() {
                                     >
                                         <span className="absolute -inset-1.5" />
                                         <span className="sr-only">Open user menu</span>
-                                        <img className="h-8 w-8 rounded-full" src="images/fidelis.jpeg" alt="image" />
+                                        <img className="h-8 w-8 rounded-full" src="images/user.png" alt="image" />
                                     </button>
                                     <div className={`absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ${tab === "profile" ? "" : "hidden"}`} role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabIndex={-1}>
                                         <Link to="/profile" className="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabIndex={-1} id="user-menu-item-0">Your Profile</Link>

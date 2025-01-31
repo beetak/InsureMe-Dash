@@ -4,7 +4,7 @@ import PropertyInsuranceForm from '../../components/products/Property/PropertyIn
 import useAuth from '../../hooks/useAuth';
 import PropertyInsuranceTable from '../../components/products/Property/PropertyInsuranceTable';
 
-export default function PropertyInsurance() {
+export default function FuneralCover() {
 
   const {user} = useAuth()
   const userRole = user.role

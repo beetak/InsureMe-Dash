@@ -1,0 +1,52 @@
+[
+    {
+        "insurer": "AFC",
+        "policyName": "Africa",
+        "isActive": false,
+        "packages": {
+            "7": 15,
+            "10": 20,
+            "15": 21,
+            "21": 30,
+            "30": 32,
+            "60": 50,
+            "92": 74,
+            "180": 90,
+            "Annual": 133
+        }
+    },
+    {
+        "insurer": "AFC",
+        "policyName": "Europe",
+        "isActive": true,
+        "packages": {
+            "7": 20,
+            "10": 26,
+            "15": 28,
+            "21": 39,
+            "30": 43,
+            "60": 65,
+            "92": 95,
+            "180": 116,
+            "Annual": 174
+        }
+        
+    },
+    {
+        "insurer": "Champions",
+        "policyName": "Europe",
+        "isActive": true,
+        "packages": {
+            "7": 20,
+            "12": 26,
+            "15": 28,
+            "21": 39,
+            "30": 43,
+            "60": 65,
+            "90": 95,
+            "180": 116,
+            "Annual": 174
+        }
+        
+    }
+]

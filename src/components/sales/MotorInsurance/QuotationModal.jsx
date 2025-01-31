@@ -210,7 +210,8 @@ export default function QuotationModal({ setModal }) {
         try {
             const response = await InsuranceApi.get('/insurers')
             if (response.data.httpStatus === "OK") {
-                setInsurers(response.data.data)
+                const filteredInsurers = response.data.data.filter((insurer) => insurer.iceCashId !== 0)
+                setInsurers(filteredInsurers)
             }
         } catch (error) {
             console.error("Error fetching insurers:", error)

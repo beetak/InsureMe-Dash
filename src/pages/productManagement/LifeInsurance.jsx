@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import PolicyTable from '../../components/products/PolicyTable';
 import PropertyInsuranceForm from '../../components/products/Property/PropertyInsuranceForm';
 import useAuth from '../../hooks/useAuth';
 import PropertyInsuranceTable from '../../components/products/Property/PropertyInsuranceTable';
 
-export default function PropertyInsurance() {
+export default function LifeInsurance() {
 
   const {user} = useAuth()
   const userRole = user.role

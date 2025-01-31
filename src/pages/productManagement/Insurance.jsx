@@ -12,6 +12,7 @@ import PropertyInsurance from './PropertyInsurance';
 import useAuth from '../../hooks/useAuth';
 import InsuranceApi, { setupInterceptors } from '../../components/api/InsuranceApi';
 import DisplayLayout from '../../components/Layout/DisplayLayout';
+import LifeInsurance from './LifeInsurance';
 
 export default function Insurance() {
 
@@ -117,6 +118,18 @@ export default function Insurance() {
                         activeTab === "Property Insurance" && 
                         <div className="bg-white rounded-xs border border-gray-200 border-solid border-1">
                           <PropertyInsurance/>
+                        </div>
+                      }
+                      {/* Tab 4 content */}
+                      {activeTab === "Life Insurance" && 
+                        <div className="bg-white rounded-xs border border-gray-200 border-solid border-1">
+                          <LifeInsurance/>
+                        </div>
+                      }
+                      {/* Tab 4 content */}
+                      {activeTab === "Funeral Cover" && 
+                        <div className="p-7 flex justify-center bg-white rounded-xs border border-gray-200 border-solid border-1">
+                          Coming Soon
                         </div>
                       }
                       {/* Tab 4 content */}

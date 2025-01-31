@@ -446,6 +446,7 @@ export default function InsurerForm() {
                                 className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
                             >
                             <option value="">Select Icecash ID</option>
+                            <option  onClick={(e)=>setIceCashId(0)}>No Icecash ID</option>
                                 {
                                     companyIcecashId ? companyIcecashId.map((item)=>(
                                         <option value="Option 1" onClick={(e)=>setIceCashId(item.Insurance_Company_ID)} key={item.Organisation}>{item.Organisation}</option>

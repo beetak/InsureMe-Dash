@@ -64,7 +64,7 @@ export default function InsuranceStats() {
                 <div className="flex w-80">
                     <div className="flex flex-col p-2 space-y-2 items-center bg-gray-400 w-full rounded-md">
                         <div className="rounded-full overflow-hidden mt-8 h-36 w-36">
-                            <img src="images/fidelis.jpeg" className='w-96' alt="" />
+                            <img src="images/user.png" className='w-96 bg-gradient-to-b from-main-color to-secondary-color' alt="" />
                         </div>
                         <h1 className='text-white text-xl'>{user.firstname} {user.surname}</h1>
                         <h1  className='text-xs text-bold text-white' >{userRole}</h1>

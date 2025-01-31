@@ -216,7 +216,7 @@ export default function UserProfile() {
                             <img 
                                 src="images/user.png" 
                                 alt="Profile" 
-                                className="w-32 h-32  bg-gradient-to-b from-main-color to-secondary-color mb-4 object-cover"
+                                className="w-32 h-32 bg-gradient-to-b from-main-color to-secondary-color mb-4 object-cover"
                             />
                         </div>
                         <div className="flex flex-col items-center">

@@ -1,23 +1,26 @@
-import React, { useEffect, Suspense } from "react"
-import { Routes, Route, Navigate } from "react-router-dom"
-import Layout from "./Layout"
-import ProtectedRoute from "./ProtectedRoute"
-import useAuth from "./hooks/useAuth"
-import { useColors } from "./context/ColorProvider"
-import { routes } from "./routes/routeConfig"
+import React, { useEffect, Suspense } from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import Layout from "./Layout";
+import ProtectedRoute from "./ProtectedRoute";
+import useAuth from "./hooks/useAuth";
+import { useColors } from "./context/ColorProvider";
+import { routes } from "./routes/routeConfig";
+import { ClipLoader } from "react-spinners"; // Import the spinner
 
 function App() {
-  const { user } = useAuth()
-  const { updateColors } = useColors()
+  const { user } = useAuth();
+  const { updateColors } = useColors();
 
   useEffect(() => {
     if (user) {
-      updateColors(user)
+      updateColors(user);
     }
-  }, [user]) // Added updateColors to dependencies
+  }, [user]); // Added updateColors to dependencies
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div className="flex items-center justify-center h-screen">
+      <ClipLoader size={100} color="#3B82F6" />
+    </div>}> {/* Updated fallback */}
       <Routes>
         <Route path="/" element={<Layout />}>
           {routes.map(({ path, element: Element, roles }) => (
@@ -39,8 +42,7 @@ function App() {
         </Route>
       </Routes>
     </Suspense>
-  )
+  );
 }
 
-export default App
-
+export default App;

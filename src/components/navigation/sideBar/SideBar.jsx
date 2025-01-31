@@ -166,7 +166,7 @@ export default function SideBar() {
                         }
                     </div>
                     <div className={`logo flex items-center ps-4 ${!isOpen && "hidden"}`}>
-                        <img src="images/fidelis.jpeg" alt="Logo" className="w-10 rounded-full" />
+                        <img src="images/user.png" alt="Logo" className="w-10 rounded-full bg-gradient-to-b from-main-color to-secondary-color" />
                         <div className="ml-4">
                             <h2 className="text-md font-bold h-6">Welcome <span className='text-main-color'>{firstname}</span></h2>
                             <p className="text-gray-600 text-xs">

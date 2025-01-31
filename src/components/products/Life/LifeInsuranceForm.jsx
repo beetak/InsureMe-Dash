@@ -4,7 +4,7 @@ import useAuth from '../../../hooks/useAuth';
 import InsuranceApi, { setupInterceptors } from '../../api/InsuranceApi';
 import WatermarkedFormContainer from '../WatermarkedFormContainer';
 
-export default function TravelInsuranceForm() {
+export default function LifeInsuranceForm() {
 
     const {user, setUser} = useAuth()
     const userRole = user.role
@@ -118,7 +118,7 @@ export default function TravelInsuranceForm() {
                     loading && <PageLoading loading={loading} failed={failed} success={success} /> 
                 } 
                 <h2 className="text-lg font-semibold">Insurance Creation Form</h2>
-                <p className="text-xs mb-4">For Travel Insurance processing</p>
+                <p className="text-xs mb-4">For Life Insurance processing</p>
                 <div className='space-y-1'>
                     {
                         Object.keys(error).length>0&&

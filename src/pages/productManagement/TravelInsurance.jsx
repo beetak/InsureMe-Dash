@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import PolicyTable from '../../components/products/PolicyTable';
-import { fetchAsyncPolicy } from '../../store/policy-store';
-import { useDispatch } from 'react-redux';
-import MotorInsuranceForm from '../../components/products/MotorVehicle/MotorInsuranceForm';
-import InsurerMotorInsuranceTable from '../../components/products/MotorVehicle/InsurerMotorInsuranceTable';
 import TravelInsuranceForm from '../../components/products/Travel/TravelInsuranceForm';
 import TravelInsuranceTable from '../../components/products/Travel/TravelInsuranceTable';
 import useAuth from '../../hooks/useAuth';
@@ -12,13 +8,6 @@ export default function TravelInsurance() {
 
   const {user} = useAuth()
   const userRole = user.role
-
-  const dispatch = useDispatch()
-
-  useEffect(() => {
-    dispatch(fetchAsyncPolicy())
-    dispatch(fetchAsyncPolicy())
-  }, []);
 
   const menus = [
     { title: "Create Insurance", icon: "fas fa-pen-nib", tab:1 },

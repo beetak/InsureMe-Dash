@@ -1,16 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 import PageLoading from '../../loadingStates/PageLoading';
-import { fetchAsyncInsurer, getInsurers } from '../../../store/insurer-store';
-import { fetchAsyncPolicy, getPolicies } from '../../../store/policy-store';
-import { postPropertyPolicy } from '../../../store/property-store';
 import InsuranceApi, { setupInterceptors } from '../../api/InsuranceApi';
 import useAuth from '../../../hooks/useAuth';
 import WatermarkedFormContainer from '../WatermarkedFormContainer';
 
 export default function PropertyInsuranceForm() {
-
-    const dispatch = useDispatch()
 
     const {user, setUser} = useAuth()
     const userRole = user.role
@@ -112,26 +106,6 @@ export default function PropertyInsuranceForm() {
 
     const [rows, setRows] = useState([]);
     const [count, setCount] = useState(1)
-    
-    const decrement = (index) => {
-        setRows((prevRows) => {
-          const updatedRows = [...prevRows];
-          updatedRows.splice(index, 1);
-          return updatedRows;
-        });
-        setCount((prevCount) => prevCount - 1);
-      };
-
-    const increment = () => {
-        setCount(prevCount=>prevCount+1)
-    }
-
-    const handleInputChange = (e, index) => {
-        const updatedRows = [...rows];
-        updatedRows[index] = e.target.value;
-        setRows(updatedRows);
-        console.log("rows ", rows)
-    };
 
     return (
         <>
@@ -140,7 +114,7 @@ export default function PropertyInsuranceForm() {
                     loading && <PageLoading loading={loading} failed={failed} success={success} /> 
                 } 
                 <h2 className="text-lg font-semibold">Insurance Creation Form</h2>
-                <p className="text-xs mb-4">For vehicle Insurance processing</p>
+                <p className="text-xs mb-4">For Property Insurance processing</p>
                 <div className='space-y-1'>
                     {
                         Object.keys(error).length>0&&

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch } from 'react-redux';
 import { ScaleLoader } from 'react-spinners';
 import PolicyViewModal from './PolicyViewModal';
@@ -9,9 +9,35 @@ import InsuranceApi, { setupInterceptors } from '../api/InsuranceApi';
 import useAuth from '../../hooks/useAuth';
 import { motion, AnimatePresence } from "framer-motion" // Import Framer Motion
 
+const containerVariants = {
+  hidden: { opacity: 1 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1, // This will stagger the animation of child elements
+    },
+  },
+}
+
+// Animation variants for each row
+const rowVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: "spring",
+      stiffness: 100,
+      damping: 12,
+    },
+  },
+  exit: { opacity: 0, y: -20 },
+}
+
 export default function PolicyTable() {
 
   const {user, setUser} = useAuth()
+  const tableRef = useRef(null)
 
   useEffect(()=>{
     setupInterceptors(() => user, setUser);
@@ -116,7 +142,7 @@ export default function PolicyTable() {
           color='#374151'
           loading={loading}
           cssOverride={override}
-          size={10}
+          size={10} // Adjust the size as needed
           aria-label="Loading Spinner"
           data-testid="loader"
         />
@@ -291,14 +317,19 @@ export default function PolicyTable() {
             </div>
           </div>
         </div>
-        <div className='overflow-auto rounded:xl shadow-md'>
-          <table className='w-full'>
+        <motion.div 
+          className='overflow-auto rounded:xl shadow-md'
+          initial={{ height: 0 }}
+          animate={{ height: 'auto' }}
+          transition={{ duration: 0.3 }}
+        >
+          <table ref={tableRef} className='w-full'>
             <thead className='bg-gray-100 border-b-2 border-gray-300'>
-              <tr >{renderTableHeader()}</tr>
+              <tr>{renderTableHeader()}</tr>
             </thead>
-            <tbody >{loading?loadingAnimation():renderTableRows()}</tbody>
+            <tbody>{loading ? loadingAnimation() : renderTableRows()}</tbody>
           </table>
-        </div>
+        </motion.div>
       </div>
     </>
   )
