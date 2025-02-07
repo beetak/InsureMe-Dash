@@ -29,7 +29,7 @@ export default function UserProfile() {
             const response = await AuthApi.get(url)
             if(response&&(response.data.message==="User found"||response.data.message==="retrieved successfully")){
                 console.log(response)
-                setAccountInfo(response.data)
+                setAccountInfo(response.data.data)
             }
         }
         catch(err){
@@ -220,12 +220,15 @@ export default function UserProfile() {
                             />
                         </div>
                         <div className="flex flex-col items-center">
-                            <p className='text-2xl font-bold'style={{
+                            <p className='text-2xl font-bold' style={{
                                 background: 'linear-gradient(0deg, main-color, secondary-color)', // Example gradient
                                 WebkitBackgroundClip: 'text',
                                 WebkitTextFillColor: 'transparent',
+                                backgroundClip: 'text', // Non-prefixed version for better compatibility
+                                color: 'transparent'
                             }}>
-                                {accountInfo.firstname} {accountInfo.lastname}
+                            {/* <p className='text-2xl font-bold'> */}
+                                {accountInfo.firstname || accountInfo.firstName} {accountInfo.lastname || accountInfo.lastName}
                             </p>
                             <p className="text-gray-600 mt-1 underline">{displayUserRole(accountInfo.role)}</p>
                             <p className="text-sm text-gray-500 mt-1">{accountInfo.email}@telone.co.zw</p>
@@ -236,7 +239,10 @@ export default function UserProfile() {
                         <p className='flex flex-col text-xs font-semibold'>Assigned Town<span className='text-2xl text-main-color'>{accountInfo.userTowns>0? accountInfo.userTowns[0]:"Overall"}</span></p>
                         <p className='flex flex-col text-xs font-semibold'>Assigned Shop<span className='text-2xl text-main-color'>{accountInfo.userShops>0? accountInfo.userShops[0]:"Overall"}</span></p>
                     </div>
-                    <div className="flex flex-col absolute right-2 top-2 z-10 space-y-4">
+                </div>
+                <div className='bg-gradient-to-t from-main-color to-secondary-bg-secondary-color w-[1px]'/>
+                <div className="flex flex-1 flex-col mx-2 space-y-2">
+                    <div className="flex flex-row space-x-4">
                         <button 
                             className="bg-gradient-to-r from-main-color to-secondary-color rounded-full py-1 w-48 text-white"
                             onClick={()=>setActiveTab("password")}
@@ -252,9 +258,6 @@ export default function UserProfile() {
                             Edit Profile Picture
                         </button>
                     </div>
-                </div>
-                <div className='bg-gradient-to-t from-main-color to-secondary-bg-secondary-color w-[1px]'/>
-                <div className="flex flex-1 flex-col mx-2">
                     {
                         activeTab === "password"?passwordReset():imageUpdate()
                     }

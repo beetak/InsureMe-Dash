@@ -10,6 +10,7 @@ export default function SideBar() {
 
     const {user} = useAuth()
     const { companyDetails } = useTheme()
+    companyDetails && console.log("co de",companyDetails)
 
     const userRole = user.role
     const firstname = user.firstname

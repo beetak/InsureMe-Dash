@@ -1,5 +1,6 @@
 // src/context/ColorContext.js
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import InsuranceApi from '../components/api/InsuranceApi';
 
 const ColorContext = createContext();
 
@@ -18,33 +19,39 @@ export const ColorProvider = ({ children }) => {
     document.documentElement.style.setProperty('--secondary-color-rgb', colors.secondaryColorRgb);
   }, [colors]);
 
-    const updateColors = async (user) => {
-        if (!user || !user.companyId) {
-            console.error('User or companyId not available');
-            return;
-        }
+  const updateColors = async (user) => {
+    if (!user || !user.companyId) {
+        console.error('User or companyId not available');
+        return;
+    }
 
-        try {
-            const response = await fetch(`http://localhost:8083/api/v1/insurers/${user.companyId}`);
-            const data = await response.json();
-            // Function to convert hex to RGB
-            const hexToRgb = (hex) => {
-              const bigint = parseInt(hex.slice(1), 16);
-              return `${(bigint >> 16) & 255}, ${(bigint >> 8) & 255}, ${bigint & 255}`;
-            };
+    try {
+        const data = await InsuranceApi(`/insurers/${user.companyId}`);
+        
+        // Debugging: log the received data
+        console.log('Received data:', data);
 
-            setColors({
-                mainColor: data.mainColor,
-                secondaryColor: data.secondColor,
-                mainColorRgb: hexToRgb(data.mainColor),
-                secondaryColorRgb: hexToRgb(data.secondColor)
-            });
-            setCompanyDetails(data);
+        const hexToRgb = (hex) => {
+            if (!hex) {
+                console.error('Hex color is undefined:', hex);
+                return '0, 0, 0'; // Default RGB value
+            }
+            const bigint = parseInt(hex.slice(1), 16);
+            return `${(bigint >> 16) & 255}, ${(bigint >> 8) & 255}, ${bigint & 255}`;
+        };
 
-        } catch (error) {
-            console.error('Failed to fetch company colors:', error);
-        }
-    };
+        setColors({
+            mainColor: data.mainColor || '#3B82F6', // Default value if undefined
+            secondaryColor: data.secondColor || '#fc0303#', // Default value if undefined
+            mainColorRgb: hexToRgb(data.mainColor),
+            secondaryColorRgb: hexToRgb(data.secondColor)
+        });
+        setCompanyDetails(data.data);
+
+    } catch (error) {
+        console.error('Failed to fetch company colors:', error);
+    }
+  };
 
   return (
     <ColorContext.Provider value={{ colors, updateColors, companyDetails }}>

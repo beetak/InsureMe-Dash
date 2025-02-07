@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAsyncPolicy, getPolicies } from '../../../store/policy-store';
-import { carApiLogin, fetchAsyncCarModels } from '../../../store/carmodel-store';
 import { getVehicleInformation, postVehicleInfo } from '../../../store/payments-store';
 import PropertyDetails from './PropertyDetails';
 import StepperControl from '../StepperControl';
-import StepperTab from '../StepperTab';
 import Stepper from '../Stepper';
 import UserDetails from './UserDetails';
 import { StepperContext } from '../../../context/StepperContext';
+import AccountDetails from './AccountDetails';
 
 export default function PropertyInsuranceSales() {
 
@@ -31,11 +30,11 @@ export default function PropertyInsuranceSales() {
     const displayStep = (step) => {
         switch(step) {
             case 1: 
-                return <UserDetails/>
+                return <AccountDetails/>
             case 2:
                 return <PropertyDetails/>
             default:
-                return <UserDetails/>
+                return <AccountDetails/>
         }
     }
 

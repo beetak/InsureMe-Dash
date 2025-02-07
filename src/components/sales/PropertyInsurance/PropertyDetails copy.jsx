@@ -65,91 +65,59 @@ export default function PropertyDetails({ onChange }) {
     return (
         <>
             {[...Array(count)].map((_, index) => (
-                <div key={index} className="flex items-start mt-2">
-                    <label htmlFor={`address-${index}`} className="block text-sm font-medium leading-6 text-gray-900 w-1/6 mt-3">
+                <div key={index} className="flex items-center mt-2">
+                    <label htmlFor={`address-${index}`} className="block text-sm font-medium leading-6 text-gray-900 w-1/6">
                         Building Row {++index}
                     </label>
-                    <div className="flex-col flex-1">
-                        <div className="flex items-center space-x-2 flex-1">
-                            <div className="mt-2 flex-1">
-                                <input
-                                    type="text"
-                                    name="buildingAddress"
-                                    id="buildingAddress"
-                                    autoComplete="family-name"
-                                    placeholder="Risk Address"
-                                    onChange={handleChange}
-                                    value={propertyData["buildingAddress"] || ""}
-                                    className="block w-full rounded-xs border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
-                                />
-                            </div>
-                            <div className="mt-2 flex-1">
-                                <input
-                                    type="text"
-                                    name="buildingValue"
-                                    id="buildingValue"
-                                    autoComplete="family-name"
-                                    placeholder="Value of buildings"
-                                    onChange={handleChange}
-                                    value={propertyData["buildingValue"] || ""}
-                                    className="block w-full rounded-xs border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
-                                />
-                            </div>
-                            <div className="mt-2 flex-1">
-                                <select
-                                    id="systemAdOns"
-                                    name="systemAdOns"
-                                    className="border border-gray-300 bg-inherit rounded-xs px-3 py-1.5 w-full"
-                                >
-                                    <option className='font-bold italic text-gray-400'>Roof Type</option>
-                                    <option value="Option 1">Metal Slate</option>
-                                    <option value="Option 1">Tile</option>
-                                    <option value="Option 1">Asbestos</option>
-                                    <option value="Option 1">Wood</option>
-                                    <option value="Option 2">Thatch</option>
-                                </select>
-                            </div>
+                    <div className="flex items-center space-x-2 flex-1">
+                        <div className="mt-2 flex-1">
+                            <input
+                                type="text"
+                                name="buildingAddress"
+                                id="buildingAddress"
+                                autoComplete="family-name"
+                                placeholder="Risk Address"
+                                onChange={handleChange}
+                                value={propertyData["buildingAddress"] || ""}
+                                className="block w-full rounded-xs border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
+                            />
                         </div>
-                        <div className="flex items-center space-x-2">
-                            <div className="mt-2 flex-1">
-                                <select
-                                    id="systemAdOns"
-                                    name="systemAdOns"
-                                    className="border border-gray-300 bg-inherit rounded-xs px-3 py-1.5 w-full"
-                                >
-                                    <option className='font-bold italic text-gray-400'>Construction Type</option>
-                                    <option value="Option 1">Brick</option>
-                                    <option value="Option 1">Wood</option>
-                                    <option value="Option 1">Concrete</option>
-                                </select>
-                            </div>
-                            <div className="mt-2 flex-1">
-                                <select
-                                    id="systemAdOns"
-                                    name="systemAdOns"
-                                    className="border border-gray-300 bg-inherit rounded-xs px-3 py-1.5 w-full"
-                                >
-                                    <option className='font-bold italic text-gray-400'>House Description</option>
-                                    <option value="Option 1">Stand Alone</option>
-                                    <option value="Option 1">Semi-Detached</option>
-                                    <option value="Option 1">Flat</option>
-                                </select>
-                            </div>
+                        <div className="mt-2 flex-1">
+                            <input
+                                type="text"
+                                name="buildingValue"
+                                id="buildingValue"
+                                autoComplete="family-name"
+                                placeholder="Value of buildings"
+                                onChange={handleChange}
+                                value={propertyData["buildingValue"] || ""}
+                                className="block w-full rounded-xs border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
+                            />
                         </div>
-                    </div>
-                    
-                    <div className="mt-2 ml-2 w-40">
-                        <label className='bg-gray-400 text-white justify-end py-1.5 px-3 w-full flex'>{moneyFomart({amount:0})}</label>
+                        <div className="mt-2 flex-1">
+                            <select
+                                id="systemAdOns"
+                                name="systemAdOns"
+                                className="border border-gray-300 bg-inherit rounded-xs px-3 py-1.5 w-full"
+                            >
+                                <option className='font-bold italic text-gray-400'>Building Type</option>
+                                <option value="Option 1">Thatched</option>
+                                <option value="Option 2">Non Thatched</option>
+                            </select>
+                        </div>
+                        <div className="mt-2 w-40">
+                            <label className='bg-gray-400 text-white justify-end py-1.5 px-3 w-full flex'>{moneyFomart({amount:0})}</label>
+                        </div>
                     </div>
                     {
                         index === count ? (
                             count < 3 ? (
-                                <span onClick={increment} className="fas fa-plus px-3 bg-gray-300 rounded-full py-0.5 mx-2 mt-4" />
+                                <span onClick={increment} className="fas fa-plus px-3 bg-gray-300 rounded-full py-0.5 mx-2" />
                             ) : (
-                                <span onClick={() => decrement(index)} className="bg-gray-300 rounded-full fas fa-minus px-3 py-0.5 mx-2 mt-4" />
+                                <span onClick={() => decrement(index)} className="bg-gray-300 rounded-full fas fa-minus px-3 py-0.5 mx-2" />
                             )
                             ) : (
-                                <span onClick={() => decrement(index)} className="bg-gray-300 rounded-full fas fa-minus px-3 py-0.5 mx-2 mt-4" />
+                                <span onClick={() => decrement(index)} className="bg-gray-300 rounded-full fas fa-minus px-3 py-0.5 mx-2" />
                             )
                     }
                 </div>

@@ -211,9 +211,39 @@ export default function PropertyInsuranceForm() {
                             </div>
                         </div>
                     }
+
+                    {/* Roof Type */}
                     <div className="sm:col-span-3 flex items-center">
                         <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900 w-1/6">
-                            Building Type
+                            House Construction
+                        </label>
+                        <div className="mt-2 flex-1">
+                            {
+                                Object.keys(error).length>0&&
+                                error.map((error, index) => {
+                                    if (error.err === "insurer") {
+                                        return <h6 key={index} className='text-red-500 mb-1'>{error.message}</h6>;
+                                    }
+                                    return null;
+                                })
+                            }
+                            <select
+                                id="houseConstruction"
+                                name="houseConstruction"
+                                className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
+                                onChange={handleChange}
+                            >
+                                <option value="BRICK" className='text-gray-400'>Brick</option>
+                                <option value="WOOD">Wood</option>
+                                <option value="CONCRETE">Concrete</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    {/* Roof Type */}
+                    <div className="sm:col-span-3 flex items-center">
+                        <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900 w-1/6">
+                            Roof Type
                         </label>
                         <div className="mt-2 flex-1">
                             {
@@ -231,12 +261,43 @@ export default function PropertyInsuranceForm() {
                                 className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
                                 onChange={handleChange}
                             >
-                                <option value="Option 0" className='text-gray-400'>Building Type</option>
-                                <option value="THATCH">Thatched</option>
-                                <option value="NON_THATCH">Non Thatched</option>
+                                <option value="METAL_SLATE" className='text-gray-400'>Metal Slate</option>
+                                <option value="TILE">Tile</option>
+                                <option value="ASBESTOS">Asbestos</option>
+                                <option value="WOOD">Wood</option>
+                                <option value="THATCH">Thatch</option>
                             </select>
                         </div>
                     </div>
+
+                    {/* House Description */}
+                    <div className="sm:col-span-3 flex items-center">
+                        <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900 w-1/6">
+                            House Description
+                        </label>
+                        <div className="mt-2 flex-1">
+                            {
+                                Object.keys(error).length>0&&
+                                error.map((error, index) => {
+                                    if (error.err === "insurer") {
+                                        return <h6 key={index} className='text-red-500 mb-1'>{error.message}</h6>;
+                                    }
+                                    return null;
+                                })
+                            }
+                            <select
+                                id="houseDescription"
+                                name="houseDescription"
+                                className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
+                                onChange={handleChange}
+                            >
+                                <option value="STAND_ALONE" className='text-gray-400'>Stand Alone</option>
+                                <option value="SEMI_DETACHED">Semi Detached</option>
+                                <option value="FLAT">Flat</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <div className="sm:col-span-3 flex items-center">
                         <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900 w-1/6">
                             Premium %
