@@ -220,18 +220,18 @@ export default function UserProfile() {
                             />
                         </div>
                         <div className="flex flex-col items-center">
-                            <p className='text-2xl font-bold' style={{
+                            {/* <p className='text-2xl font-bold' style={{
                                 background: 'linear-gradient(0deg, main-color, secondary-color)', // Example gradient
                                 WebkitBackgroundClip: 'text',
                                 WebkitTextFillColor: 'transparent',
                                 backgroundClip: 'text', // Non-prefixed version for better compatibility
                                 color: 'transparent'
-                            }}>
-                            {/* <p className='text-2xl font-bold'> */}
+                            }}> */}
+                            <p className='text-2xl font-bold'>
                                 {accountInfo.firstname || accountInfo.firstName} {accountInfo.lastname || accountInfo.lastName}
                             </p>
                             <p className="text-gray-600 mt-1 underline">{displayUserRole(accountInfo.role)}</p>
-                            <p className="text-sm text-gray-500 mt-1">{accountInfo.email}@telone.co.zw</p>
+                            <p className="text-sm text-gray-500 mt-1">{accountInfo.email}{(user.role==="ADMIN"||user.role==="SUPER_ADMIN"||user.role==="SALES_AGENT")&&"@telone.co.zw"}</p>
                         </div>
                     </div>
                     <div className="flex mt-8 space-x-3">
