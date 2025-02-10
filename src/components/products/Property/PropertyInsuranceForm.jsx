@@ -15,11 +15,9 @@ export default function PropertyInsuranceForm() {
     const [error, setError] = useState([])
     const [policyData, setPolicyData] = useState([])
     const [insurers, setInsurers] = useState("")
-    const [policies, setPolicies] = useState("")
 
     useEffect(()=>{
         fetchInsurer()
-        fetchPolicy()
         setupInterceptors(() => user, setUser);
     },[])
 
@@ -28,19 +26,6 @@ export default function PropertyInsuranceForm() {
             const response = await InsuranceApi.get(`/insurers`)
             if(response){
                 setInsurers(response.data.data)
-            }
-        }
-        catch(err){
-            console.log(error)
-        }
-    }
-
-    const fetchPolicy = async () => {
-        try{
-            const response = await InsuranceApi.get(`/policy-types`)
-            if(response&&response.data){
-                console.log(response)
-                setPolicies(response.data.data)
             }
         }
         catch(err){
@@ -61,17 +46,22 @@ export default function PropertyInsuranceForm() {
         }
     
         if (!policyData.description || policyData.description.trim() === "") {
-            console.error("Plan Name is required.");
+            console.error("Policy Description is required.");
             return; 
         }
     
-        if (!policyData.buildingType || policyData.buildingType.trim() === "") {
-            console.error("Max Days Limit must be a valid number greater than 0.");
+        if (!policyData.policy || policyData.policy.trim() === "") {
+            console.error("Policy is required.");
+            return; 
+        }
+
+        if (!policyData.policyType || policyData.policyType.trim() === "") {
+            console.error("Policy Type is required.");
             return; 
         }
     
-        if (!policyData.premiumPercentage || policyData.premiumPercentage <= 0) {
-            console.error("Amount must be a valid number greater than 0.");
+        if (!policyData.rate || policyData.rate <= 0) {
+            console.error("Policy Premium rate is required.");
             return; 
         }
 
@@ -79,10 +69,9 @@ export default function PropertyInsuranceForm() {
         try{
             const postData = {
                 ...policyData,
-                insurerId: policyData.insurerId || user.companyId,
-                active: true
+                insurerId: policyData.insurerId || user.companyId
             };
-            const response = await InsuranceApi.post(`/property-insurance`,postData)
+            const response = await InsuranceApi.post(`/insurer-property-rates`, postData)
             console.log("post results: ", response)
             if(response.data.code==="CREATED"){
                 setSuccess(true)
@@ -125,34 +114,6 @@ export default function PropertyInsuranceForm() {
                             return null;
                         })
                     }
-                    {/* <div className="sm:col-span-3 flex items-center">
-                        <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900 w-1/6">
-                            Policy Type
-                        </label>
-                        <div className="mt-2 flex-1">
-                            {
-                                Object.keys(error).length>0&&
-                                error.map((error, index) => {
-                                    if (error.err === "policy") {
-                                        return <h6 key={index} className='text-red-500 mb-1'>{error.message}</h6>;
-                                    }
-                                    return null;
-                                })
-                            }
-                            <select
-                                id="insuranceType"
-                                name="insuranceType"
-                                className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
-                            >
-                                <option value="Option 0">Select Policy Type</option>
-                                {
-                                    policies?policies.map((policy, index)=>(
-                                        <option key={index} onClick={(e)=>setPolicyTypeId(policy.policyTypeId)}>{policy.policyTypeName}</option>
-                                    )):<option value="Option 0">No data found</option>
-                                }
-                            </select>
-                        </div>
-                    </div> */}
                     <div className="sm:col-span-3 flex items-center">
                         <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900 w-1/6">
                             Description
@@ -215,7 +176,7 @@ export default function PropertyInsuranceForm() {
                     {/* Roof Type */}
                     <div className="sm:col-span-3 flex items-center">
                         <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900 w-1/6">
-                            House Construction
+                            Policy
                         </label>
                         <div className="mt-2 flex-1">
                             {
@@ -228,14 +189,15 @@ export default function PropertyInsuranceForm() {
                                 })
                             }
                             <select
-                                id="houseConstruction"
-                                name="houseConstruction"
+                                id="policy"
+                                name="policy"
                                 className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
                                 onChange={handleChange}
+                                value={policyData["policy"] || ""}
                             >
-                                <option value="BRICK" className='text-gray-400'>Brick</option>
-                                <option value="WOOD">Wood</option>
-                                <option value="CONCRETE">Concrete</option>
+                                <option className='font-bold italic text-gray-400'>Policy</option>
+                                <option value="DOMESTIC_COMBINED_STANDARD_CONSTRUCTION">Domestic Combined Standard Construction</option>
+                                <option value="DOMESTIC_COMBINED_NON_STANDARD_CONSTRUCTION">Domestic Combined non Standard Construction</option>
                             </select>
                         </div>
                     </div>
@@ -243,7 +205,7 @@ export default function PropertyInsuranceForm() {
                     {/* Roof Type */}
                     <div className="sm:col-span-3 flex items-center">
                         <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900 w-1/6">
-                            Roof Type
+                            Policy Type
                         </label>
                         <div className="mt-2 flex-1">
                             {
@@ -256,44 +218,16 @@ export default function PropertyInsuranceForm() {
                                 })
                             }
                             <select
-                                id="buildingType"
-                                name="buildingType"
+                                id="policyType"
+                                name="policyType"
                                 className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
                                 onChange={handleChange}
+                                value={policyData["policyType"] || ""}
                             >
-                                <option value="METAL_SLATE" className='text-gray-400'>Metal Slate</option>
-                                <option value="TILE">Tile</option>
-                                <option value="ASBESTOS">Asbestos</option>
-                                <option value="WOOD">Wood</option>
-                                <option value="THATCH">Thatch</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    {/* House Description */}
-                    <div className="sm:col-span-3 flex items-center">
-                        <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900 w-1/6">
-                            House Description
-                        </label>
-                        <div className="mt-2 flex-1">
-                            {
-                                Object.keys(error).length>0&&
-                                error.map((error, index) => {
-                                    if (error.err === "insurer") {
-                                        return <h6 key={index} className='text-red-500 mb-1'>{error.message}</h6>;
-                                    }
-                                    return null;
-                                })
-                            }
-                            <select
-                                id="houseDescription"
-                                name="houseDescription"
-                                className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
-                                onChange={handleChange}
-                            >
-                                <option value="STAND_ALONE" className='text-gray-400'>Stand Alone</option>
-                                <option value="SEMI_DETACHED">Semi Detached</option>
-                                <option value="FLAT">Flat</option>
+                                <option className='font-bold italic text-gray-400'>Policy Type</option>
+                                <option value="HOUSE_OWNERS">House Owners</option>
+                                <option value="HOUSE_HOLDERS">House Holders</option>
+                                <option value="ALL_RISK">All Risk</option>
                             </select>
                         </div>
                     </div>
@@ -314,11 +248,11 @@ export default function PropertyInsuranceForm() {
                             }
                             <input
                                 type="text"
-                                name="premiumPercentage"
-                                id="premiumPercentage"
+                                name="rate"
+                                id="rate"
                                 autoComplete="family-name"
-                                placeholder='Description'
-                                value={policyData["premiumPercentage"] || ""}
+                                placeholder='Rate'
+                                value={policyData["rate"] || ""}
                                 onChange={handleChange}
                                 className="block w-full rounded-xs bg-transparent border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-black focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
                             />

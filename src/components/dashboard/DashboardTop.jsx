@@ -25,8 +25,10 @@ export default function DashboardTop() {
                     <div className="flex-col flex w-full">
                         <div className="flex justify-around bg-gradient-to-r from-[#656E70] to-[#3B82F6] w-full rounded-md h-40 items-center">
                             <div className="flex flex-col p-4 space-y-4">
-                                <h1 className='text-white text-sm font-bold'><span className='fas fa-user mr-2'/>Total Insurers</h1>
-                                <h1  className='text-4xl text-bold text-white' >12</h1>
+                                <h1 className='text-white text-sm font-bold'>
+                                    <span className='fas fa-building mr-2'/>Total Insurers
+                                </h1>
+                                <h1 className='text-4xl font-bold text-white'>12</h1>
                                 <button 
                                     className="rounded-full border border-white text-white py-1 px-4"
                                     onClick={handleNavigate}
@@ -36,26 +38,32 @@ export default function DashboardTop() {
                             </div>
                             <div className="w-[1px] bg-white h-16 m-0 bg-gradient-to-b from-[#656E70] to-[rgba(255,255,255,1)]"/>
                             <div className="flex flex-col p-4 space-y-4">
-                                <h1 className='text-white text-sm font-bold'><span className='fas fa-user mr-2'/>New Users</h1>
-                                <h1  className='text-4xl text-bold text-white' >15</h1>
+                                <h1 className='text-white text-sm font-bold'>
+                                    <span className='fas fa-user-plus mr-2'/>New Users
+                                </h1>
+                                <h1 className='text-4xl font-bold text-white'>15</h1>
                                 <button className="rounded-full border border-white text-white py-1 px-4">
-                                    view insurers 
+                                    view users 
                                 </button>
                             </div>
                             <div className="w-[1px] bg-white h-16 m-0 bg-gradient-to-b from-[#656E70] to-[rgba(255,255,255,1)]"/>
                             <div className="flex flex-col p-4 space-y-4">
-                                <h1 className='text-white text-sm font-bold'><span className='fas fa-user mr-2'/>Policies</h1>
-                                <h1  className='text-4xl text-bold text-white' >20</h1>
+                                <h1 className='text-white text-sm font-bold'>
+                                    <span className='fas fa-file-alt mr-2'/>Active Policies
+                                </h1>
+                                <h1 className='text-4xl font-bold text-white'>20</h1>
                                 <button className="rounded-full border border-white text-white py-1 px-4">
-                                    view users
+                                    view policies
                                 </button>
                             </div>
                             <div className="w-[1px] bg-white h-16 m-0 bg-gradient-to-b from-[#656E70] to-[rgba(255,255,255,1)]"/>
                             <div className="flex flex-col p-4 space-y-4">
-                                <h1 className='text-white text-sm font-bold'><span className='fas fa-user mr-2'/>New Users</h1>
-                                <h1  className='text-4xl text-bold text-white' >125</h1>
+                                <h1 className='text-white text-sm font-bold'>
+                                    <span className='fas fa-comment-dollar mr-2'/>Quotes Generated
+                                </h1>
+                                <h1 className='text-4xl font-bold text-white'>125</h1>
                                 <button className="rounded-full border border-white text-white py-1 px-4">
-                                    view users
+                                    view quotes
                                 </button>
                             </div>                        
                         </div>

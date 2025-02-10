@@ -29,12 +29,12 @@ export default function PropertyInsuranceTable() {
 
   const getPropertyProducts = async () => {
     setLoading(true)
-    const url = user.role==="INSURER_ADMIN"?`/property-insurance/insurer/${user.companyId}` : `/property-insurance`
+    const url = user.role==="INSURER_ADMIN"?`/insurer-property-rates/insurer/${user.companyId}` : `/insurer-property-rates`
     try{
       const response = await InsuranceApi.get(url)
       if (response.data.code === "OK" && response.data.data.length > 0) {
         console.log("property respo",response)
-        setPropertyInsurance(response.data);
+        setPropertyInsurance(response.data.data);
       } else if (response.data.code === "NOT_FOUND") {
         setProdResponse("No travel plans found");
       } else if (response.data.code !== "OK") {
@@ -55,11 +55,12 @@ export default function PropertyInsuranceTable() {
 
   const getInsurerProducts = async(insurerId) => {
     setLoading(true)
-    const response = await InsuranceApi.get(`/property-insurance/insurer/${insurerId}`)
+    setPropertyInsurance([])
+    const response = await InsuranceApi.get(`/insurer-property-rates/insurer/${insurerId}`)
     console.log(response.data.message)
     if (response.data.code === "OK" && response.data.data.length > 0) {
       setPropertyInsurance(response.data.data);
-    } else if (response.data.code === "NOT_FOUND") {
+    } else if (response.data.code === "OK" && response.data.data.length < 1) {
       setProdResponse("No travel plans found");
     } else if (response.data.code !== "OK") {
         setProdResponse("Error fetching resource, Please check your network connection");
@@ -86,32 +87,14 @@ export default function PropertyInsuranceTable() {
     setLoading(true)
     setMessage("Deleting...")
     setIsDelete(true)
-    // dispatch(deleteVehicleInsurance({
-    //     insuranceId
-    // }))
-    // .then((response)=>{
-    //   if(response.payload&&response.payload.success){
-        
-    //   }
-    //   else{
-    //       setLoading(true)
-    //   }            
-    // })
-    // .finally(()=>{
-    //   dispatch(fetchAsyncVehicleInsuranace())
-    //   .then(()=>{
-    //     setLoading(false)
-    //     setIsDelete(false)
-    //   })
-    // })
   }
     
   const renderTableHeader = () => {
     const columns = [
       { key: 'item', label: '#', width: "1" },
-      { key: 'name', label: 'Policy' },
-      { key: 'insurerName', label: 'Insurer Name' },
-      { key: 'status', label: 'Policy Status' },
+      { key: 'policy', label: 'Policy' },
+      { key: 'policyType', label: 'Policy Type' },
+      // { key: 'insurerName', label: 'Insurer Name' },
       { key: 'action', label: 'Action' },
     ];
 
@@ -156,16 +139,16 @@ export default function PropertyInsuranceTable() {
               <td className='font-bold text-blue-500 justify-center items-center w-7'>
                   <div className='w-full justify-center flex items-center'>{index + 1}</div>
               </td>
-              <td>{item.policyName}</td>
-              <td>{item.insurer}</td>
-              {/* <td>{formatDate(item.createdAt)}</td> */}
-              <td className=''>
+              <td>{item.policy}</td>
+              <td>{item.policyType}</td>
+              {/* <td>{item.insurerId}</td> */}
+              {/* <td className=''>
                   <div className='w-full justify-center flex items-center'>
                       <span className={`font-semibold uppercase text-xs tracking-wider px-3 text-white ${item.isActive ? "bg-green-600" : "bg-red-600"} rounded-full py-1`}>
                           {item.isActive ? "Active" : "Inactive"}
                       </span>
                   </div>
-              </td>
+              </td> */}
               <td className='py-1 space-x-0 justify-center'>
                   <div className='w-full justify-center flex items-center'>
                       <button
@@ -264,7 +247,7 @@ export default function PropertyInsuranceTable() {
                 {
                   insurers?insurers.map((insurer, index)=>(
                     <option onClick={()=>getInsurerProducts(insurer.insurerId)}>{insurer.insurerName}</option>
-                  )):<option value="5">No Categories</option>
+                  )):<option value="5">No Policy</option>
                 }
               </select>
             </div>

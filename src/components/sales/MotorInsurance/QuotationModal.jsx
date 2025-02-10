@@ -543,7 +543,6 @@ export default function QuotationModal({ setModal }) {
                 durationMonths: quotation.Policy.DurationMonths,
                 governmentLevy: quotation.Policy.GovernmentLevy,
                 insuranceCompany: quotation.insurerName,
-                // insuranceCompany: quotation.Policy.InsuranceCompanyID,
                 startDate: quotation.Policy.StartDate,
                 endDate: quotation.Policy.EndDate
             }

@@ -67,25 +67,6 @@ export default function TravelInsuranceTable() {
   const handleDelete = (insuranceId) => {
     setLoading(true)
     setMessage("Deleting...")
-    // setIsDelete(true)
-    // dispatch(deleteTravelInsurance({
-    //     insuranceId
-    // }))
-    // .then((response)=>{
-    //   if(response.payload&&response.payload.success){
-        
-    //   }
-    //   else{
-    //       setLoading(true)
-    //   }            
-    // })
-    // .finally(()=>{
-    //   // dispatch(fetchAsyncTravelInsuranace())
-    //   // .then(()=>{
-    //   //   setLoading(false)
-    //   //   setIsDelete(false)
-    //   // })
-    // })
   }
     
   const renderTableHeader = () => {
@@ -102,7 +83,7 @@ export default function TravelInsuranceTable() {
 
     return columns.map((column) => (
       <th key={column.key} className={`text-sm font-bold tracking-wide text-left ${column.width ? "p-3 w-" + column.width : "py-3"} ${column.key === 'status' && "text-center"} ${column.key === 'action' && "text-center"}`}>
-        <span className="mr-2">{column.label}</span>            
+        <span className="mr-2">{column.label}</span>
       </th>
     ));
   };

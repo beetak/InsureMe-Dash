@@ -8,7 +8,6 @@ import StepperControl from '../StepperControl';
 import TravelDetails from './TravelDetails';
 import { postTravelInfo, postTravellerInfo } from '../../../store/travel-store';
 import AccountDetails from './AccountDetails';
-import PolicyDetails from './PolicyDetails';
 import QuotationModal from './QuotationModal';
 
 export default function TravelInsuranceSales() {
@@ -16,17 +15,13 @@ export default function TravelInsuranceSales() {
     const [currentStep, setCurrentStep] = useState(1)
     const [userData, setUserData] = useState([])
     const [travelData, setTravelData] = useState([])
-    const [policyData, setPolicyData] = useState([])
     const [isOpen, setIsOpen] = useState(false)
 
     const dispatch = useDispatch();
-    const vehicleInfo = useSelector(getVehicleInformation)
 
     useEffect(() => {
         dispatch(fetchAsyncPolicy());
     }, []);
-
-    const policies = useSelector(getPolicies);
 
     const steps = [
         "Client's Details",
@@ -43,45 +38,6 @@ export default function TravelInsuranceSales() {
                 return <AccountDetails/>
         }
     }
-   
-    const submitUserInfo = () => {
-        if(!userData){
-            handleNextStep()
-        }
-        else{
-            dispatch(
-                postTravellerInfo({
-                    ...userData
-                })
-            ).then((response) => {
-                console.log('Response: ', response.payload);
-                if (response.payload && response.payload.success) {
-                    handleNextStep()
-                }
-            }).catch((err)=>{
-                console.log("err", err)
-            })
-        }
-    };
-    const submitTravelInfo = () => {
-        if(!travelData){
-            handleNextStep()
-        }
-        else{
-            dispatch(
-                postTravelInfo({
-                    ...travelData
-                })
-            ).then((response) => {
-                console.log('Response: ', response.payload);
-                if (response.payload && response.payload.success) {
-                    handleNextStep()
-                }
-            }).catch((err)=>{
-                console.log("err", err)
-            })
-        }
-    };
 
     const handleClick = (direction) => {
         let newStep = currentStep
