@@ -32,8 +32,6 @@ export default function Policy() {
     return false;
   });
 
-  const insurer  = ["Credsure", "ZimNat", "Old Mutual", "Allied", "FBC", "CBZ", "First Mutual"]
-
   const [activeTab, setActiveTab] = useState(1);
 
   const handleTabClick = (tabIndex) => {
@@ -43,6 +41,14 @@ export default function Policy() {
   useEffect(()=>{
     dispatch(fetchAsyncCategory())
   },[dispatch])
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    const polTab = params.get('policyTab')
+    if (polTab) {
+        setActiveTab(userRole==='INSURER_ADMIN' ? 1 : 2)
+    }
+  }, [location])
 
   return (
     <>

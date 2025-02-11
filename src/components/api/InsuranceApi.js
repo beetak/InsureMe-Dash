@@ -1,8 +1,8 @@
 import axios from "axios";
 
 const InsuranceApi = axios.create({
-  baseURL: "https://insureme.co.zw:8082/api/v1",
-  // baseURL: "https://localhost:8082/api/v1",
+  // baseURL: "https://insureme.co.zw:8082/api/v1",
+  baseURL: "https://localhost:8082/api/v1",
 });
 
 function isTokenExpired(token) {
@@ -14,8 +14,8 @@ function isTokenExpired(token) {
 
 async function refreshAccessToken(refreshToken) {
   try {
-    const response = await axios.post("https://insureme.co.zw:8082/api/v1/auth/refresh-token", { refreshToken });
-    // const response = await axios.post("https://localhost:8082/api/v1/auth/refresh-token", { refreshToken });
+    // const response = await axios.post("https://insureme.co.zw:8082/api/v1/auth/refresh-token", { refreshToken });
+    const response = await axios.post("https://localhost:8082/api/v1/auth/refresh-token", { refreshToken });
     return response.data.accessToken;
   } catch (error) {
     console.error("Error refreshing access token:", error);
