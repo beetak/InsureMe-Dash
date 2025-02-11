@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import SalesCharts from './SalesCharts'
 import useAuth from '../../hooks/useAuth'
-import { setupInterceptors } from '../api/InsuranceApi'
+import InsuranceApi, { setupInterceptors } from '../api/InsuranceApi'
 
 const shopName = localStorage.getItem('shopName')
 const townName = localStorage.getItem('towmName')
@@ -13,9 +13,60 @@ export default function DashboardTop() {
 
     const { user, setUser } = useAuth()
 
+    const [newClients, setNewClients] = useState('')
+    const [totalPolicies, setTotalPolicies] = useState('')
+    const [totalInsurers, setTotalInsurers] = useState('')
+
     useEffect(() => {
         setupInterceptors(() => user, setUser)
+        getNewUsers()
+        getTotalPolicies()
+        getTotalInsurers()
     },[])
+
+
+    const getNewUsers = async () => {
+        const response = await InsuranceApi.get(`/clients/current-day`)
+        if(response.data.code==="OK"){
+            setNewClients(response.data.data)
+        }
+    }
+
+    const getTotalPolicies = async () => {
+        try{
+            const response = await InsuranceApi.get(`/policy-types`)
+            if(response&&response.data.httpStatus==="OK"){
+              console.log("my response ", response)
+              if(response.data.data.length<1){
+                setTotalPolicies(0)
+              }
+              else{
+                setTotalPolicies(response.data.data.length)
+              }
+          }
+        }
+        catch(err){
+            console.log(error)
+        }
+    }
+
+    const getTotalInsurers = async () => {
+        try{
+            const response = await InsuranceApi.get('/insurers')
+            if(response&&response.data.httpStatus==="OK"){
+              console.log("my response ", response)
+              if(response.data.data.length<1){
+                setTotalInsurers(0)
+              }
+              else{
+                setTotalInsurers(response.data.data.length)
+              }
+          }
+        }
+        catch(err){
+            console.log(error)
+        }
+    }
 
     const navigate = useNavigate()
 
@@ -24,11 +75,11 @@ export default function DashboardTop() {
     };
 
     const navigateToUsers = () => {
-        navigate('/insurers?insurerTab=true');
+        navigate('/users?userTab=true');
     };
 
     const navigateToPolicies = () => {
-        navigate('/insurers?insurerTab=true');
+        navigate('/policy?policyTab=true');
     };
 
     const navigateToQuotes = () => {
@@ -45,7 +96,7 @@ export default function DashboardTop() {
                                 <h1 className='text-white text-sm font-bold'>
                                     <span className='fas fa-building mr-2'/>Total Insurers
                                 </h1>
-                                <h1 className='text-4xl font-bold text-white'>12</h1>
+                                <h1 className='text-4xl font-bold text-white'>{totalInsurers||0}</h1>
                                 <button 
                                     className="rounded-full border border-white text-white py-1 px-4"
                                     onClick={navigateToInsurers}
@@ -58,7 +109,7 @@ export default function DashboardTop() {
                                 <h1 className='text-white text-sm font-bold'>
                                     <span className='fas fa-user-plus mr-2'/>New Users
                                 </h1>
-                                <h1 className='text-4xl font-bold text-white'>15</h1>
+                                <h1 className='text-4xl font-bold text-white'>{newClients||0}</h1>
                                 <button 
                                     className="rounded-full border border-white text-white py-1 px-4"
                                     onClick={navigateToUsers}
@@ -71,7 +122,7 @@ export default function DashboardTop() {
                                 <h1 className='text-white text-sm font-bold'>
                                     <span className='fas fa-file-alt mr-2'/>Active Policies
                                 </h1>
-                                <h1 className='text-4xl font-bold text-white'>20</h1>
+                                <h1 className='text-4xl font-bold text-white'>{totalPolicies||0}</h1>
                                 <button 
                                     className="rounded-full border border-white text-white py-1 px-4"
                                     onClick={navigateToPolicies}

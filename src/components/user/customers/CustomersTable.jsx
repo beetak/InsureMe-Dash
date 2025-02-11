@@ -1,31 +1,25 @@
 import React, { useEffect, useState } from 'react'
 import { ScaleLoader } from 'react-spinners'
 import useAuth from '../../../hooks/useAuth'
-import InsuranceApi from '../../api/InsuranceApi'
+import InsuranceApi, { setupInterceptors } from '../../api/InsuranceApi'
 
 export default function CustomersTable() {
 
-    const {user} = useAuth()
-    const {accessToken} = user
-
-    const headers = {
-      Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json",
-      "Accept": "application/json"
-    }
+    const {user, setUser} = useAuth()
 
     const [customerResponse, setCustomerResponse] = useState('')
     const [loading, setLoading] = useState(false)
     const [customers, setCustomers] = useState('')
   
     useEffect(()=>{
+        setupInterceptors(()=> user, setUser)
         fetchCustomers()
     },[])
 
     const fetchCustomers = async () => {
         setLoading(true)
         try{
-            const response = await InsuranceApi.get('/town', {headers})
+            const response = await InsuranceApi.get('/town')
             if(response&&response.data){
                 console.log(response.data)
                 setCustomers(response.data.data)
