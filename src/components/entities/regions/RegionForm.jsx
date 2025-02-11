@@ -1,11 +1,16 @@
-import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
-import { postRegion } from '../../../store/entity-store'
+import React, { useEffect, useState } from 'react'
 import PageLoading from '../../loadingStates/PageLoading'
+import useAuth from '../../../hooks/useAuth'
+import InsuranceApi, { setupInterceptors } from '../../api/InsuranceApi'
 
 export default function RegionForm() {
 
-    const dispatch = useDispatch()
+    const { user, setUser } = useAuth()
+
+    useEffect(() => {
+        setupInterceptors(() => user, setUser)
+    },[])
+
     const [name, setName] = useState('')
     const [loading, setLoading] = useState(false)
     const [success, setSuccess] = useState(false)
@@ -14,6 +19,10 @@ export default function RegionForm() {
 
     const handlePost = async (e) => {
         e.preventDefault()
+
+        const postData = {
+            
+        }
         if(name===""){
             setError({err: 'empty', message: 'Please provide the description'})
             setTimeout(()=>{
@@ -22,28 +31,30 @@ export default function RegionForm() {
         }
         else{
             setLoading(true)
-            dispatch(postRegion({
-                region: {
-                    name
-                }
-            }))
-            .then((response)=>{
-                console.log("Post response: ", response)
-                if(response.payload.success){
+            try{
+                const response = await InsuranceApi.post('/region', {
+                    region: {
+                        name
+                    }
+                })
+                if(response.data){
                     setSuccess(true)
                 }
                 else{
                     setFailed(true)
                 }
-            })
-            .finally(()=>{
+            }
+            catch(e){
+                setFailed(true)
+            }
+            finally{
                 setTimeout(()=>{
                     setLoading(false)
                     setSuccess(false)
-                    setFailed(true)
+                    setFailed(false)
                     setName("")
-                }, 2000)
-            })
+                }, 1000)
+            }
         }
     }
 

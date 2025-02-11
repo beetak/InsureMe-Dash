@@ -19,7 +19,7 @@ export default function PolicyTable() {
 
   const [ catResponse, setCatResponse] = useState('')
   const [ message, setMessage] = useState('')
-  const [ prodResponse, setProdResponse] = useState('')
+  const [ policyResponse, setPolicyResponse] = useState('')
   const [loading, setLoading] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
   const [itemId, setItemId] = useState('')
@@ -42,7 +42,7 @@ export default function PolicyTable() {
           const response = await InsuranceApi.get(`/categories`)
           if(response&&response.data.httpStatus==="OK"){
               console.log(response)
-              if(response.data.data.length===0){
+              if(response.data.data.length<1){
                 setCatResponse("No Categories found")
               }
               else{
@@ -67,14 +67,20 @@ export default function PolicyTable() {
   const fetchPolicy = async () => {
       try{
           const response = await InsuranceApi.get(`/policy-types`)
-          if(response&&response.data){
-              console.log(response)
+          if(response&&response.data.httpStatus==="OK"){
+            console.log("my response ", response)
+            if(response.data.data.length<1){
+              setPolicyResponse("No Policies found")
+            }
+            else{
               setPolicies(response.data.data)
-          }
+            }
+        }
       }
       catch(err){
           console.log(error)
-          setError("Error fetching user")
+          setError("Error fetching resource")
+          setPolicyResponse("Error fetching resource")
       }
   }
 
@@ -224,7 +230,7 @@ export default function PolicyTable() {
     ) : (
       <tr className="">
         <td colSpan={7} style={{ textAlign: "center" }}>
-          {prodResponse}
+          {policyResponse}
         </td>
       </tr>
     )

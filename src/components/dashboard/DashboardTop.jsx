@@ -1,20 +1,37 @@
-import React from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import React, { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import SalesCharts from './SalesCharts'
+import useAuth from '../../hooks/useAuth'
+import { setupInterceptors } from '../api/InsuranceApi'
 
 const shopName = localStorage.getItem('shopName')
-const shopId = localStorage.getItem('shopId')
 const townName = localStorage.getItem('towmName')
-const townId = localStorage.getItem('towmId')
 const regionName = localStorage.getItem('regionName')
-const regionId = localStorage.getItem('regionId')
 const userRole = localStorage.getItem('role')
 
 export default function DashboardTop() {
 
+    const { user, setUser } = useAuth()
+
+    useEffect(() => {
+        setupInterceptors(() => user, setUser)
+    },[])
+
     const navigate = useNavigate()
 
-    const handleNavigate = () => {
+    const navigateToInsurers = () => {
+        navigate('/insurers?insurerTab=true');
+    };
+
+    const navigateToUsers = () => {
+        navigate('/insurers?insurerTab=true');
+    };
+
+    const navigateToPolicies = () => {
+        navigate('/insurers?insurerTab=true');
+    };
+
+    const navigateToQuotes = () => {
         navigate('/insurers?insurerTab=true');
     };
 
@@ -31,7 +48,7 @@ export default function DashboardTop() {
                                 <h1 className='text-4xl font-bold text-white'>12</h1>
                                 <button 
                                     className="rounded-full border border-white text-white py-1 px-4"
-                                    onClick={handleNavigate}
+                                    onClick={navigateToInsurers}
                                 >
                                     view insurers
                                 </button>
@@ -42,7 +59,10 @@ export default function DashboardTop() {
                                     <span className='fas fa-user-plus mr-2'/>New Users
                                 </h1>
                                 <h1 className='text-4xl font-bold text-white'>15</h1>
-                                <button className="rounded-full border border-white text-white py-1 px-4">
+                                <button 
+                                    className="rounded-full border border-white text-white py-1 px-4"
+                                    onClick={navigateToUsers}
+                                >
                                     view users 
                                 </button>
                             </div>
@@ -52,7 +72,10 @@ export default function DashboardTop() {
                                     <span className='fas fa-file-alt mr-2'/>Active Policies
                                 </h1>
                                 <h1 className='text-4xl font-bold text-white'>20</h1>
-                                <button className="rounded-full border border-white text-white py-1 px-4">
+                                <button 
+                                    className="rounded-full border border-white text-white py-1 px-4"
+                                    onClick={navigateToPolicies}
+                                >
                                     view policies
                                 </button>
                             </div>

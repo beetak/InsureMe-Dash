@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { navActions } from '../../../store/nav-store'
-import { fetchAsyncRegions, getRegions, postTown } from '../../../store/entity-store'
 import PageLoading from '../../loadingStates/PageLoading'
+import useAuth from '../../../hooks/useAuth'
+import InsuranceApi, { setupInterceptors } from '../../api/InsuranceApi'
 
 export default function TownForm() {
 
-    const dispatch = useDispatch()
+    const { user, setUser } = useAuth()
+
+    useEffect(() => {
+        setupInterceptors(() => user, setUser)
+    },[])
 
     const [name, setName] = useState('')
     const [regionId, setRegionId] = useState(0)
@@ -14,27 +17,26 @@ export default function TownForm() {
     const [success, setSuccess] = useState(false)
     const [failed, setFailed] = useState(false)   
     const [error, setError] = useState([])
+    const [regions, setRegions] = useState('')
     const [regionResponse, setRegionResponse] = useState('')
 
-    const regions = useSelector(getRegions)
-
     useEffect(()=>{
-        dispatch(fetchAsyncRegions())
-        .then((res)=>{
-            console.log("search response ", res)
-            setLoading(false)
-            if(!res.payload.success){
-                setRegionResponse("Error fetching resource, Please check your network connection")
+        const fetchAsyncRegions = async () => {
+            try {
+                const response = await InsuranceApi.get('/region')
+                if(response.data.code==="OK"&&response.data.data.length>0){
+                    setRegions(response.data.data)
+                }
+                else if (response.data.code==="OK"&&response.data.data.length<1){
+                    setRegionResponse("No Regions found")
+                }
+            } catch (error) {
+                setRegionResponse('Error fetching regions')
+                console.error("Error fetching regions: ", error)
             }
-            else if(res.payload.success&&!res.payload.data){
-                setRegionResponse("No Categories found")
-            }
-            }
-        )
-        .finally(()=>{
-            setLoading(false)
-        })
-    },[dispatch])
+        }
+        fetchAsyncRegions()
+    },[])
 
     const handlePost = async (e) => {
         e.preventDefault()
@@ -62,29 +64,32 @@ export default function TownForm() {
             }
             else if(name!==""&&regionId!==0){
                 setLoading(true)
-                dispatch(postTown({
-                    regionId,
-                    town: {
-                        name
-                    }
-                }))
-                .then((response)=>{
-                    console.log("Post response: ", response)
-                    if(response.payload.success){
+                try{
+                    const response = await InsuranceApi.post('/town', {
+                        regionId,
+                        town: {
+                            name
+                        }
+                    })
+                    if(response.data){
                         setSuccess(true)
                     }
                     else{
                         setFailed(true)
                     }
-                })
-                .finally(()=>{
+                }
+                catch(e){
+                    setFailed(true)
+                }
+                finally{
                     setTimeout(()=>{
                         setLoading(false)
                         setSuccess(false)
-                        setFailed(true)
+                        setFailed(false)
                         setName("")
-                    }, 2000)
-                })
+                        setRegionId("")
+                    }, 1000)
+                }
             }
         }
     }

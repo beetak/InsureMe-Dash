@@ -1,23 +1,19 @@
 import React, { useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux';
-import { deleteRegion, fetchAsyncRegions, getRegions } from '../../../store/entity-store';
+import { deleteRegion, fetchAsyncRegions } from '../../../store/entity-store';
 import { ScaleLoader } from 'react-spinners';
 import RegionModal from './RegionModal';
 import RegionViewModal from './RegionViewModal';
 import DeleteConfirmationModal from '../../deleteConfirmation/deleteConfirmationModal';
-import InsuranceApi from '../../api/InsuranceApi';
+import InsuranceApi, { setupInterceptors } from '../../api/InsuranceApi';
 import useAuth from '../../../hooks/useAuth';
 
 export default function RegionsTable() {
 
-    const {user} = useAuth()
-    const {accessToken} = user
+    const { user, setUser } = useAuth()
 
-    const headers = {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-    }    
+    useEffect(()=>{
+        setupInterceptors(() => user, setUser)
+    },[])
 
     const [regionResponse, setRegionResponse] = useState('')
     const [loading, setLoading] = useState(false)
@@ -29,31 +25,31 @@ export default function RegionsTable() {
     const [regions, setRegions] = useState('')
   
     useEffect(()=>{
+        const fetchRegions = async () => {
+            setLoading(true)
+            try{
+                const response = await InsuranceApi.get('/region')
+                if(response.data.code==="OK"&&response.data.data.length>0){
+                    setRegions(response.data.data)
+                }
+                else if (response.data.code==="OK"&&response.data.data.length<1){
+                    setRegionResponse("No Regions found")
+                }
+            }
+            catch(err){
+                if(err){
+                    setRegionResponse("Error fetching resource, Please check your network connection")
+                }
+                else if(err){
+                    setRegionResponse("No Regions found")
+                }
+            }
+            finally{
+                setLoading(false)
+            }
+        }
         fetchRegions()
     },[])
-
-    const fetchRegions = async () => {
-        setLoading(true)
-        try{
-            const response = await InsuranceApi.get('/region', {headers})
-            if(response&&response.data){
-                console.log(response.data)
-                setRegions(response.data.data)
-            }
-        }
-        catch(err){
-            console.log(error)
-            if(err){
-                setRegionResponse("Error fetching resource, Please check your network connection")
-            }
-            else if(err){
-                setRegionResponse("No Categories found")
-            }
-        }
-        finally{
-        setLoading(false)
-        }
-    }
 
     const handleDelete = (id) => {
         setLoading(true)

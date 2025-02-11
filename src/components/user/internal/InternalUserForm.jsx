@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { postAdmin, postUserRegion, postUserShop, postUserTown } from '../../../store/user-store'
-import PageLoading from '../../loadingStates/PageLoading'
-import { fetchAsyncRegions, fetchAsyncShops, fetchAsyncTowns, fetchShopsByTownId, fetchTownsByRegionId, getRegions, getShops, getTowns } from '../../../store/entity-store'
 import UserLoadingModal from './InternalUserLoadingModal'
+import useAuth from '../../../hooks/useAuth'
+import InsuranceApi, { setupInterceptors } from '../../api/InsuranceApi'
 
 export default function InternalUserForm() {
 
-    const dispatch = useDispatch()
-    const shops = useSelector(getShops)
-    const towns = useSelector(getTowns)
-    const regions = useSelector(getRegions)
+    const { user, setUser } = useAuth()
+
+    useEffect(() => {
+        setupInterceptors(() => user, setUser)
+    },[])
 
     const [domainName, setDomainName] = useState("")
+    const [phoneNumber, setPhoneNumber] = useState("")
     const [role, setRole] = useState("")
     const [regionId, setRegionId] = useState("")
     const [townId, setTownId] = useState("")
@@ -25,52 +25,57 @@ export default function InternalUserForm() {
     const [townResponse, setTownResponse] = useState('')
     const [regionResponse, setRegionResponse] = useState('')
     const [message, setMessage] = useState([])
+    const [regions, setRegions] = useState('')
+    const [towns, setTowns] = useState('')
+    const [shops, setShops] = useState('')
 
     useEffect(()=>{
-        dispatch(fetchAsyncRegions())
-        .then((res)=>{
-            console.log("search region response ", res)
-            setLoading(false)
-            if(!res.payload.success){
-                setRegionResponse("Error fetching resource, Please check your network connection")
+        const fetchAsyncRegions = async () => {
+            try {
+                const response = await InsuranceApi.get('/region')
+                if(response.data.code==="OK"&&response.data.data.length>0){
+                    setRegions(response.data.data)
+                }
+                else if (response.data.code==="OK"&&response.data.data.length<1){
+                    setRegionResponse("No regions found")
+                }
+            } catch (error) {
+                setRegionResponse('Error fetching regions')
+                console.error("Error fetching regions: ", error)
             }
-            else if(res.payload.success&&!res.payload.data){
-                setRegionResponse("No Regions found")
-            }
-            }
-        )
-    },[dispatch])
+        }
+        fetchAsyncRegions()
+    },[])
 
-    const fetchTowns = (id) => {
-        dispatch(fetchTownsByRegionId(id))
-        .then((res)=>{
-            console.log("search response ", res)
-            if(!res.payload.success){
-                setCatResponse("Error fetching resource, Please check your network connection")
+    const fetchTowns = async (id) => {
+        try{
+            const response = await InsuranceApi.get(`/town/region/${id}`)
+            if(response.data.code==="OK"&&response.data.data.length>0){
+                setTowns(response.data.data)
             }
-            else if(res.payload.success&&!res.payload.data){
-                setCatResponse("No Categories found")
+            else if (response.data.code==="OK"&&response.data.data.length<1){
+                setTownResponse("No towns found for this region")
             }
-            if(res.payload.success){
-                setTownState(true)
-            }
-        })
+        }
+        catch(err){
+            setTownResponse("Error fetching towns")
+        }
+        
     }
     
-    const fetchShops = (id) => {
-        dispatch(fetchShopsByTownId(id))
-        .then((res)=>{
-            console.log("search response ", res)
-            if(!res.payload.success){
-                setCatResponse("Error fetching resource, Please check your network connection")
+    const fetchShops = async (id) => {
+        try{
+            const response = await InsuranceApi.get(`/shop/town/${id}`)
+            if(response.data.code==="OK"&&response.data.data.length>0){
+                setShops(response.data.data)
             }
-            else if(res.payload.success&&!res.payload.data){
-                setCatResponse("No Categories found")
+            else if (response.data.code==="NOT_FOUND"){
+                setShopResponse("No shops found for this town")
             }
-            if(res.payload.success){
-                setShopState(true)
-            }
-        })
+        }
+        catch(err){
+            setShopResponse("Error fetching towns")
+        }
     }
 
     const handlePost = async (e) => {
@@ -115,38 +120,39 @@ export default function InternalUserForm() {
                     else{
                         setLoading(true)
                         setMessage({status: false, data: ''});
-                        dispatch(postAdmin({
-                            firstname: "Tawanda",
-                            lastname: "Mpofu",
-                            email: domainName,
-                            role
-                        }))
-                        .then((response)=>{
-                            if(response.payload.success){
-                                dispatch(postUserRegion({
-                                    userId: response.payload.data.id,
-                                    regionId
-                                }))
-                                .then((res)=>{
-                                    if(response.payload.success){
+                        try{
+                            if(response){
+                                const response = await InsuranceApi.post(`/auth/register`,{
+                                    firstname: "Tawanda",
+                                    lastname: "Mpofu",
+                                    email: domainName,
+                                    phoneNumber,
+                                    role
+                                })
+                                try{
+                                    const res = await InsuranceApi.post(`/user-region`,{
+                                        userId: response.data.data.id,
+                                        regionId
+                                    })
+                                    if(response.data.code==="CREATED"){
                                         setSuccess(true)
-                                        setMessage({status: true, data: response.payload.data, region: res.payload.data.regionId});
+                                        setMessage({status: true, data: response.data.data, region: res.data.data.regionId});
                                     }
                                     else{
-                                        setMessage({status: true, data: response.payload.data, region: "Region Assignment Failed"})
+                                        setMessage({status: true, data: response.data.data, region: "Region Assignment Failed"})
                                     }
-                                })
-                                .catch(()=>{
-                                    setMessage({status: true, data: response.payload.data, region: "User Assignment Failed"});
-                                })
+                                }
+                                catch(err){
+                                    setMessage({status: true, data: response.data.data, region: "User Assignment Failed"});
+                                }
                             }
                             else{
                                 setFailed(true)
                             }
-                        })
-                        .catch(()=>{
+                        }
+                        catch(err){
                             setMessage({status: true, data: "User Creation Failed"});
-                        })
+                        }
                     }
                 }
                 else if(townValidRoles.includes(role)){
@@ -168,35 +174,35 @@ export default function InternalUserForm() {
                     else if(regionId!==""&&townId!==""){
                         setLoading(true)
                         setMessage({status: false, data: ''});
-                        dispatch(postAdmin({
-                            firstname: "Tawanda",
-                            lastname: "Mpofu",
-                            email: domainName,
-                            role
-                        }))
-                        .then((response)=>{
-                            if(response.payload.success){
-                                dispatch(postUserTown({
-                                    userId:response.payload.data.id,
+                        
+                        if(response.data.code==="CREATED"){
+                            const response = await InsuranceApi.post(`/auth/register`,{
+                                firstname: "Tawanda",
+                                lastname: "Mpofu",
+                                email: domainName,
+                                phoneNumber,
+                                role
+                            })
+                            try{
+                                const res = await InsuranceApi.post(`/user-town`,{
+                                    userId:response.data.data.id,
                                     townId
-                                }))
-                                .then((res)=>{
-                                    if(res.payload.success){
-                                        setSuccess(true)
-                                        setMessage({status: true, data: response.payload.data, town: res.payload.data.townId});
-                                    }
-                                    else{
-                                        setMessage({status: true, data: response.payload.data, town: "Assigning Town Failed"})
-                                    }
                                 })
-                                .catch(()=>{
-                                    setMessage({status: true, data: response.payload.data, town: "Town Assignment Failed"});
-                                })
+                                if(res.data.code==="CREATED"){
+                                    setSuccess(true)
+                                    setMessage({status: true, data: response.data.data, town: res.data.data.townId});
+                                }
+                                else{
+                                    setMessage({status: true, data: response.data.data, town: "Assigning Town Failed"})
+                                }
                             }
-                            else{
-                                setFailed(true)
+                            catch(err){
+                                setMessage({status: true, data: response.data.data, town: "Town Assignment Failed"});
                             }
-                        })
+                        }
+                        else{
+                            setFailed(true)
+                        }
                     }
                 }
                 else if(shopValidRoles.includes(role)){
@@ -225,58 +231,58 @@ export default function InternalUserForm() {
                     else if(regionId!==""&&townId!==""){
                         setLoading(true)
                         setMessage("loading")
-                        dispatch(postAdmin({
+                        const response = await InsuranceApi.post(`/auth/register`,{
                             firstname: "Tawanda",
                             lastname: "Mpofu",
                             email: domainName,
+                            phoneNumber,
                             role
-                        }))
-                        .then((response)=>{
-                            if(response.payload.success){
-                                console.log("user post data ", response)
-                                dispatch(postUserShop({
-                                    userId:response.payload.data.id,
-                                    shopId
-                                }))
-                                .then((res)=>{
-                                    if(res.payload.success){
-                                        setSuccess(true)
-                                        setMessage({status: true, data: response.payload, shop: res.payload.data});
-                                    }
-                                    else{
-                                        setMessage({status: true, data: response.payload.data, shop: "Shop Assignment Failed"})
-                                    }
-                                })
-                                .catch(()=>{
-                                    setMessage({status: true, data: response.payload.data, shop: "Shop Assignment Failed"});
-                                })
-                            }
-                            else{
-                                setFailed(true)
-                            }
                         })
+                        if(response.data.code==="CREATED"){
+                            console.log("user post data ", response)
+                            try{
+                                const res = await InsuranceApi.post(`/user-shop`,{
+                                    userId:response.data.data.id,
+                                    shopId
+                                })
+                                if(res.data.code==="CREATED"){
+                                    setSuccess(true)
+                                    setMessage({status: true, data: response.data, shop: res.data.data});
+                                }
+                                else{
+                                    setMessage({status: true, data: response.data.data, shop: "Shop Assignment Failed"})
+                                }
+                            }
+                            catch(err){
+                                setMessage({status: true, data: response.data.data, shop: "Shop Assignment Failed"});
+                            }
+                        }
+                        else{
+                            setFailed(true)
+                        }
                     }
                 }
                 else{
                     setLoading(true)
                     setMessage({status: false, data: ""});
-                    dispatch(postAdmin({
-                        firstname: "Tawanda",
-                        lastname: "Mpofu",
-                        email: domainName,
-                        role
-                    }))
-                    .then((response) => {
-                        if (response.payload.success) {
+                    try{
+                        const response = await InsuranceApi.post(`/auth/register`,{
+                            firstname: "Tawanda",
+                            lastname: "Mpofu",
+                            email: domainName,
+                            phoneNumber,
+                            role
+                        })
+                        if (response.data.code==="CREATED") {
                             setSuccess(true);
-                            setMessage({status: true, data: response.payload.data});
+                            setMessage({status: true, data: response.data.data});
                         } else {
                             setFailed(true);
                         }
-                    })
-                    .catch(()=>{
+                    }
+                    catch(err){
                         setFailed(true)
-                    })
+                    }
                 }
             }
         }
@@ -339,6 +345,32 @@ export default function InternalUserForm() {
                                 placeholder='Domain Name'
                                 value={domainName}
                                 onChange={(e)=>setDomainName(e.target.value)}
+                                className="block w-full rounded-xs border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
+                            />
+                        </div>
+                    </div>
+                    <div className="sm:col-span-3 flex items-center">
+                        <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900 w-1/4">
+                            Phone Number
+                        </label>
+                        <div className="mt-2 flex-1">
+                            {
+                                Object.keys(error).length>0&&
+                                error.map((error, index) => {
+                                    if (error.err === "phoneNumber") {
+                                        return <h6 key={index} className='text-red-500 mb-1'>{error.message}</h6>;
+                                    }
+                                    return null;
+                                })
+                            }
+                            <input
+                                type="text"
+                                name="phoneNumber"
+                                id="phoneNumber"
+                                autoComplete="family-name"
+                                placeholder='Phone Number'
+                                value={phoneNumber}
+                                onChange={(e)=>setPhoneNumber(e.target.value)}
                                 className="block w-full rounded-xs border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
                             />
                         </div>
@@ -408,7 +440,7 @@ export default function InternalUserForm() {
                                                 <option key={i} value="" onClick={()=>{fetchTowns(region.id);setRegionId(region.id)}}>{region.name}</option>
                                             )
                                             
-                                        }):<option className='text-red-500'>An ERROR occurred</option>
+                                        }):<option className='text-red-500'>{regionResponse}</option>
                                     }
                                 </select>
                             </div>
@@ -442,7 +474,7 @@ export default function InternalUserForm() {
                                                 <option key={i} value="" onClick={()=>{setTownId(town.id);fetchShops(town.id)}}>{town.name}</option>
                                             )
                                             
-                                        }):<option className='text-red-500'>An ERROR occurred</option>
+                                        }):<option className='text-red-500'>{townResponse}</option>
                                     }
                                 </select>
                             </div>
@@ -476,7 +508,7 @@ export default function InternalUserForm() {
                                                 <option key={i} value="" onClick={()=>{setShopId(shop.id);fetchAgents(shop.id)}}>{shop.name}</option>
                                             )
                                             
-                                        }):<option className='text-red-500'>An ERROR occurred</option>
+                                        }):<option className='text-red-500'>{shopResponse}</option>
                                     }
                                 </select>
                             </div>

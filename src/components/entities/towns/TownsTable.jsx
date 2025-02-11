@@ -1,24 +1,19 @@
 import React, { useEffect, useState } from 'react'
-import { getRoles } from '../../../store/user-store';
-import { useDispatch, useSelector } from 'react-redux';
 import { ScaleLoader } from 'react-spinners';
-import { deleteTown, fetchAsyncTowns, getTowns } from '../../../store/entity-store';
+import { deleteTown, fetchAsyncTowns } from '../../../store/entity-store';
 import TownViewModal from './TownViewModal';
 import TownModal from './TownModal';
 import DeleteConfirmationModal from '../../deleteConfirmation/deleteConfirmationModal';
 import useAuth from '../../../hooks/useAuth';
-import InsuranceApi from '../../api/InsuranceApi';
+import InsuranceApi, { setupInterceptors } from '../../api/InsuranceApi';
 
 export default function TownsTable() {
 
-    const {user} = useAuth()
-    const {accessToken} = user
+    const { user, setUser } = useAuth()
 
-    const headers = {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-    } 
+    useEffect(()=>{
+        setupInterceptors(() => user, setUser)
+    },[])
 
     const [townResponse, setTownResponse] = useState('')
     const [loading, setLoading] = useState(false)
@@ -29,31 +24,33 @@ export default function TownsTable() {
     const [towns, setTowns] = useState('')
   
     useEffect(()=>{
+        const fetchTowns = async () => {
+            setLoading(true)
+            try{
+                const response = await InsuranceApi.get('/town')
+                if(response.data.code==="OK"&&response.data.data!==null){
+                    setTowns(response.data.data)
+                }
+                else if (response.data.code==="NOT_FOUND"){
+                    setTownResponse("No Towns found")
+                }
+            }
+            catch(err){
+                console.log(err)
+                if(err){
+                    setTownResponse("Error fetching resource, Please check your network connection")
+                }
+                else if(err){
+                    setTownResponse("No Categories found")
+                }
+            }
+            finally{
+            setLoading(false)
+            }
+        }
+
         fetchTowns()
     },[])
-
-    const fetchTowns = async () => {
-        setLoading(true)
-        try{
-            const response = await InsuranceApi.get('/town', {headers})
-            if(response&&response.data){
-                console.log(response.data)
-                setTowns(response.data.data)
-            }
-        }
-        catch(err){
-            console.log(error)
-            if(err){
-                setTownResponse("Error fetching resource, Please check your network connection")
-            }
-            else if(err){
-                setTownResponse("No Categories found")
-            }
-        }
-        finally{
-        setLoading(false)
-        }
-    }
 
     const handleDelete = (id) => {
         setLoading(true)

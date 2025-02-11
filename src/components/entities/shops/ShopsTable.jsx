@@ -1,26 +1,21 @@
 import React, { useEffect, useState } from 'react'
-import { getRoles } from '../../../store/user-store';
-import { useDispatch, useSelector } from 'react-redux';
 import { ScaleLoader } from 'react-spinners';
 import { deleteShop, fetchAsyncShops, getShops } from '../../../store/entity-store';
 import ShopModal from './ShopModal';
 import ShopViewModal from './ShopViewModal';
 import DeleteConfirmationModal from '../../deleteConfirmation/deleteConfirmationModal';
 import useAuth from '../../../hooks/useAuth';
-import InsuranceApi from '../../api/InsuranceApi';
+import InsuranceApi, { setupInterceptors } from '../../api/InsuranceApi';
 
 export default function ShopsTable() {
 
-    const {user} = useAuth()
-    const {accessToken} = user
+    const { user, setUser } = useAuth()
 
-    const headers = {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-    } 
+    useEffect(()=>{
+        setupInterceptors(() => user, setUser)
+    },[])
 
-    const [shopResponse, setShopResponse] = useState('')
+    const [shopResponse, setShopResponse] = useState('Refresh')
     const [loading, setLoading] = useState(false)
     const [isOpen, setIsOpen] = useState(false)
     const [itemId, setItemId] = useState('')
@@ -30,31 +25,34 @@ export default function ShopsTable() {
     const [shops, setShops] = useState('')
   
     useEffect(()=>{
+        const fetchShops = async () => {
+            setLoading(true)
+            try{
+                const response = await InsuranceApi.get('/shop')
+                console.log("respo", response)
+                if(response.data.code==="OK"&&response.data.data!==null){
+                    console.log("My",response.data)
+                    setShops(response.data.data)
+                }
+                else if (response.data.code==="NOT_FOUND"){
+                    setShopResponse("No Shops found")
+                }
+            }
+            catch(err){
+                if(err){
+                    setShopResponse("Error fetching resource, Please check your network connection")
+                }
+                else if(err){
+                    setShopResponse("No Categories found")
+                }
+            }
+            finally{
+                setLoading(false)
+            }
+        }
+
         fetchShops()
     },[])
-
-    const fetchShops = async () => {
-        setLoading(true)
-        try{
-            const response = await InsuranceApi.get('/shop', {headers})
-            if(response&&response.data){
-                console.log(response.data)
-                setShops(response.data.data)
-            }
-        }
-        catch(err){
-            console.log(error)
-            if(err){
-                setShopResponse("Error fetching resource, Please check your network connection")
-            }
-            else if(err){
-                setShopResponse("No Categories found")
-            }
-        }
-        finally{
-        setLoading(false)
-        }
-    }
 
     const handleDelete = (id) => {
         setLoading(true)
@@ -75,8 +73,8 @@ export default function ShopsTable() {
         const columns = [
             { key: 'item', label: '#', width: 1 },
             { key: 'name', label: 'Name' },
-            { key: 'name', label: 'Parent Town' },
-            { key: 'name', label: 'Parent Region' },
+            { key: 'town', label: 'Parent Town' },
+            { key: 'region', label: 'Parent Region' },
             { key: 'datecreated', label: 'Date Created' },
             { key: 'status', label: 'Status' },
             { key: 'action', label: 'Action' },

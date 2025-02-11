@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { navActions } from '../../../store/nav-store'
-import { fetchAsyncTowns, getTowns, postShop } from '../../../store/entity-store'
 import PageLoading from '../../loadingStates/PageLoading'
+import useAuth from '../../../hooks/useAuth'
+import InsuranceApi, { setupInterceptors } from '../../api/InsuranceApi'
 
 export default function ShopForm() {
 
-    const dispatch = useDispatch()
+    const { user, setUser } = useAuth()
 
+    useEffect(() => {
+        setupInterceptors(() => user, setUser)
+    },[])
+    
     const [name, setName] = useState('')
     const [phoneNumber, setPhoneNumber] = useState('')
     const [address, setAddress] = useState('')
@@ -16,27 +19,26 @@ export default function ShopForm() {
     const [success, setSuccess] = useState(false)
     const [failed, setFailed] = useState(false)
     const [error, setError] = useState([])
+    const [towns, setTowns] = useState('')
     const [townResponse, setTownResponse] = useState('')
 
-    const towns = useSelector(getTowns)
-
     useEffect(()=>{
-        dispatch(fetchAsyncTowns())
-        .then((res)=>{
-            console.log("search response ", res)
-            setLoading(false)
-            if(!res.payload.success){
-                setTownResponse("Error fetching resource, Please check your network connection")
+        const fetchAsyncTowns = async () => {
+            try {
+                const response = await InsuranceApi.get('/town')
+                if(response.data.code==="OK"&&response.data.data.length>0){
+                    setTowns(response.data.data)
+                }
+                else if (response.data.code==="OK"&&response.data.data.length<1){
+                    setTownResponse("No Regions found")
+                }
+            } catch (error) {
+                setTownResponse('Error fetching towns')
+                console.error("Error fetching towns: ", error)
             }
-            else if(res.payload.success&&!res.payload.data){
-                setTownResponse("No Categories found")
-            }
-            }
-        )
-        .finally(()=>{
-            setLoading(false)
-        })
-    },[dispatch])
+        }
+        fetchAsyncTowns()
+    },[])
 
     const handlePost = async (e) => {
         e.preventDefault()
@@ -78,31 +80,30 @@ export default function ShopForm() {
             }
             else if(name!==""&&townId!==0){
                 setLoading(true)
-                dispatch(postShop({
-                    townId,
-                    shop: {
-                        name,
-                        phoneNumber,
-                        address
-                    }
-                }))
-                .then((response)=>{
-                    console.log("Post response: ", response)
-                    if(response.payload.success){
+                try{
+                    const response = await InsuranceApi.post('/shop', {
+                        townId,
+                        shop: {
+                            name,
+                            phoneNumber,
+                            address
+                        }
+                    })
+                    if(response.data){
                         setSuccess(true)
                     }
-                    else{
-                        setFailed(true)
-                    }
-                })
-                .finally(()=>{
+                }
+                catch(e){
+                    setFailed(true)
+                }
+                finally{
                     setTimeout(()=>{
                         setLoading(false)
                         setSuccess(false)
-                        setFailed(true)
+                        setFailed(false)
                         setName("")
-                    }, 2000)
-                })
+                    }, 1000)
+                }
             }
         }
     }
