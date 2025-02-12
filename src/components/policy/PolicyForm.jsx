@@ -197,14 +197,20 @@ export default function PolicyForm() {
                             <select
                                 id="categoryId"
                                 name="categoryId"
+                                value={categoryId}
+                                onChange={(e) => setCategoryId(Number(e.target.value))}
                                 className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
                             >
-                                <option value="Option 0">Select Policy Category</option>
-                                {
-                                    categories?categories.map((category, index)=>(
-                                        <option key={index} onClick={(e)=>setCategoryId(category.categoryId)}>{category.categoryName}</option>
-                                    )):<option value="Option 0">No data found</option>
-                                }
+                                <option value={0}>Select Policy Category</option>
+                                {categories ? (
+                                    categories.map((category) => (
+                                    <option key={category.categoryId} value={category.categoryId}>
+                                        {category.categoryName}
+                                    </option>
+                                    ))
+                                ) : (
+                                    <option value={0}>No data found</option>
+                                )}
                             </select>
                         </div>
                     </div>                    
