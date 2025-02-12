@@ -1,9 +1,34 @@
-import React, { lazy, Suspense } from 'react'
+import React, { lazy, Suspense, useEffect, useState } from 'react'
+import useAuth from '../../hooks/useAuth'
+import InsuranceApi, { setupInterceptors } from '../api/InsuranceApi'
 
 // Lazy load the Chart component
 const Chart = lazy(() => import('react-apexcharts'))
 
 export default function SalesCharts() {
+
+  const { user, setUser } = useAuth()
+
+  const [ salesStats, setSalesStats ] = useState([])
+
+  useEffect(()=>{
+    setupInterceptors(()=> user, setUser)
+
+    const fetchSalesStats = async () => {
+      try{
+        const response = await InsuranceApi.get(`/product-payments/total-sales`)
+        if(response.data.data){
+          console.log("response", response)
+          setSalesStats(response.data.data)
+        }
+      }
+      catch(err){
+        console.log(err)
+      }
+    }
+    fetchSalesStats()
+  },[])
+
   const barOptions = {
     chart: {
       id: 'basic-bar',
@@ -29,28 +54,37 @@ export default function SalesCharts() {
     colors: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6']
   }
 
-  const barSeries = [
-    {
-      name: 'First Mutual',
-      data: [30],
-    },
-    {
-      name: 'Nicoz Diamond',
-      data: [50],
-    },
-    {
-      name: 'Old Mutual',
-      data: [40],
-    },
-    {
-      name: 'Credsure',
-      data: [75],
-    },
-    {
-      name: 'Nicoz Diamond',
-      data: [35],
-    },
-  ]
+  const createBarSeries = (response) => {
+    return response.map(item => ({
+        name: item.insurerName,
+        data: [item.totalSales],
+    }));
+  };
+
+  const barSeries = createBarSeries(salesStats);
+  
+  // const barSeries = [
+  //   {
+  //     name: 'First Mutual',
+  //     data: [30],
+  //   },
+  //   {
+  //     name: 'Nicoz Diamond',
+  //     data: [50],
+  //   },
+  //   {
+  //     name: 'Old Mutual',
+  //     data: [40],
+  //   },
+  //   {
+  //     name: 'Credsure',
+  //     data: [75],
+  //   },
+  //   {
+  //     name: 'Nicoz Diamond',
+  //     data: [35],
+  //   },
+  // ]
 
   return (
     <div className="flex flex-row w-full py-2 space-x-4">

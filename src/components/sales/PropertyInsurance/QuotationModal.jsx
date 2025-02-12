@@ -176,7 +176,7 @@ export default function QuotationModal({ setModal }) {
             setLoading(false)
         }
         fetchQuotes()
-    }, [])
+    }, [insurers])
 
     const handlePaymentSuccess = useCallback((quotation, currency) => {
         setProcessingPayment(false)
@@ -327,7 +327,7 @@ export default function QuotationModal({ setModal }) {
             transactionDescription: JSON.stringify(transactionDescription),
             referenceNumber: quotation.merchantRef,
             mobileNumber: userData.phoneNumber,
-            paymentStatus: "PENDING",
+            paymentStatus: "ACCEPTED",
             paymentMethod: method,
             amount: quotation.calculatedPrice,
         }

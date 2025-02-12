@@ -195,8 +195,8 @@ export default function PolicyForm() {
                                 })
                             }
                             <select
-                                id="insuranceType"
-                                name="insuranceType"
+                                id="categoryId"
+                                name="categoryId"
                                 className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
                             >
                                 <option value="Option 0">Select Policy Category</option>

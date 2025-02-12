@@ -29,7 +29,7 @@ export const ColorProvider = ({ children }) => {
         const data = await InsuranceApi(`/insurers/${user.companyId}`);
         
         // Debugging: log the received data
-        console.log('Received data:', data);
+        console.log('Received data:', data.data);
 
         const hexToRgb = (hex) => {
             if (!hex) {
@@ -41,10 +41,10 @@ export const ColorProvider = ({ children }) => {
         };
 
         setColors({
-            mainColor: data.mainColor || '#3B82F6', // Default value if undefined
-            secondaryColor: data.secondColor || '#fc0303#', // Default value if undefined
-            mainColorRgb: hexToRgb(data.mainColor),
-            secondaryColorRgb: hexToRgb(data.secondColor)
+            mainColor: data.data.mainColor || '#0B56AC', // Default value if undefined
+            secondaryColor: data.data.secondColor || '#fc0303', // Default value if undefined
+            mainColorRgb: hexToRgb(data.data.mainColor),
+            secondaryColorRgb: hexToRgb(data.data.secondColor)
         });
         setCompanyDetails(data.data);
 

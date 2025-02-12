@@ -390,8 +390,8 @@ export default function InternalUserForm() {
                                 })
                             }
                             <select
-                                id="insuranceType"
-                                name="insuranceType"
+                                id="role"
+                                name="role"
                                 className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
                             >
                                 <option 

@@ -56,7 +56,9 @@ export default function UserProfile() {
     const updateUserImage = async () => {
         console.log(image)
         try{
-            const response = await InsuranceApi.patch(`/users/logo?userLogo=${image}`)
+            const response = await InsuranceApi.patch(`/users/logo`,{
+                userLogo: image
+            })
             if(response&&response.data.message==="User found"){
                 console.log(response)
                 setAccountInfo(response.data)

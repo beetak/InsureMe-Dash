@@ -108,17 +108,6 @@ export default function QuotationModal({ setModal }) {
         }
     }, [])
 
-    // const handlePaymentSuccess = useCallback(() => {
-    //     setProcessingPayment(false)
-    //     setStatusMessage("Policy Approval Successful")
-    //     setPaymentStatus(true)
-    // }, [ quotations, pollingMerchantRef])
-
-    // const handlePaymentFailure = useCallback((error) => {
-    //     setProcessingPayment(false)
-    //     setStatusMessage("Payment failed: " + error)
-    // }, [])
-
     useEffect(() => {
         setupInterceptors(() => user, setUser);
         fetchInsurers()
@@ -169,7 +158,7 @@ export default function QuotationModal({ setModal }) {
             setLoading(false)
         }
         fetchQuotes()
-    }, [])
+    }, [insurers])
 
     const handlePaymentSuccess = useCallback((quotation, currency) => {
         setProcessingPayment(false)
@@ -306,7 +295,7 @@ export default function QuotationModal({ setModal }) {
             transactionDescription: JSON.stringify(transactionDescription),
             referenceNumber: quotation.merchantRef,
             mobileNumber: travelData.phoneNumber,
-            paymentStatus: "PENDING",
+            paymentStatus: "ACCEPTED",
             paymentMethod: method,
             amount: quotation.amount
         }
