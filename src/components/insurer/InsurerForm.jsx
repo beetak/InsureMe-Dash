@@ -111,12 +111,14 @@ export default function InsurerForm() {
                     }
                 }
                 catch(err){
-
+                    setFailed(true)
                 }
                 finally{
-                    setLoading(false)
-                    setFailed(false)
-                    setSuccess(false)
+                    setTimeout(()=>{
+                        setLoading(false)
+                        setFailed(false)
+                        setSuccess(false)
+                    },2000)
                 }
             }
         }
@@ -205,6 +207,9 @@ export default function InsurerForm() {
 
     return (
         <>
+            {
+                loading && <PageLoading loading={loading} success={success} failed={failed}/>
+            }
             <ColorPickerModal
                 isOpen={isColorModalOpen}
                 onClose={() => setIsColorModalOpen(false)}
@@ -441,17 +446,23 @@ export default function InsurerForm() {
                                 })
                             }
                             <select
-                                id="systemAdOns"
-                                name="systemAdOns"
+                                id="iceCashId"
+                                name="iceCashId"
+                                value={iceCashId}
+                                onChange={(e) => setIceCashId(e.target.value)}
                                 className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
                             >
-                            <option value="">Select Icecash ID</option>
-                            <option  onClick={(e)=>setIceCashId(0)}>No Icecash ID</option>
-                                {
-                                    companyIcecashId ? companyIcecashId.map((item)=>(
-                                        <option value="Option 1" onClick={(e)=>setIceCashId(item.Insurance_Company_ID)} key={item.Organisation}>{item.Organisation}</option>
-                                    )):<option value="Option 1">Not Found</option>
-                                }
+                                <option value="" className='font-bold italic'>Select Icecash ID</option>
+                                <option  value={0}>No Icecash ID</option>
+                                {companyIcecashId ? (
+                                    companyIcecashId.map((item) => (
+                                    <option key={item.Insurance_Company_ID} value={item.Insurance_Company_ID}>
+                                        {item.Organisation}
+                                    </option>
+                                    ))
+                                ) : (
+                                    <option value="">No data found</option>
+                                )}
                             </select>
                         </div>
                     </div>

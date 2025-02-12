@@ -311,17 +311,20 @@ export default function InsurerUserForm() {
                             <select
                                 id="role"
                                 name="role"
+                                value={role}
+                                onChange={(e) => setRole(e.target.value)}
                                 className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
                             >
-                                <option 
-                                    className='font-bold italic'
-                                >Select User Role</option>
-                                {
-                                    roles.map((role, index)=>(
-                                        <option key={index} onClick={(e)=>setRole(role)}>{role}</option>
+                                <option value="" className='font-bold italic'>Select User Role</option>
+                                {roles ? (
+                                    roles.map((role, index) => (
+                                    <option key={index} value={role}>
+                                        {role}
+                                    </option>
                                     ))
-                                }
-                                
+                                ) : (
+                                    <option value="">No data found</option>
+                                )}
                             </select>
                         </div>
                     </div>
@@ -344,14 +347,20 @@ export default function InsurerUserForm() {
                                 <select
                                     id="insurerId"
                                     name="insurerId"
+                                    value={insurerId}
+                                    onChange={(e) => setInsurerId(Number(e.target.value))}
                                     className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
                                 >
-                                    <option value="Option 0">Select Insurance Company</option>
-                                    {
-                                        insurers?insurers.map((insurer, index)=>(
-                                            <option key={index} onClick={(e)=>setInsurerId(insurer.insurerId)}>{insurer.insurerName}</option>
-                                        )):<option value="Option 0">No data found</option>
-                                    }
+                                    <option value={0}>Select Insurance Company</option>
+                                    {insurers ? (
+                                        insurers.map((insurer) => (
+                                        <option key={insurer.insurerId} value={insurer.insurerId}>
+                                            {insurer.insurerName}
+                                        </option>
+                                        ))
+                                    ) : (
+                                        <option value={0}>No data found</option>
+                                    )}
                                 </select>
                             </div>
                         </div>

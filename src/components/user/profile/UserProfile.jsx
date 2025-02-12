@@ -16,7 +16,7 @@ export default function UserProfile() {
     const [accountInfo, setAccountInfo] = useState("")
     const [activeTab, setActiveTab] = useState('password')
     const [error, setError]=useState("")
-    const [updateInfo, setUpdateInfo]=useState([])
+    const [updateInfo, setUpdateInfo]=useState({})
 
     useEffect(()=>{
         setupInterceptors(() => user, setUser);
@@ -26,7 +26,7 @@ export default function UserProfile() {
     const fetchUser = async () => {
         try{
             const url = user.role === "INSURER_ADMIN" ? `/insurer-users/user/${userId}` : `/users/userId/${userId}`
-            const response = await AuthApi.get(url)
+            const response = await InsuranceApi.get(url)
             if(response&&(response.data.message==="User found"||response.data.message==="retrieved successfully")){
                 console.log(response)
                 setAccountInfo(response.data.data)
@@ -41,7 +41,7 @@ export default function UserProfile() {
     const updateUser = async () => {
         console.log(updateInfo)
         try{
-            const response = await AuthApi.patch(`/users`,updateInfo)
+            const response = await InsuranceApi.patch(`/users/change-password`,updateInfo)
             if(response&&response.data.message==="User found"){
                 console.log(response)
                 setAccountInfo(response.data)

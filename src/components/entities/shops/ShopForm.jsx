@@ -221,14 +221,20 @@ export default function ShopForm() {
                             <select
                                 id="townId"
                                 name="townId"
+                                value={townId}
+                                onChange={(e) => setTownId(Number(e.target.value))}
                                 className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
                             >
-                                <option value="Option 0">Select Parent Town</option>
-                                {
-                                    towns?towns.map((town, index)=>(
-                                        <option key={index} onClick={(e)=>setTownId(town.id)}>{town.name}</option>
-                                    )):<option value="Option 0">No data found</option>
-                                }
+                                <option value={0}>Select Parent Town</option>
+                                {towns ? (
+                                    towns.map((town) => (
+                                    <option key={town.id} value={town.id}>
+                                        {town.name}
+                                    </option>
+                                    ))
+                                ) : (
+                                    <option value={0}>No data found</option>
+                                )}
                             </select>
                         </div>
                     </div>                   

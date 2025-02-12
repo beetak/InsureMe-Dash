@@ -24,6 +24,9 @@ export default function CustomersTable() {
                 console.log(response.data)
                 setCustomers(response.data.data)
             }
+            else{
+                setCustomerResponse("No Categories found")
+            }
         }
         catch(err){
             console.log(error)

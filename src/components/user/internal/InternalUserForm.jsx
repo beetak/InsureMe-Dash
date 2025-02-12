@@ -431,17 +431,20 @@ export default function InternalUserForm() {
                                 <select
                                     id="regionId"
                                     name="regionId"
+                                    value={regionId}
+                                    onChange={(e) => {setRegionId(Number(e.target.value));fetchTowns(e.target.value)}}
                                     className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
                                 >
-                                    <option className='w-full' onClick={()=>setRegionId("")} value="">Select User Region</option>
-                                    {
-                                        regions?regions.map((region, i)=>{
-                                            return(
-                                                <option key={i} value="" onClick={()=>{fetchTowns(region.id);setRegionId(region.id)}}>{region.name}</option>
-                                            )
-                                            
-                                        }):<option className='text-red-500'>{regionResponse}</option>
-                                    }
+                                    <option value={0}>Select Parent Region</option>
+                                    {regions ? (
+                                        regions.map((region) => (
+                                        <option key={region.id} value={region.id}>
+                                            {region.name}
+                                        </option>
+                                        ))
+                                    ) : (
+                                        <option value={0} className='text-red-500'>{regionResponse}</option>
+                                    )}
                                 </select>
                             </div>
                         </div>
@@ -465,17 +468,20 @@ export default function InternalUserForm() {
                                 <select
                                     id="townId"
                                     name="townId"
+                                    value={townId}
+                                    onChange={(e) => {setTownId(Number(e.target.value));fetchShops(e.target.value)}}
                                     className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
                                 >
-                                    <option value="" onClick={()=>setTownId("")}>Select User Town</option>
-                                    {
-                                        towns?towns.map((town, i)=>{
-                                            return(
-                                                <option key={i} value="" onClick={()=>{setTownId(town.id);fetchShops(town.id)}}>{town.name}</option>
-                                            )
-                                            
-                                        }):<option className='text-red-500'>{townResponse}</option>
-                                    }
+                                    <option value={0}>Select User Town</option>
+                                    {towns ? (
+                                        towns.map((town) => (
+                                        <option key={town.id} value={town.id}>
+                                            {town.name}
+                                        </option>
+                                        ))
+                                    ) : (
+                                        <option value={0}>{townResponse}</option>
+                                    )}
                                 </select>
                             </div>
                         </div>
@@ -499,17 +505,20 @@ export default function InternalUserForm() {
                                 <select
                                     id="shopId"
                                     name="shopId"
+                                    value={shopId}
+                                    onChange={(e) => {setShopId(Number(e.target.value));fetchAgents(e.target.value)}}
                                     className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
                                 >
-                                    <option value="" onClick={()=>setShopId("")}>Select User Shop</option>
-                                    {
-                                        shops?shops.map((shop, i)=>{
-                                            return(
-                                                <option key={i} value="" onClick={()=>{setShopId(shop.id);fetchAgents(shop.id)}}>{shop.name}</option>
-                                            )
-                                            
-                                        }):<option className='text-red-500'>{shopResponse}</option>
-                                    }
+                                    <option value={0}>Select User Shop</option>
+                                    {shops ? (
+                                        shops.map((shop) => (
+                                        <option key={shop.id} value={shop.id}>
+                                            {shop.name}
+                                        </option>
+                                        ))
+                                    ) : (
+                                        <option value={0}>{shopResponse}</option>
+                                    )}
                                 </select>
                             </div>
                         </div>

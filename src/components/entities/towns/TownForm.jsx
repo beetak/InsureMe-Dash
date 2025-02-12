@@ -155,14 +155,20 @@ export default function TownForm() {
                             <select
                                 id="regionId"
                                 name="regionId"
+                                value={regionId}
+                                onChange={(e) => setRegionId(Number(e.target.value))}
                                 className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
                             >
-                                <option value="Option 0">Select Parent Region</option>
-                                {
-                                    regions?regions.map((region, index)=>(
-                                        <option key={index} onClick={(e)=>setRegionId(region.id)}>{region.name}</option>
-                                    )):<option value="Option 0">No data found</option>
-                                }
+                                <option value={0}>Select Parent Region</option>
+                                {regions ? (
+                                    regions.map((region) => (
+                                    <option key={region.id} value={region.id}>
+                                        {region.name}
+                                    </option>
+                                    ))
+                                ) : (
+                                    <option value={0}>No data found</option>
+                                )}
                             </select>
                         </div>
                     </div>                   

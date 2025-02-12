@@ -9,8 +9,8 @@ import DisplayLayout from '../../components/Layout/DisplayLayout';
 export default function Customers() {
 
   const menus = [
-    { title: "Customers Creation", icon: "fas fa-user", tab:1 },
-    { title: "View Customers", icon: "fas fa-book", tab:2 },
+    // { title: "Customers Creation", icon: "fas fa-user", tab:1 },
+    { title: "View Customers", icon: "fas fa-book", tab:1 },
   ]
 
   const [activeTab, setActiveTab] = useState(1);
@@ -51,16 +51,16 @@ export default function Customers() {
                   {
                     activeTab === 1 && 
                     <div className="p-7 bg-white rounded-xs border border-gray-200 border-solid border-1">
-                      <CustomerForm/>
+                      <CustomersTable/>
                     </div>
                   }
                   {/* Tab 3 content */}
-                  {
+                  {/* {
                     activeTab === 2 && 
                     <div className="p-7 bg-white rounded-xs border border-gray-200 border-solid border-1">
                       <CustomersTable/>
                     </div>
-                  }
+                  } */}
                 </div>
               </div>
             </div>
