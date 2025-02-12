@@ -5,13 +5,17 @@ import icons from './icons.json'
 import useAuth from '../../hooks/useAuth';
 import InsuranceApi, { setupInterceptors } from '../api/InsuranceApi';
 
-export default function CategoryModal(props) {
+export default function CategoryModal({ data, refresh, setModal }) {
 
     const { user, setUser } = useAuth()
 
-    useEffect(()=>{
-        setupInterceptors(()=> user, setUser)
-    })
+    useEffect(() => {
+        setupInterceptors(()=>user, setUser)
+        setCategoryName(data.categoryName)
+        setDescription(data.description)
+        setIconUrl(data.iconUrl)
+        setIsActive(data.isActive)
+    }, [data])
 
     const [description, setDescription] = useState("");
     const [categoryName, setCategoryName] = useState("");
@@ -24,11 +28,13 @@ export default function CategoryModal(props) {
     const [failed, setFailed] = useState(false)
     const [close, setClose] = useState(false)
 
+     
+
     const handleSubmit = async (e) => {
         e.preventDefault()        
         setLoading(true)
         try{
-            const response = await InsuranceApi.put(`/categories/${props.data.categoryId}`,{
+            const response = await InsuranceApi.put(`/categories/${data.categoryId}`,{
                 categoryName,
                 description,
                 iconUrl,
@@ -47,14 +53,14 @@ export default function CategoryModal(props) {
                 setFailed(false)
                 setSuccess(false)
                 setDescription('')
-                props.refresh()
-                props.setModal(close)
+                refresh()
+                setModal(close)
             },1000)
         }
     }
 
     const getModal =(isOpen)=>{
-        props.setModal(isOpen)
+        setModal(isOpen)
     }
 
     return (
@@ -88,7 +94,7 @@ export default function CategoryModal(props) {
                                 type="text"
                                 id="categoryName"
                                 autoComplete="family-name"
-                                placeholder={props.data.categoryName}
+                                placeholder={data.categoryName}
                                 name="categoryName"
                                 onChange={(e)=>setCategoryName(e.target.value)}
                                 className="block w-full rounded-xs border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
@@ -105,7 +111,7 @@ export default function CategoryModal(props) {
                                 type="text"
                                 id="name"
                                 autoComplete="family-name"
-                                placeholder={props.data.description}
+                                placeholder={data.description}
                                 name="description"
                                 onChange={(e)=>setDescription(e.target.value)}
                                 className="block w-full rounded-xs border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
@@ -160,7 +166,7 @@ export default function CategoryModal(props) {
                                 name="systemAdOns"
                                 className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
                             >
-                                <option value="">{props.data.isActive?"Active":"Inactive"}</option>
+                                <option value="">{data.isActive?"Active":"Inactive"}</option>
                                 <option onClick={()=>setIsActive(true)}>Active</option>
                                 <option onClick={()=>setIsActive(false)}>Inactive</option>
                             </select>
@@ -175,7 +181,7 @@ export default function CategoryModal(props) {
                     Update
                     </button>
                     <button
-                        onClick={()=>props.setModal(close)}
+                        onClick={()=>setModal(close)}
                         className={`border border-gray-300 rounded-sm px-4 py-2 bg-gray-700 text-gray-100 hover:text-gray-700 hover:bg-white w-40`}
                     >
                     Cancel

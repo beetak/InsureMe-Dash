@@ -169,7 +169,7 @@ export default function InsurerTable() {
     <>
       <div className="p-5 bg-white rounded-md border border-gray-200 border-solid border-1">
         {
-          isOpen&& <InsurerModal setModal={getModal} data={modalData}/>
+          isOpen&& <InsurerModal setModal={getModal} data={modalData} refresh={fetchInsurer}/>
         }
         {
           viewOpen&& <InsurerViewModal setModal={getViewModal} data={modalData}/>

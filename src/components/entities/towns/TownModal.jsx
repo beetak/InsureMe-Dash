@@ -2,9 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Modal from "../../modal/Modal"
-import { useDispatch, useSelector } from "react-redux"
 import { HashLoader } from "react-spinners"
-import { fetchAsyncRegions, getRegions } from "../../../store/entity-store"
 import InsuranceApi, { setupInterceptors } from "../../api/InsuranceApi"
 import useAuth from "../../../hooks/useAuth"
 

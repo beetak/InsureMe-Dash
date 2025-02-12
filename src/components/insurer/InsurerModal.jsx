@@ -7,20 +7,34 @@ import useAuth from '../../hooks/useAuth';
 import InsuranceApi, { setupInterceptors } from '../api/InsuranceApi';
 import ColorPickerModal from '../modal/ColorPickerModal';
 
-export default function InsurerModal(props) {
+export default function InsurerModal({ data, refresh, setModal }) {
 
     const {user, setUser} = useAuth()
 
-    useEffect(()=>{
-        setupInterceptors(() => user, setUser);
-    },[])
+    useEffect(() => {
+        setupInterceptors(()=>user, setUser)
 
-    const userImage = props.data.insurerLogo
+        setInsurerName(data.insurerName)
+        setAddress(data.address)
+        setIsActive(data.isActive)
+        setInsurerLogo(data.insurerLogo)
+        setWebsiteUrl(data.websiteUrl)
+        setSecondAddress(data.secondAddress)
+        setOfficeNumber(data.officeNumber)
+        setMobileNumber(data.mobileNumber)
+        setEmail(data.email)
+        setIceCashId(data.iceCashId)
+        setMainColor(data.mainColor)
+        setSecondColor(data.secondColor)
+    }, [data])
+
+    const userImage = data.insurerLogo
 
     const [insurerName, setInsurerName] = useState("")
     const [isActive, setIsActive] = useState("")
     const [address, setAddress] = useState("")
     const [secondAddress, setSecondAddress] = useState("")
+    const [insurerLogo, setInsurerLogo] = useState("")
     const [mobileNumber, setMobileNumber] = useState("")
     const [officeNumber, setOfficeNumber] = useState("")
     const [email, setEmail] = useState("")
@@ -38,13 +52,13 @@ export default function InsurerModal(props) {
     const [isColorModalOpen, setIsColorModalOpen] = useState(false)
     const [activeColorPicker, setActiveColorPicker] = useState('main')
 
-    const [close, setClose] = useState(false)
+    const close = false
 
     const handleUpdate = async (e) => {  
-        const id = props.data.insurerId
+        const id = data.insurerId
         const insurerData = {
             insurerName,
-            insurerLogo: image,
+            insurerLogo: image?image:insurerLogo,
             address,
             secondAddress,
             mobileNumber,
@@ -52,7 +66,9 @@ export default function InsurerModal(props) {
             email,
             websiteUrl,
             isActive,
-            iceCashId
+            iceCashId,
+            mainColor,
+            secondColor
         }
         setLoading(true)
         console.log("update data", insurerData)
@@ -69,6 +85,8 @@ export default function InsurerModal(props) {
             setLoading(false)
             setFailed(false)
             setSuccess(false)
+            refresh()
+            setModal(close)
         }
     }
 
@@ -78,7 +96,7 @@ export default function InsurerModal(props) {
     }
 
     const getModal =(isOpen)=>{
-        props.setModal(isOpen)
+        setModal(isOpen)
     }
 
     const getLogoModal =(isOpen)=>{
@@ -162,14 +180,14 @@ export default function InsurerModal(props) {
                         </label>
                         <div className="mt-2 flex-1">
                             <input
-                            type="text"
-                            name="insurerName"
-                            id="insurerName"
-                            autoComplete="family-name"
-                            placeholder={props.data.insurerName}
-                            value={insurerName}
-                            onChange={(e)=>setInsurerName(e.target.value)}
-                            className="block w-full rounded-xs border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
+                                type="text"
+                                name="insurerName"
+                                id="insurerName"
+                                autoComplete="family-name"
+                                placeholder={data.insurerName}
+                                // value={insurerName}
+                                onChange={(e)=>setInsurerName(e.target.value)}
+                                className="block w-full rounded-xs border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
                             />
                         </div>
                     </div>
@@ -179,14 +197,14 @@ export default function InsurerModal(props) {
                         </label>
                         <div className="mt-2 flex-1">
                             <input
-                            type="text"
-                            name="websiteUrl"
-                            id="websiteUrl"
-                            autoComplete="family-name"
-                            placeholder={`${props.data.websiteUrl?props.data.websiteUrl:"Website (Optional)"}`}
-                            value={websiteUrl}
-                            onChange={(e)=>setWebsiteUrl(e.target.value)}
-                            className="block w-full rounded-xs border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
+                                type="text"
+                                name="websiteUrl"
+                                id="websiteUrl"
+                                autoComplete="family-name"
+                                placeholder={`${data.websiteUrl?data.websiteUrl:"Website (Optional)"}`}
+                                // value={websiteUrl}
+                                onChange={(e)=>setWebsiteUrl(e.target.value)}
+                                className="block w-full rounded-xs border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
                             />
                         </div>
                     </div>
@@ -220,14 +238,14 @@ export default function InsurerModal(props) {
                         </label>
                         <div className="mt-2 flex-1">
                             <input
-                            type="text"
-                            name="websiteUrl"
-                            id="websiteUrl"
-                            autoComplete="family-name"
-                            placeholder={props.data.address}
-                            value={address}
-                            onChange={(e)=>setAddress(e.target.value)}
-                            className="block w-full rounded-xs border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
+                                type="text"
+                                name="websiteUrl"
+                                id="websiteUrl"
+                                autoComplete="family-name"
+                                placeholder={data.address}
+                                // value={address}
+                                onChange={(e)=>setAddress(e.target.value)}
+                                className="block w-full rounded-xs border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
                             />
                         </div>
                     </div>
@@ -237,14 +255,14 @@ export default function InsurerModal(props) {
                         </label>
                         <div className="mt-2 flex-1">
                             <input
-                            type="text"
-                            name="websiteUrl"
-                            id="websiteUrl"
-                            autoComplete="family-name"
-                            placeholder={`${props.data.secondAddress?props.data.secondAddress:"Second Address (Optional)"}`}
-                            value={secondAddress}
-                            onChange={(e)=>setSecondAddress(e.target.value)}
-                            className="block w-full rounded-xs border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
+                                type="text"
+                                name="websiteUrl"
+                                id="websiteUrl"
+                                autoComplete="family-name"
+                                placeholder={`${data.secondAddress?data.secondAddress:"Second Address (Optional)"}`}
+                                // value={secondAddress}
+                                onChange={(e)=>setSecondAddress(e.target.value)}
+                                className="block w-full rounded-xs border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
                             />
                         </div>
                     </div>
@@ -254,14 +272,14 @@ export default function InsurerModal(props) {
                         </label>
                         <div className="mt-2 flex-1">
                             <input
-                            type="text"
-                            name="websiteUrl"
-                            id="websiteUrl"
-                            autoComplete="family-name"
-                            placeholder={props.data.officeNumber}
-                            value={officeNumber}
-                            onChange={(e)=>setOfficeNumber(e.target.value)}
-                            className="block w-full rounded-xs border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
+                                type="text"
+                                name="websiteUrl"
+                                id="websiteUrl"
+                                autoComplete="family-name"
+                                placeholder={data.officeNumber}
+                                // value={officeNumber}
+                                onChange={(e)=>setOfficeNumber(e.target.value)}
+                                className="block w-full rounded-xs border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
                             />
                         </div>
                     </div>
@@ -275,8 +293,8 @@ export default function InsurerModal(props) {
                                 name="websiteUrl"
                                 id="websiteUrl"
                                 autoComplete="family-name"
-                                placeholder={`${props.data.mobileNumber?props.data.mobileNumber:"Second Office Number (Optional)"}`}
-                                value={mobileNumber}
+                                placeholder={`${data.mobileNumber?data.mobileNumber:"Second Office Number (Optional)"}`}
+                                // value={mobileNumber}
                                 onChange={(e)=>setMobileNumber(e.target.value)}
                                 className="block w-full rounded-xs border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
                             />
@@ -292,8 +310,8 @@ export default function InsurerModal(props) {
                             name="websiteUrl"
                             id="websiteUrl"
                             autoComplete="family-name"
-                            placeholder={props.data.email}
-                            value={email}
+                            placeholder={data.email}
+                            // value={email}
                             onChange={(e)=>setEmail(e.target.value)}
                             className="block w-full rounded-xs border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
                             />
@@ -339,7 +357,7 @@ export default function InsurerModal(props) {
                     </div>
 
                     {
-                        props.data.secondEmail&&
+                        data.secondEmail&&
                         <div className="sm:col-span-3 flex items-center">
                             <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900 w-1/6">
                                 Address 2
@@ -350,8 +368,8 @@ export default function InsurerModal(props) {
                                 name="websiteUrl"
                                 id="websiteUrl"
                                 autoComplete="family-name"
-                                placeholder={props.data.secondAddress}
-                                value={secondAddress}
+                                placeholder={data.secondAddress}
+                                // value={secondAddress}
                                 onChange={(e)=>setSecondAddress(e.target.value)}
                                 className="block w-full rounded-xs border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
                                 />
@@ -381,13 +399,15 @@ export default function InsurerModal(props) {
                         </label>
                         <div className="mt-2 flex-1">
                             <select
-                                id="systemAdOns"
-                                name="systemAdOns"
-                                className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
+                                id="isActive"
+                                name="isActive"
+                                value={isActive}
+                                onChange={(e) => setIsActive(e.target.value)}
+                                className="block w-full rounded-xs border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
                             >
-                                <option value="">{props.data.isActive?"Active":"Inactive"}</option>
-                                <option onClick={()=>setIsActive(true)}>Active</option>
-                                <option onClick={()=>setIsActive(false)}>Inactive</option>
+                                <option value="">{data.isActive?"Active":"Inactive"}</option>
+                                <option value={"active"}>Active</option>
+                                <option value={"inactive"}>Inactive</option>
                             </select>
                         </div>
                     </div>
@@ -399,14 +419,21 @@ export default function InsurerModal(props) {
                             <select
                                 id="iceCashId"
                                 name="iceCashId"
+                                value={iceCashId}
+                                onChange={(e) => setIceCashId(e.target.value)}
                                 className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
                             >
-                            <option value="">Select Icecash ID</option>
-                                {
-                                    companyIcecashId ? companyIcecashId.map((item)=>(
-                                        <option value="Option 1" onClick={(e)=>setIceCashId(item.Insurance_Company_ID)} key={item.Organisation}>{item.Organisation}</option>
-                                    )):<option value="Option 1">Not Found</option>
-                                }
+                                <option value="" className='font-bold italic'>Select Icecash ID</option>
+                                <option  value={0}>No Icecash ID</option>
+                                {companyIcecashId ? (
+                                    companyIcecashId.map((item) => (
+                                    <option key={item.Insurance_Company_ID} value={item.Insurance_Company_ID}>
+                                        {item.Organisation}
+                                    </option>
+                                    ))
+                                ) : (
+                                    <option value="">No data found</option>
+                                )}
                             </select>
                         </div>
                     </div>
@@ -419,7 +446,7 @@ export default function InsurerModal(props) {
                     Submit
                     </button>
                     <button
-                        onClick={()=>props.setModal(close)}
+                        onClick={()=>setModal(close)}
                         className={`border border-gray-300 rounded-sm px-4 py-2 bg-gray-700 text-gray-100 hover:text-gray-700 hover:bg-white w-40`}
                     >
                     Cancel

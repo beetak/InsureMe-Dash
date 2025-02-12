@@ -19,7 +19,11 @@ export default function AgentSales() {
 
     const { user, setUser } = useAuth()
 
-    const [catResponse, setCatResponse] = useState('')
+    useEffect(()=>{
+        setupInterceptors(()=> user, setUser)
+        dispatch(fetchAsyncRegions())
+    },[dispatch])
+
     const [message, setMessage] = useState('Enter date range and click search')
     const [searchActive, setSearchActive] = useState(false)
     const [loading, setLoading] = useState(false)
@@ -71,11 +75,6 @@ export default function AgentSales() {
             },1000)
         }
     }
-
-    useEffect(()=>{
-        setupInterceptors(()=> user, setUser)
-        dispatch(fetchAsyncRegions())
-    },[dispatch])
         
     const renderTableHeader = () => {
         const columns = [

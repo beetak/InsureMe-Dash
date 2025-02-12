@@ -115,18 +115,29 @@ export default function Insurance() {
                       }
                       {/* Tab 4 content */}
                       {activeTab === "Life Insurance" && 
-                        <div className="bg-white rounded-xs border border-gray-200 border-solid border-1">
-                          <LifeInsurance/>
+                        <div className="p-7 flex justify-center bg-white rounded-xs border border-gray-200 border-solid border-1">
+                          Coming Soon
                         </div>
                       }
-                      {/* Tab 4 content */}
+                      {/* Tab 5 content */}
                       {activeTab === "Funeral Cover" && 
                         <div className="p-7 flex justify-center bg-white rounded-xs border border-gray-200 border-solid border-1">
                           Coming Soon
                         </div>
                       }
+                      {/* Tab 6 content */}
+                      {activeTab === "Health Insurance" && 
+                        <div className="p-7 flex justify-center bg-white rounded-xs border border-gray-200 border-solid border-1">
+                          Coming Soon
+                        </div>
+                      }
                       {/* Tab 4 content */}
-                      {activeTab === 3 && 
+                      {(activeTab !== "Property Insurance" && 
+                        activeTab !== "Travel Insurance" &&
+                        activeTab !== "Motor Vehicle Insurance" &&
+                        activeTab !== "Health Insurance" &&
+                        activeTab !== "Funeral Cover" &&
+                        activeTab !== "Life Insurance") && 
                         <div className="p-7 flex justify-center bg-white rounded-xs border border-gray-200 border-solid border-1">
                           Coming Soon
                         </div>

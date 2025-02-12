@@ -1,36 +1,66 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { HashLoader } from 'react-spinners';
 import { updatePolicy } from '../../store/policy-store';
 import Modal from '../modal/Modal';
 import { getCategories } from '../../store/category-store';
-import InsuranceApi from '../api/InsuranceApi';
+import InsuranceApi, { setupInterceptors } from '../api/InsuranceApi';
+import useAuth from '../../hooks/useAuth';
 
-export default function PolicyModal(props) {
+export default function PolicyModal({ data, refresh, setModal }) {
 
-    const dispatch = useDispatch()
+    const { user, setUser } = useAuth()
 
     const [policyTypeName, setPolicyTypeName] = useState("");
     const [policyTypeDescription, setPolicyTypeDescription] = useState("");
-    const [policyState, setPolicyState] = useState(props.data.categoryName);
+    const [policyState, setPolicyState] = useState(data.categoryName);
     const [price, setPrice] = useState("");
     const [categoryId, setCategoryId] = useState(0);
     const [loading, setLoading] = useState(false)
     const [success, setSuccess] = useState(false)
     const [failed, setFailed] = useState(false)
-    const [isOpen, setIsOpen] = useState(false)
     const [isActive, setIsActive] = useState(false)
+    const [categories, setCategories] = useState('')
+    const [catResponse, setCatResponse] = useState('')
     const close = false
 
-    const categories = useSelector(getCategories)
+    const fetchCategory = async () => {
+        setLoading(true)
+        try{
+            const response = await InsuranceApi.get('/categories')
+            if(response&&response.data){
+                console.log(response.data)
+                setCategories(response.data.data)
+            }
+        }
+        catch(err){
+            console.log(error)
+            if(err){
+              setCatResponse("Error fetching resource, Please check your network connection")
+            }
+            else if(err){
+              setCatResponse("No Categories found")
+            }
+        }
+        finally{
+          setLoading(false)
+        }
+      }
 
-    const [rows, setRows] = useState([]);
+    useEffect(() => {
+        setupInterceptors(()=>user, setUser)
+        setPolicyTypeDescription(data.policyTypeDescription)
+        setCategoryId(data.categoryId)
+        setPolicyTypeName(data.policyTypeName)
+        setIsActive(data.isActive)
+        fetchCategory()
+    }, [data])
 
     const handleSubmit = async (e) => {
         e.preventDefault()        
         setLoading(true)
         try{
-            const response = await InsuranceApi.put(`/policy-types/${props.data.policyTypeId}`,{
+            const response = await InsuranceApi.put(`/policy-types/${data.policyTypeId}`,{
                 policyTypeName,
                 policyTypeDescription,
                 categoryId,
@@ -51,15 +81,15 @@ export default function PolicyModal(props) {
                 setPolicyTypeDescription('')
                 setCategoryId(0)
                 setPolicyTypeName("")
-                props.refresh()
+                refresh()
                 setSuccess(false)
-                props.setModal(close)
+                setModal(close)
             },1000)
         }
     }
 
     const getModal =(isOpen)=>{
-        props.setModal(isOpen)
+        setModal(isOpen)
     }
 
     return (
@@ -93,7 +123,7 @@ export default function PolicyModal(props) {
                                 name="policyTypeName"
                                 id="policyTypeName"
                                 autoComplete="family-name"
-                                placeholder={props.data.policyTypeName}
+                                placeholder={data.policyTypeName}
                                 onChange={(e)=>setPolicyTypeName(e.target.value)}
                                 className="block w-full rounded-xs border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
                             />
@@ -109,7 +139,7 @@ export default function PolicyModal(props) {
                                 name="description"
                                 id="description"
                                 autoComplete="family-name"
-                                placeholder={props.data.policyTypeDescription}
+                                placeholder={data.policyTypeDescription}
                                 onChange={(e)=>setPolicyTypeDescription(e.target.value)}
                                 className="block w-full rounded-xs border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
                             />
@@ -121,17 +151,24 @@ export default function PolicyModal(props) {
                         </label>
                         <div className="mt-2 flex-1">
                             <select
-                                id="insuranceType"
-                                name="insuranceType"
-                                className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
+                                id="categoryId"
+                                name="categoryId"
+                                value={categoryId}
+                                onChange={(e) => setCategoryId(Number(e.target.value))}
+                                className="block w-full rounded-xs border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
                             >
-                                <option value="Option 0">{policyState}</option>
-                                {
-                                    categories?categories.map((category, index)=>(
-                                        <option key={index} onClick={(e)=>setCategoryId(category.categoryId)}>{category.categoryName}</option>
-                                    )):<option value="Option 0">No data found</option>
-                                }
+                                <option value={0}>Select Category</option>
+                                {categories && categories.length > 0 ? (
+                                    categories.map((category) => (
+                                        <option key={category.categoryId} value={category.categoryId}>
+                                        {category.categoryName}
+                                        </option>
+                                    ))
+                                ) : (
+                                <option value={0}>No data found</option>
+                                )}
                             </select>
+                            {catResponse && <p className="mt-1 text-xs text-red-500">{catResponse}</p>}
                         </div>
                     </div>
                     <div className="sm:col-span-3 flex items-center">
@@ -144,7 +181,7 @@ export default function PolicyModal(props) {
                                 name="systemAdOns"
                                 className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
                             >
-                                <option value="">{props.data.isActive?"Active":"Inactive"}</option>
+                                <option value="">{data.isActive?"Active":"Inactive"}</option>
                                 <option onClick={()=>setIsActive(true)}>Active</option>
                                 <option onClick={()=>setIsActive(false)}>Inactive</option>
                             </select>
@@ -159,7 +196,7 @@ export default function PolicyModal(props) {
                     Update
                     </button>
                     <button
-                        onClick={()=>props.setModal(close)}
+                        onClick={()=>setModal(close)}
                         className={`border border-gray-300 rounded-sm px-4 py-2 bg-gray-700 text-gray-100 hover:text-gray-700 hover:bg-white w-40`}
                     >
                     Cancel
