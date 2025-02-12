@@ -1,11 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import WindowCard from '../../components/windowCard/WindowCard'
-import SideBar from '../../components/navigation/sideBar/SideBar';
-import TopBar from '../../components/navigation/topBar/TopBar';
-import InsurancePolicyTable from '../../components/products/InsurancePolicyTable';
-import PolicyTable from '../../components/products/PolicyTable';
-import { useDispatch } from 'react-redux';
-import { fetchActiveCategories } from '../../store/category-store';
 import MotorVehicle from './MotorVehicle';
 import TravelInsurance from './TravelInsurance';
 import PropertyInsurance from './PropertyInsurance';
@@ -44,7 +38,6 @@ export default function Insurance() {
           }
       }
       catch(err){
-          console.log(error)
           if(err){
             setCatResponse("Error fetching resource, Please check your network connection")
           }

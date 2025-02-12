@@ -16,6 +16,7 @@ export default function TownsTable() {
     },[])
 
     const [townResponse, setTownResponse] = useState('')
+    const [modalData, setModalData] = useState('')
     const [loading, setLoading] = useState(false)
     const [isOpen, setIsOpen] = useState(false)
     const [itemId, setItemId] = useState('')
@@ -24,47 +25,54 @@ export default function TownsTable() {
     const [towns, setTowns] = useState('')
   
     useEffect(()=>{
-        const fetchTowns = async () => {
-            setLoading(true)
-            try{
-                const response = await InsuranceApi.get('/town')
-                if(response.data.code==="OK"&&response.data.data!==null){
-                    setTowns(response.data.data)
-                }
-                else if (response.data.code==="NOT_FOUND"){
-                    setTownResponse("No Towns found")
-                }
-            }
-            catch(err){
-                console.log(err)
-                if(err){
-                    setTownResponse("Error fetching resource, Please check your network connection")
-                }
-                else if(err){
-                    setTownResponse("No Categories found")
-                }
-            }
-            finally{
-            setLoading(false)
-            }
-        }
-
         fetchTowns()
     },[])
 
-    const handleDelete = (id) => {
+    const fetchTowns = async () => {
+        setLoading(true)
+        try{
+            const response = await InsuranceApi.get('/town')
+            if(response.data.code==="OK"&&response.data.data!==null){
+                setTowns(response.data.data)
+            }
+            else if (response.data.code==="NOT_FOUND"){
+                setTownResponse("No Towns found")
+            }
+        }
+        catch(err){
+            console.log(err)
+            if(err){
+                setTownResponse("Error fetching resource, Please check your network connection")
+            }
+            else if(err){
+                setTownResponse("No Categories found")
+            }
+        }
+        finally{
+        setLoading(false)
+        }
+    }
+
+    const handleDelete = async (id) => {
         setLoading(true)
         setIsDelete(true)
-        dispatch(deleteTown({
-            id
-        }))
-        .finally(()=>{
-            dispatch(fetchAsyncTowns())
-            .then(()=>{
+        try{
+            const response = await InsuranceApi.delete(`/town/${id}`)
+            if(response&&response.data.code==="OK"){
+                setMessage("Deleted")
+            }
+          }
+          catch(err){
+              console.log(err)
+          }
+          finally{
+            setTimeout(()=>{
                 setLoading(false)
                 setIsDelete(false)
-            })
-        })
+                setMessage('')
+            },1000)
+            fetchTowns()
+        }
     }
 
     const renderTableHeader = () => {
@@ -173,7 +181,7 @@ export default function TownsTable() {
         <>
             <div className="p-5 bg-white rounded-md border border-gray-200 border-solid border-1">
                 {
-                    isOpen&& <TownModal setModal={getModal} data={modalData}/>
+                    isOpen&& <TownModal setModal={getModal} data={modalData} refresh={fetchTowns}/>
                 }
                 {
                     viewOpen&& <TownViewModal setModal={getViewModal} data={modalData}/>

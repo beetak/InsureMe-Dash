@@ -4,6 +4,7 @@ import { HashLoader } from 'react-spinners';
 import { updatePolicy } from '../../store/policy-store';
 import Modal from '../modal/Modal';
 import { getCategories } from '../../store/category-store';
+import InsuranceApi from '../api/InsuranceApi';
 
 export default function PolicyModal(props) {
 
@@ -28,35 +29,33 @@ export default function PolicyModal(props) {
     const handleSubmit = async (e) => {
         e.preventDefault()        
         setLoading(true)
-        dispatch(updatePolicy({
-            id: props.data.policyTypeId,
-            data:{
+        try{
+            const response = await InsuranceApi.put(`/policy-types/${props.data.policyTypeId}`,{
                 policyTypeName,
                 policyTypeDescription,
                 categoryId,
                 isActive
-            }
-        }))
-        .then((response)=>{
-            if(response.payload&&response.payload.success){
+            })
+            if(response.data&&response.data.httpStatus==="OK"){
                 setSuccess(true)
             }
             else{
                 setFailed(true)
-            }            
-        })
-        .finally(()=>{
+            }
+        }
+        finally{
             setTimeout(()=>{
                 setLoading(false)
                 setFailed(false)
-                setSuccess(false)
                 setPrice('')
                 setPolicyTypeDescription('')
                 setCategoryId(0)
                 setPolicyTypeName("")
+                props.refresh()
+                setSuccess(false)
                 props.setModal(close)
             },1000)
-        })
+        }
     }
 
     const getModal =(isOpen)=>{

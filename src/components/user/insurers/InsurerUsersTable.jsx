@@ -1,23 +1,24 @@
 import React, { useEffect, useState } from 'react'
-import { deleteInsurerAdmin, fetchAsyncAdmins, fetchAsyncInsurerAdmins, getInsurerUsers, getUsers } from '../../../store/user-store'
-import { useDispatch, useSelector } from 'react-redux'
-import { navActions } from '../../../store/nav-store'
 import { ScaleLoader } from 'react-spinners'
 import InsurerUserModal from './InsurerUserModal'
 import InsurerUserViewModal from './InsurerUserViewModal'
 import InsuranceApi, { setupInterceptors } from '../../api/InsuranceApi'
 import useAuth from '../../../hooks/useAuth'
+import DeleteConfirmationModal from '../../deleteConfirmation/deleteConfirmationModal'
 
 export default function InsurerUsersTable() {
 
     const {user, setUser} = useAuth()
 
     const [userResponse, setUserResponse] = useState('')
+    const [message, setMessage] = useState('')
     const [loading, setLoading] = useState(false)
     const [isOpen, setIsOpen] = useState(false)
     const [viewOpen, setViewOpen] = useState(false)
     const [modalData, setModalData] = useState(null)
     const [users, setUsers] = useState('')
+    const [itemId, setItemId] = useState('')
+    const [isDelete, setIsDelete] = useState(false)
   
     useEffect(()=>{
       setupInterceptors(() => user, setUser);
@@ -48,26 +49,26 @@ export default function InsurerUsersTable() {
         }
     }
 
-    const handleDelete = (id) => {
+    const handleDelete = async (id) => {
       setLoading(true)
       setMessage("Deleting...")
-      dispatch(deleteInsurerAdmin({
-          id
-      }))
-      .then((response)=>{
-          if(response.payload&&response.payload.success){
-            setMessage("Deleted")
-          }
-          else{
-              setLoading(true)
-          }            
-      })
-      .finally(()=>{
-        dispatch(fetchAsyncInsurerAdmins())
-        .then(()=>{
+      try{
+        const response = await InsuranceApi.delete(`/insurer-users/${id}`)
+        if(response&&response.data.code==="OK"){
+          setMessage("Deleted")
+        }
+      }
+      catch(err){
+          console.log(err)
+      }
+      finally{
+        setTimeout(()=>{
           setLoading(false)
-        })
-      })
+          setIsDelete(false)
+          setMessage('')
+        },1000)
+        fetchUsers()
+      }
     }
       
     const renderTableHeader = () => {
@@ -152,8 +153,10 @@ export default function InsurerUsersTable() {
                 </button>
                 <button
                   onClick={
-                    ()=>
-                      handleDelete(item.id)
+                    ()=>{
+                      setItemId(item.id)
+                      setIsDelete(true)
+                    }
                   }
                   className={`space-x-2 border-gray-300 items-center rounded-r-full px-4 h-6 bg-gray-700 text-gray-100 hover:text-gray-700 hover:bg-white`}
                 >
@@ -185,6 +188,9 @@ export default function InsurerUsersTable() {
           }
           {
             viewOpen&& <InsurerUserViewModal setModal={getViewModal} data={modalData}/>
+          }
+          {
+            isDelete&& <DeleteConfirmationModal deleteOpen={isDelete} onClose={()=>setIsDelete(false)} onDelete={()=>handleDelete(itemId)}/>
           }
           <h2 className="text-lg font-semibold">Internal Users Table</h2>
           <div className='flex justify-between py-4'>

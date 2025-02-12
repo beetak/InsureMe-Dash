@@ -6,6 +6,7 @@ import { deleteInsurer, fetchAsyncInsurer } from '../../store/insurer-store';
 import InsurerViewModal from './InsurerViewModal';
 import InsuranceApi, { setupInterceptors } from '../api/InsuranceApi';
 import useAuth from '../../hooks/useAuth';
+import DeleteConfirmationModal from '../deleteConfirmation/deleteConfirmationModal';
 
 export default function InsurerTable() {
 
@@ -14,11 +15,13 @@ export default function InsurerTable() {
   const [insurerResponse, setCatResponse] = useState('')
   const [loading, setLoading] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
+  const [itemId, setItemId] = useState('')
   const [viewOpen, setViewOpen] = useState(false)
   const [modalData, setModalData] = useState(null)
   const [message, setMessage] = useState('')
   const [insurers, setInsurers] = useState('')
   const [error, setError] = useState('')
+  const [isDelete, setIsDelete] = useState(false)
 
   useEffect(()=>{
     setupInterceptors(() => user, setUser);
@@ -47,7 +50,7 @@ export default function InsurerTable() {
     setMessage("Deleting...")
     try{
       const response = await InsuranceApi.delete(`/insurers/${id}`)
-      if(response){
+      if(response&&response.data.code==="OK"){
         setMessage("Deleted")
       }
     }
@@ -55,7 +58,12 @@ export default function InsurerTable() {
         console.log(err)
     }
     finally{
-      setLoading(false)
+      setTimeout(()=>{
+        setLoading(false)
+        setIsDelete(false)
+        setMessage('')
+      },1000)
+      fetchInsurer()
     }
   }
     
@@ -130,8 +138,10 @@ export default function InsurerTable() {
             </button>
             <button
               onClick={
-                ()=>
-                  handleDelete(item.insurerId)
+                ()=>{
+                  setItemId(item.insurerId)
+                  setIsDelete(true)
+                }
               }
               className={`space-x-2 border-gray-300 items-center rounded-r-full px-4 h-6 bg-gray-700 text-gray-100 hover:text-gray-700 hover:bg-white`}
             >
@@ -163,6 +173,9 @@ export default function InsurerTable() {
         }
         {
           viewOpen&& <InsurerViewModal setModal={getViewModal} data={modalData}/>
+        }
+        {
+          isDelete&& <DeleteConfirmationModal deleteOpen={isDelete} onClose={()=>setIsDelete(false)} onDelete={()=>handleDelete(itemId)}/>
         }
         <h2 className="text-lg font-semibold">Insurance Type Data</h2>
         <div className='flex justify-between py-4'>

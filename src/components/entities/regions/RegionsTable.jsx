@@ -16,6 +16,7 @@ export default function RegionsTable() {
     },[])
 
     const [regionResponse, setRegionResponse] = useState('')
+    const [message, setMessage] = useState('')
     const [loading, setLoading] = useState(false)
     const [isOpen, setIsOpen] = useState(false)
     const [itemId, setItemId] = useState('')
@@ -25,45 +26,54 @@ export default function RegionsTable() {
     const [regions, setRegions] = useState('')
   
     useEffect(()=>{
-        const fetchRegions = async () => {
-            setLoading(true)
-            try{
-                const response = await InsuranceApi.get('/region')
-                if(response.data.code==="OK"&&response.data.data.length>0){
-                    setRegions(response.data.data)
-                }
-                else if (response.data.code==="OK"&&response.data.data.length<1){
-                    setRegionResponse("No Regions found")
-                }
-            }
-            catch(err){
-                if(err){
-                    setRegionResponse("Error fetching resource, Please check your network connection")
-                }
-                else if(err){
-                    setRegionResponse("No Regions found")
-                }
-            }
-            finally{
-                setLoading(false)
-            }
-        }
         fetchRegions()
     },[])
 
-    const handleDelete = (id) => {
+    const fetchRegions = async () => {
+        setLoading(true)
+        try{
+            const response = await InsuranceApi.get('/region')
+            if(response.data.code==="OK"&&response.data.data.length>0){
+                setRegions(response.data.data)
+            }
+            else if (response.data.code==="OK"&&response.data.data.length<1){
+                setRegionResponse("No Regions found")
+            }
+        }
+        catch(err){
+            if(err){
+                setRegionResponse("Error fetching resource, Please check your network connection")
+            }
+            else if(err){
+                setRegionResponse("No Regions found")
+            }
+        }
+        finally{
+            setLoading(false)
+        }
+    }
+
+    const handleDelete = async (id) => {
         setLoading(true)
         setIsDelete(true)
-        dispatch(deleteRegion({
-            id
-        }))
-        .finally(()=>{
-            dispatch(fetchAsyncRegions())
-          .then(()=>{
-            setLoading(false)
-            setIsDelete(false)
-          })
-        })
+        setMessage("Deleting...")
+        try{
+            const response = await InsuranceApi.delete(`/region/${id}`)
+            if(response&&response.data.code==="OK"){
+                setMessage("Deleted")
+            }
+          }
+          catch(err){
+              console.log(err)
+          }
+          finally{
+            setTimeout(()=>{
+                setLoading(false)
+                setIsDelete(false)
+                setMessage('')
+            },1000)
+            fetchRegions()
+        }
     }
 
     console.log("my regions ", regions)
@@ -170,7 +180,7 @@ export default function RegionsTable() {
         <>
           <div className="p-5 bg-white rounded-md border border-gray-200 border-solid border-1">
                 {
-                    isOpen&& <RegionModal setModal={getModal} data={modalData}/>
+                    isOpen&& <RegionModal setModal={getModal} data={modalData} refresh={fetchRegions}/>
                 }
                 {
                     viewOpen&& <RegionViewModal setModal={getViewModal} data={modalData}/>

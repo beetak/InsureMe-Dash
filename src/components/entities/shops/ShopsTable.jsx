@@ -25,34 +25,33 @@ export default function ShopsTable() {
     const [shops, setShops] = useState('')
   
     useEffect(()=>{
-        const fetchShops = async () => {
-            setLoading(true)
-            try{
-                const response = await InsuranceApi.get('/shop')
-                console.log("respo", response)
-                if(response.data.code==="OK"&&response.data.data!==null){
-                    console.log("My",response.data)
-                    setShops(response.data.data)
-                }
-                else if (response.data.code==="NOT_FOUND"){
-                    setShopResponse("No Shops found")
-                }
-            }
-            catch(err){
-                if(err){
-                    setShopResponse("Error fetching resource, Please check your network connection")
-                }
-                else if(err){
-                    setShopResponse("No Categories found")
-                }
-            }
-            finally{
-                setLoading(false)
-            }
-        }
-
         fetchShops()
     },[])
+    const fetchShops = async () => {
+        setLoading(true)
+        try{
+            const response = await InsuranceApi.get('/shop')
+            console.log("respo", response)
+            if(response.data.code==="OK"&&response.data.data!==null){
+                console.log("My",response.data)
+                setShops(response.data.data)
+            }
+            else if (response.data.code==="NOT_FOUND"){
+                setShopResponse("No Shops found")
+            }
+        }
+        catch(err){
+            if(err){
+                setShopResponse("Error fetching resource, Please check your network connection")
+            }
+            else if(err){
+                setShopResponse("No Categories found")
+            }
+        }
+        finally{
+            setLoading(false)
+        }
+    }
 
     const handleDelete = (id) => {
         setLoading(true)
@@ -176,7 +175,7 @@ export default function ShopsTable() {
         <>
           <div className="p-5 bg-white rounded-md border border-gray-200 border-solid border-1">
                 {
-                    isOpen&& <ShopModal setModal={getModal} data={modalData}/>
+                    isOpen&& <ShopModal setModal={getModal} data={modalData} refresh={fetchShops}/>
                 }
                 {
                     viewOpen&& <ShopViewModal setModal={getViewModal} data={modalData}/>

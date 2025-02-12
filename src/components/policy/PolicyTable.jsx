@@ -131,24 +131,27 @@ export default function PolicyTable() {
     </tr>
   }
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     setLoading(true)
     setMessage("Deleting...")
     setIsDelete(true)
-    dispatch(deletePolicy({
-        id
-    }))
-    .then((response)=>{
-        if(response.payload&&response.payload.success){
-          setMessage("Deleted")
-        }
-        else{
-            setLoading(true)
-        }            
-    })
-    .finally(()=>{
+    try{
+      const response = await InsuranceApi.delete(`/policy-types/${id}`)
+      if(response&&response.data.code==="OK"){
+        setMessage("Deleted")
+      }
+    }
+    catch(err){
+        console.log(err)
+    }
+    finally{
       fetchPolicy()
-    })
+      setTimeout(()=>{
+        setLoading(false)
+        setIsDelete(false)
+        setMessage('')
+      },1000)
+    }
   }
 
   function formatDate(dateString) {
@@ -247,7 +250,7 @@ export default function PolicyTable() {
     <>
       <div className="p-5 bg-white rounded-md border border-gray-200 border-solid border-1">
         {
-          isOpen&& <PolicyModal setModal={getModal} data={modalData}/>
+          isOpen&& <PolicyModal setModal={getModal} data={modalData} refresh={fetchPolicy}/>
         }
         {
           viewOpen&& <PolicyViewModal setModal={getViewModal} data={modalData}/>

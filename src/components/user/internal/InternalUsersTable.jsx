@@ -1,24 +1,18 @@
 import React, { useEffect, useState } from 'react'
-import { deleteUser, fetchAsyncAdmins, getUsers } from '../../../store/user-store'
-import { useDispatch, useSelector } from 'react-redux'
-import { navActions } from '../../../store/nav-store'
 import { ScaleLoader } from 'react-spinners'
 import InternalUserModal from './InternalUserModal';
 import InternalUserViewModal from './InternalUserViewModal';
 import DeleteConfirmationModal from '../../deleteConfirmation/deleteConfirmationModal'
 import useAuth from '../../../hooks/useAuth'
-import InsuranceApi from '../../api/InsuranceApi'
+import InsuranceApi, { setupInterceptors } from '../../api/InsuranceApi'
 
 export default function InternalUsersTable() {
 
-    const {user} = useAuth()
-    const {accessToken} = user
+    const {user, setUser} = useAuth()
 
-    const headers = {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-    } 
+    useEffect(()=>{
+        setupInterceptors(()=> user, setUser)
+    })
 
     const [userResponse, setUserResponse] = useState('')
     const [loading, setLoading] = useState(false)
@@ -28,6 +22,7 @@ export default function InternalUsersTable() {
     const [modalData, setModalData] = useState(null)
     const [itemId, setItemId] = useState('')
     const [users, setUsers] = useState('')
+    const [message, setMessage] = useState('')
   
     useEffect(()=>{
         fetchUsers()
@@ -36,7 +31,7 @@ export default function InternalUsersTable() {
     const fetchUsers = async () => {
         setLoading(true)
         try{
-            const response = await InsuranceApi.get('/users', {headers})
+            const response = await InsuranceApi.get('/users')
             if(response&&response.data){
                 console.log(response.data)
                 setUsers(response.data.data)
@@ -56,41 +51,49 @@ export default function InternalUsersTable() {
         }
     }
 
-    const handleDelete = (id) => {
+    const handleDelete = async(id) => {
         setLoading(true)
+        setMessage("Deleting...")
         setIsDelete(true)
-        dispatch(deleteUser({
-            id
-        }))
-        .finally(()=>{
-            dispatch(fetchAsyncAdmins())
-            .then(()=>{
+        try{
+            const response = await InsuranceApi.delete(`/users/${id}`)
+            if(response&&response.data.code==="OK"){
+                setMessage("Deleted")
+            }
+        }
+        catch(err){
+            console.log(err)
+        }
+        finally{
+            setTimeout(()=>{
                 setLoading(false)
                 setIsDelete(false)
-            })
-        })
+                setMessage('')
+            },1000)
+            fetchUsers()
+        }
     }
       
     const renderTableHeader = () => {
-      const columns = [
-        { key: 'item', label: '#', width: "1" },
-        { key: 'name', label: 'Firstname' },
-        { key: 'name', label: 'Lastname' },
-        { key: 'category', label: 'Role' },
-        { key: 'status', label: 'Status' },
-        { key: 'action', label: 'Action' },
-      ];
+        const columns = [
+            { key: 'item', label: '#', width: "1" },
+            { key: 'name', label: 'Firstname' },
+            { key: 'name', label: 'Lastname' },
+            { key: 'category', label: 'Role' },
+            { key: 'status', label: 'Status' },
+            { key: 'action', label: 'Action' },
+        ];
   
-      return columns.map((column) => (
-        <th key={column.key} className={`text-sm font-bold tracking-wide text-left ${column.width ? "p-3 w-" + column.width : "py-3"} ${column.key === 'status' && "text-center"} ${column.key === 'action' && "text-center"}`}>
-          <span className="mr-2">{column.label}</span>            
-        </th>
-      ));
+        return columns.map((column) => (
+            <th key={column.key} className={`text-sm font-bold tracking-wide text-left ${column.width ? "p-3 w-" + column.width : "py-3"} ${column.key === 'status' && "text-center"} ${column.key === 'action' && "text-center"}`}>
+                <span className="mr-2">{column.label}</span>            
+            </th>
+        ));
     };
   
     const loadingAnimation = () => {
         return <tr>
-          <td colSpan={7} style={{ textAlign: 'center' }} className='py-3'>
+            <td colSpan={7} style={{ textAlign: 'center' }} className='py-3'>
                 <ScaleLoader
                     color='#374151'
                     loading={loading}

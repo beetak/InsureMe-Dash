@@ -1,13 +1,17 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Modal from '../modal/Modal';
-import { useDispatch, useSelector } from 'react-redux';
-import { getCategories, updateCategory } from '../../store/category-store';
 import { HashLoader } from 'react-spinners';
 import icons from './icons.json'
+import useAuth from '../../hooks/useAuth';
+import InsuranceApi, { setupInterceptors } from '../api/InsuranceApi';
 
 export default function CategoryModal(props) {
 
-    const dispatch = useDispatch()
+    const { user, setUser } = useAuth()
+
+    useEffect(()=>{
+        setupInterceptors(()=> user, setUser)
+    })
 
     const [description, setDescription] = useState("");
     const [categoryName, setCategoryName] = useState("");
@@ -23,32 +27,30 @@ export default function CategoryModal(props) {
     const handleSubmit = async (e) => {
         e.preventDefault()        
         setLoading(true)
-        dispatch(updateCategory({
-            id: props.data.categoryId,
-            data:{
+        try{
+            const response = await InsuranceApi.put(`/categories/${props.data.categoryId}`,{
                 categoryName,
                 description,
                 iconUrl,
                 isActive
-            }
-        }))
-        .then((response)=>{
-            if(response.payload&&response.payload.success){
+            })
+            if(response.data&&response.data.httpStatus==="OK"){
                 setSuccess(true)
             }
             else{
                 setFailed(true)
-            }            
-        })
-        .finally(()=>{
+            }
+        }
+        finally{
             setTimeout(()=>{
                 setLoading(false)
                 setFailed(false)
                 setSuccess(false)
                 setDescription('')
+                props.refresh()
                 props.setModal(close)
             },1000)
-        })
+        }
     }
 
     const getModal =(isOpen)=>{

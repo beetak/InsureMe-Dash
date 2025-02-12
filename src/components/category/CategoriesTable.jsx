@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
-import { deleteCategory, fetchAsyncCategory, getCategories } from '../../store/category-store';
 import { ScaleLoader } from 'react-spinners';
 import CategoryModal from './CategoryModal';
 import CategoryViewModal from './CategoryViewModal';
@@ -21,8 +19,6 @@ export default function CategoriesTable() {
   const [viewOpen, setViewOpen] = useState(false)
   const [modalData, setModalData] = useState(null)
   const [categories, setCategories] = useState([])
-  
-  const dispatch = useDispatch()
 
   useEffect(() => {
     fetchCategory()
@@ -57,7 +53,7 @@ export default function CategoriesTable() {
     setIsDelete(true)
     try{
       const response = await InsuranceApi.delete(`/categories/${id}`)
-      if(response){
+      if(response&&response.data.code==="OK"){
         setMessage("Deleted")
       }
     }
@@ -65,7 +61,12 @@ export default function CategoriesTable() {
         console.log(err)
     }
     finally{
-      setLoading(false)
+      setTimeout(()=>{
+        setLoading(false)
+        setIsDelete(false)
+        setMessage('')
+      },1000)
+      fetchCategory()
     }
   }
     
@@ -177,7 +178,7 @@ export default function CategoriesTable() {
     <>
       <div className="p-5 bg-white rounded-md border border-gray-200 border-solid border-1">
         {
-          isOpen&& <CategoryModal setModal={getModal} data={modalData}/>
+          isOpen&& <CategoryModal setModal={getModal} data={modalData} refresh={fetchCategory}/>
         }
         {
           viewOpen&& <CategoryViewModal setModal={getViewModal} data={modalData}/>

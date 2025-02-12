@@ -47,15 +47,15 @@ export default function SideBar() {
         },
         { title: "Entities", icon: "fas fa-globe", tab:"entities", dropdown: true,
             submenuItems: [
-                { title: "Regions", src: "/regions", icon: "fas fa-home", tab:"entities"},
+                { title: "Regions", src: "/regions", icon: "fas fa-registered", tab:"entities"},
                 { title: "Towns", src: "/towns", icon: "fas fa-user", tab:"entities"},
-                { title: "Shops", src: "/shops", icon: "fas fa-users", tab:"entities"},
+                { title: "Shops", src: "/shops", icon: "fas fa-store", tab:"entities"},
                 { title: "Insurance Companies", src: "/insurers", icon: "fas fa-users", tab:"entities"},
             ]
         },
         { title: "User Management", icon: "fas fa-user", tab:"user-management", dropdown: true,
             submenuItems: [
-                { title: "Internal Users", src: "/internal-users", icon: "fas fa-home", tab:"entities"},
+                { title: "Internal Users", src: "/internal-users", icon: "fas fa-user", tab:"entities"},
                 { title: "Insurer Users", src: "/insurer-users", icon: "fas fa-user", tab:"entities"},
                 { title: "Customers", src: "/customers", icon: "fas fa-user", tab:"entities"},
             ]
