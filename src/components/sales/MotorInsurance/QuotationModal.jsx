@@ -236,7 +236,7 @@ export default function QuotationModal({ setModal }) {
             } else if (
                 response.statusText === "OK" && (
                     response.data.Response.Quotes[0].Message === "USD payments are currently suspended for this company" ||
-                    response.data.Response.Quotes[0].Message === "ZIG payments are currently suspended for this company"
+                    response.data.Response.Quotes[0].Message === "ZWG payments are currently suspended for this company"
                 )
             ) {
                 setStatusMessage("No USD payments")
@@ -582,7 +582,8 @@ export default function QuotationModal({ setModal }) {
             mobileNumber: userData.phoneNumber,
             paymentStatus: "PENDING",
             paymentMethod: method,
-            amount: quotation.amount
+            amount: quotation.amount,
+            currency: policyData.currency
         }
         try {
             const payResult = await InsuranceApi.post("/product-payments", paymentBody)

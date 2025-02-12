@@ -155,7 +155,7 @@ export default function PropertyProposals() {
                     500
                 </td>
                 <td>
-                    {/* {item.totalZigAmount.toLocaleString('en-US', {
+                    {/* {item.totalZWGAmount.toLocaleString('en-US', {
                         style: 'currency',
                         currency: 'USD',
                     })} */}
@@ -186,7 +186,7 @@ export default function PropertyProposals() {
     
         const headers = [
                 ["Policy", "Quantity", "Revenue Collections",""],
-                ["", "", "USD","ZIG"]
+                ["", "", "USD","ZWG"]
         ];
     
         let invoiceContent = {
@@ -210,7 +210,7 @@ export default function PropertyProposals() {
                     policy.policyName,
                     10,
                     policy.totalAmountUsd,
-                    policy.totalAmountZig
+                    policy.totalAmountZWG
                 ])
             ]),
             bodyStyles: {

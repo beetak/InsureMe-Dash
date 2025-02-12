@@ -46,13 +46,13 @@ export default function InsuranceStats() {
                                     <div className="flex flex-col px-4 space-y-4 w-1/2">
                                         <h1  className='text-xs text-bold text-white' ><i className='fa fa-car text-lg mr-4'/>Vehicle Insurance</h1>                                
                                         <div className="flex w-full text-white justify-between">
-                                            <p className='flex flex-col'>200<span className='text-xs'>Zig 0.00</span><span className='text-xs'>USD 0.00</span></p>
+                                            <p className='flex flex-col'>200<span className='text-xs'>ZWG 0.00</span><span className='text-xs'>USD 0.00</span></p>
                                         </div>
                                     </div>
                                     <div className="flex flex-col px-4 space-y-4 w-1/2">
                                         <h1  className='text-xs text-bold text-white' ><i class="fa-solid fa-shield-halved text-lg mr-4"/>Other Insurance</h1>                                
                                         <div className="flex w-full text-white justify-between">
-                                            <p className='flex flex-col'>200<span className='text-xs'>Zig 200,000.00</span><span className='text-xs'>USD 12,000.00</span></p>
+                                            <p className='flex flex-col'>200<span className='text-xs'>ZWG 200,000.00</span><span className='text-xs'>USD 12,000.00</span></p>
                                         </div>
                                     </div>
                                 </div>

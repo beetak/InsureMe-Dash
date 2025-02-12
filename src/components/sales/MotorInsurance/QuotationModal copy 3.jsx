@@ -232,7 +232,7 @@ export default function QuotationModal({ setModal }) {
             } else if (
                 response.statusText === "OK" && (
                 response.data.Response.Quotes[0].Message === "USD payments are currently suspended for this company" ||
-                response.data.Response.Quotes[0].Message === "ZIG payments are currently suspended for this company"
+                response.data.Response.Quotes[0].Message === "ZWG payments are currently suspended for this company"
                 )
             ) {
                 setStatusMessage("No USD payments")

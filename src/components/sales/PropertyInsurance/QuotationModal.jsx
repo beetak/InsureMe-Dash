@@ -330,6 +330,7 @@ export default function QuotationModal({ setModal }) {
             paymentStatus: "ACCEPTED",
             paymentMethod: method,
             amount: quotation.calculatedPrice,
+            currency: propertyData.currency
         }
         try {
             const payResult = await InsuranceApi.post("/product-payments", paymentBody)

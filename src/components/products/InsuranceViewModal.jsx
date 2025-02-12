@@ -20,7 +20,7 @@ export default function InsuranceViewModal(props) {
                     <div className="flex flex-col items-center text-gray-600 space-y-3">
                         <h2 className="text-lg font-semibold text-gray-600"><span className='font-semibold text-xs'>Product Name: </span>{props.data.productName}</h2>
                         <p className=''><span className='font-semibold text-xs'>Product Category: </span> {props.data.categoryId}</p>
-                        <p className=''><span className='font-semibold text-xs'>Price: </span>$ {props.data.price} ZiG</p>
+                        <p className=''><span className='font-semibold text-xs'>Price: </span>$ {props.data.price} ZWG</p>
                         <p className=''><span className='font-semibold text-xs'>Date Created: </span> {formatDate(props.data.createdAt)}</p>
                         <div className='w-full justify-center flex items-center'> <span className={` font-semibold uppercase text-xs tracking-wider px-3 text-white ${props.data.isActive?" bg-green-600": " bg-red-600 "} rounded-full py-1`}>{props.data.isActive?"Active":"Inactive"}</span></div>
                     </div>

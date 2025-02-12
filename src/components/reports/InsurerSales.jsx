@@ -87,7 +87,7 @@ export default function InsurerSales() {
             label: 'Revenue Collections',
             subHeaders: [
               { key: 'usd', label: 'USD' },
-              { key: 'zig', label: 'ZIG' },
+              { key: 'ZWG', label: 'ZWG' },
             ],
           },
         ];

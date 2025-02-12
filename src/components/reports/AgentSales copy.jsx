@@ -95,7 +95,7 @@ export default function AgentSales() {
         // Add table
         const headers = [
             ["Broker", "Policy", "Revenue Collections", "", "TelOne Commission", "", "Broker Remittance", ""],
-            ["", "", "USD", "ZIG", "USD", "ZIG", "USD", "ZIG"]
+            ["", "", "USD", "ZWG", "USD", "ZWG", "USD", "ZWG"]
         ]
 
         const body = commissions.flatMap(broker => [
@@ -104,11 +104,11 @@ export default function AgentSales() {
                 '',
                 policy.policyName,
                 policy.totalAmountUsd,
-                policy.totalAmountZig,
+                policy.totalAmountZWG,
                 policy.telOneCommissionUsd,
-                policy.telOneCommissionZig,
+                policy.telOneCommissionZWG,
                 policy.brokerRemmitanceUsd,
-                policy.brokerRemmitanceZig
+                policy.brokerRemmitanceZWG
             ])
         ])
 
@@ -163,7 +163,7 @@ export default function AgentSales() {
                 label: 'Revenue Collections',
                 subHeaders: [
                     { key: 'usd', label: 'USD' },
-                    { key: 'zig', label: 'Payment Method' },
+                    { key: 'ZWG', label: 'Payment Method' },
                 ],
             },
         ]

@@ -297,7 +297,8 @@ export default function QuotationModal({ setModal }) {
             mobileNumber: travelData.phoneNumber,
             paymentStatus: "ACCEPTED",
             paymentMethod: method,
-            amount: quotation.amount
+            amount: quotation.amount,
+            currency: travelData.currency
         }
         try {
             const payResult = await InsuranceApi.post("/product-payments", paymentBody)

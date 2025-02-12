@@ -229,15 +229,15 @@ export default function PolicyDetails() {
                     </div>
                     <div className="flex items-center">
                         <input
-                            id="ZIG"
+                            id="ZWG"
                             name="currency"
                             type="checkbox"
                             className="form-checkbox h-4 w-4 text-indigo-600"
-                            checked={policyData.currency === 'ZIG'}
-                            onChange={() => handleCurrency('ZIG')}
+                            checked={policyData.currency === 'ZWG'}
+                            onChange={() => handleCurrency('ZWG')}
                         />
-                        <label htmlFor="ZIG" className="ml-2 text-gray-900">
-                            ZIG
+                        <label htmlFor="ZWG" className="ml-2 text-gray-900">
+                            ZWG
                         </label>
                     </div>
                 </div>

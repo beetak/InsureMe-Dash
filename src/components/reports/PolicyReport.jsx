@@ -95,7 +95,7 @@ export default function PolicyReport() {
             label: 'Revenue Collections',
             subHeaders: [
               { key: 'usd', label: 'USD' },
-              { key: 'zig', label: 'ZIG' },
+              { key: 'ZWG', label: 'ZWG' },
             ],
           },
         ];

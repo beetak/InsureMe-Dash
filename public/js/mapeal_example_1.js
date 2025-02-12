@@ -8173,7 +8173,7 @@ $(function() {
           longitude: 2.7577777777778,
           href: "#",
           tooltip: {
-            content: "<span style=\"font-weight:bold;\">LÃ©zignan-CorbiÃ¨res (11203)</span><br />Population : 10690"
+            content: "<span style=\"font-weight:bold;\">LÃ©ZWGnan-CorbiÃ¨res (11203)</span><br />Population : 10690"
           }
         },
         "town-97124": {

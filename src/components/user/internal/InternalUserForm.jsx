@@ -103,6 +103,7 @@ export default function InternalUserForm() {
                 }, 2000);
             }
             else if(domainName!==""&&role!==""){
+                const [firstname, lastname] = domainName.split('.');
 
                 const regionValidRoles = ["REGIONAL_ACCOUNTANT", "REGIONAL_GENERAL_MANAGER"];
                 const townValidRoles = ["AREA_BUSINESS_MANAGER", "BUSINESS_PERFORMANCE_SUPERVISOR"];
@@ -123,8 +124,8 @@ export default function InternalUserForm() {
                         try{
                             if(response){
                                 const response = await InsuranceApi.post(`/auth/register`,{
-                                    firstname: "Tawanda",
-                                    lastname: "Mpofu",
+                                    firstname,
+                                    lastname,
                                     email: domainName,
                                     phoneNumber,
                                     role
@@ -177,8 +178,8 @@ export default function InternalUserForm() {
                         
                         if(response.data.code==="CREATED"){
                             const response = await InsuranceApi.post(`/auth/register`,{
-                                firstname: "Tawanda",
-                                lastname: "Mpofu",
+                                firstname,
+                                lastname,
                                 email: domainName,
                                 phoneNumber,
                                 role
@@ -232,8 +233,8 @@ export default function InternalUserForm() {
                         setLoading(true)
                         setMessage("loading")
                         const response = await InsuranceApi.post(`/auth/register`,{
-                            firstname: "Tawanda",
-                            lastname: "Mpofu",
+                            firstname,
+                            lastname,
                             email: domainName,
                             phoneNumber,
                             role
@@ -267,8 +268,8 @@ export default function InternalUserForm() {
                     setMessage({status: false, data: ""});
                     try{
                         const response = await InsuranceApi.post(`/auth/register`,{
-                            firstname: "Tawanda",
-                            lastname: "Mpofu",
+                            firstname,
+                            lastname,
                             email: domainName,
                             phoneNumber,
                             role

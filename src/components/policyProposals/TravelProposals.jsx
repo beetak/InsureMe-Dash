@@ -237,7 +237,7 @@ export default function TravelProposals() {
     
         const headers = [
                 ["Broker", "Policy", "Revenue Collections","", "TelOne Commission","", "Broker Remmitance",""],
-                ["", "", "USD","ZIG", "USD","ZIG", "USD","ZIG"]
+                ["", "", "USD","ZWG", "USD","ZWG", "USD","ZWG"]
         ];
     
         let invoiceContent = {
@@ -262,11 +262,11 @@ export default function TravelProposals() {
                     '', // Leave the first column empty for the policy details
                     policy.policyName,
                     policy.totalAmountUsd,
-                    policy.totalAmountZig,
+                    policy.totalAmountZWG,
                     policy.telOneCommissionUsd,
-                    policy.telOneCommissionZig,
+                    policy.telOneCommissionZWG,
                     policy.brokerRemmitanceUsd,
-                    policy.brokerRemmitanceZig
+                    policy.brokerRemmitanceZWG
                 ])
             ]),
             bodyStyles: {

@@ -41,14 +41,14 @@ export default function SideBar() {
             submenuItems: [,
                 { title: "Commisions", src: "/commissions", icon: "fas fa-user", tab:"revenue"},
                 { title: "Reports", src: "/reports", icon: "fas fa-file-alt", tab:"revenue"},
-                { title: "Cover Notes", src: "/notes", icon: "fas fa-shield", tab:"revenue"},
-                { title: "Claims", src: "/claims", icon: "fas fa-chart-bar", tab:"revenue"},
+                // { title: "Cover Notes", src: "/notes", icon: "fas fa-shield", tab:"revenue"},
+                // { title: "Claims", src: "/claims", icon: "fas fa-chart-bar", tab:"revenue"},
             ]
         },
         { title: "Entities", icon: "fas fa-globe", tab:"entities", dropdown: true,
             submenuItems: [
                 { title: "Regions", src: "/regions", icon: "fas fa-registered", tab:"entities"},
-                { title: "Towns", src: "/towns", icon: "fas fa-user", tab:"entities"},
+                { title: "Towns", src: "/towns", icon: "fas fa-t", tab:"entities"},
                 { title: "Shops", src: "/shops", icon: "fas fa-store", tab:"entities"},
                 { title: "Insurance Companies", src: "/insurers", icon: "fas fa-users", tab:"entities"},
             ]

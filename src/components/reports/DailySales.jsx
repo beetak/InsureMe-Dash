@@ -54,7 +54,7 @@ export default function DailySales() {
             label: 'Revenue Collections',
             subHeaders: [
               { key: 'usd', label: 'USD' },
-              { key: 'zig', label: 'ZIG' },
+              { key: 'ZWG', label: 'ZWG' },
             ],
           },
         ];
@@ -116,7 +116,7 @@ export default function DailySales() {
                     300
                 </td>
                 <td>
-                    {/* {item.totalZigAmount.toLocaleString('en-US', {
+                    {/* {item.totalZWGAmount.toLocaleString('en-US', {
                         style: 'currency',
                         currency: 'USD',
                     })} */}

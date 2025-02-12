@@ -36,17 +36,17 @@ export default function Reports() {
   }, [location])
 
   const menus = [
-    { title: "National Sales", icon: "fas fa-pen-nib", tab:1 },
-    { title: "Shop Sales", icon: "fas fa-book", tab:2 },
-    { title: "Commission", icon: "fas fa-book", tab:4 },
+    // { title: "National Sales", icon: "fas fa-pen-nib", tab:1 },
+    // { title: "Shop Sales", icon: "fas fa-book", tab:2 },
+    // { title: "Commission", icon: "fas fa-book", tab:4 },
     { title: "Agent Sales", icon: "fas fa-book", tab:(userRole==='INSURER_ADMIN' || userRole==='SALES_AGENT')?1:3 },
-    { title: "Tax", icon: "fas fa-book", tab:5 },
-    { title: "Policy", icon: "fas fa-book", tab:6 },
-    { title: "Insurer", icon: "fas fa-book", tab:7 },
-    { title: "Sales", icon: "fas fa-book", tab:userRole==='INSURER_ADMIN'?2:'' },
+    // { title: "Tax", icon: "fas fa-book", tab:5 },
+    // { title: "Policy", icon: "fas fa-book", tab:6 },
+    // { title: "Insurer", icon: "fas fa-book", tab:7 },
+    // { title: "Sales", icon: "fas fa-book", tab:userRole==='INSURER_ADMIN'?2:'' },
     { title: "Daily Sales", icon: "fas fa-book", tab:userRole==='INSURER_ADMIN'?3:8},
     { title: "Transaction", icon: "fas fa-book", tab:(userRole==='INSURER_ADMIN' || userRole==='SALES_AGENT')?4:9 },
-    { title: "Commissions", icon: "fas fa-book", tab:userRole==='INSURER_ADMIN'?5:10 },
+    // { title: "Commissions", icon: "fas fa-book", tab:userRole==='INSURER_ADMIN'?5:10 },
   ]
 
   const filteredMenus = menus.filter((menu) => {

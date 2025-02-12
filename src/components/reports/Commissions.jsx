@@ -94,7 +94,7 @@ export default function Commissions() {
             label: 'Revenue Collections',
             subHeaders: [
               { key: 'usd', label: 'USD' },
-              { key: 'zig', label: 'ZIG' },
+              { key: 'ZWG', label: 'ZWG' },
             ],
           },
           {
@@ -102,7 +102,7 @@ export default function Commissions() {
             label: 'TelOne Commission 10%',
             subHeaders: [
               { key: 'usd', label: 'USD' },
-              { key: 'zig', label: 'ZIG' },
+              { key: 'ZWG', label: 'ZWG' },
             ],
           },
           {
@@ -110,7 +110,7 @@ export default function Commissions() {
             label: 'Broker Remmitance',
             subHeaders: [
               { key: 'usd', label: 'USD' },
-              { key: 'zig', label: 'ZIG' },
+              { key: 'ZWG', label: 'ZWG' },
             ],
           },
         ];
@@ -231,7 +231,7 @@ export default function Commissions() {
     const printDocument = () => {        
         const headers = [
                 ["Broker", "Policy", "Revenue Collections","", "TelOne Commission","", "Broker Remmitance",""],
-                ["", "", "USD","ZIG", "USD","ZIG", "USD","ZIG"]
+                ["", "", "USD","ZWG", "USD","ZWG", "USD","ZWG"]
         ];
     
         let invoiceContent = {
@@ -256,11 +256,11 @@ export default function Commissions() {
                     '', // Leave the first column empty for the policy details
                     policy.policyName,
                     policy.totalAmountUsd,
-                    policy.totalAmountZig,
+                    policy.totalAmountZWG,
                     policy.telOneCommissionUsd,
-                    policy.telOneCommissionZig,
+                    policy.telOneCommissionZWG,
                     policy.brokerRemmitanceUsd,
-                    policy.brokerRemmitanceZig
+                    policy.brokerRemmitanceZWG
                 ])
             ]),
             bodyStyles: {

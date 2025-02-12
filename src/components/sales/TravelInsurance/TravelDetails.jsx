@@ -167,15 +167,15 @@ export default function TravelDetails() {
                   </div>
                   <div className="flex items-center">
                     <input
-                      id="ZIG"
+                      id="ZWG"
                       name="currency"
                       type="checkbox"
                       className="form-checkbox h-4 w-4 text-indigo-600"
-                      checked={travelData.currency === 'ZIG'}
-                      onChange={() => handleCurrency('ZIG')}
+                      checked={travelData.currency === 'ZWG'}
+                      onChange={() => handleCurrency('ZWG')}
                     />
-                    <label htmlFor="ZIG" className="ml-2 text-gray-900">
-                      ZIG
+                    <label htmlFor="ZWG" className="ml-2 text-gray-900">
+                      ZWG
                     </label>
                   </div>
                 </div>
