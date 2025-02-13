@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react'
-import Modal from '../../modal/Modal';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchAsyncRegions, fetchAsyncShops, fetchAsyncTowns, getRegions, getShops, getTowns } from '../../../store/entity-store';
-import { postInsurer } from '../../../store/insurer-store';
+import { useEffect, useState } from "react"
+import Modal from "../../modal/Modal"
+import InsuranceApi, { setupInterceptors } from "../../api/InsuranceApi"
+import useAuth from "../../../hooks/useAuth"
 
-export default function InternalUserModal(props) {
+export default function InternalUserModal({ setModal, data, refresh }) {
 
-    const dispatch = useDispatch()
-    const shops = useSelector(getShops)
-    const towns = useSelector(getTowns)
-    const regions = useSelector(getRegions)
+    const { user, setUser } = useAuth()
+
+    useEffect(() => {
+        setupInterceptors(() => user, setUser)
+    },[])
 
     const [domainName, setDomainName] = useState("")
     const [role, setRole] = useState("")
@@ -20,327 +20,274 @@ export default function InternalUserModal(props) {
     const [success, setSuccess] = useState(false)
     const [failed, setFailed] = useState(false)
     const [error, setError] = useState([])
-    const [shopResponse, setShopResponse] = useState('')
-    const [townResponse, setTownResponse] = useState('')
-    const [regionResponse, setRegionResponse] = useState('')
-    const [message, setMessage] = useState('')
+    const [shops, setShops] = useState('')
+    const [towns, setTowns] = useState('')
+    const [regions, setRegions] = useState('')
+    const [shopResponse, setShopResponse] = useState("")
+    const [townResponse, setTownResponse] = useState("")
+    const [regionResponse, setRegionResponse] = useState("")
 
     useEffect(()=>{
-        dispatch(fetchAsyncShops())
-        .then((res)=>{
-            console.log("search response ", res)
-            setLoading(false)
-            if(!res.payload.success){
-                setShopResponse("Error fetching resource, Please check your network connection")
-            }
-            else if(res.payload.success&&!res.payload.data){
-                setShopResponse("No Shops found")
-            }
-            }
-        )
-    },[dispatch])
-    
-    useEffect(()=>{
-        dispatch(fetchAsyncTowns())
-        .then((res)=>{
-            console.log("search response ", res)
-            setLoading(false)
-            if(!res.payload.success){
-                setTownResponse("Error fetching resource, Please check your network connection")
-            }
-            else if(res.payload.success&&!res.payload.data){
-                setTownResponse("No Towns found")
-            }
-            }
-        )
-    },[dispatch])
-
-    useEffect(()=>{
-        dispatch(fetchAsyncRegions())
-        .then((res)=>{
-            console.log("search response ", res)
-            setLoading(false)
-            if(!res.payload.success){
-                setRegionResponse("Error fetching resource, Please check your network connection")
-            }
-            else if(res.payload.success&&!res.payload.data){
-                setRegionResponse("No Regions found")
-            }
-            }
-        )
-    },[dispatch])
-
-    const [close, setClose] = useState(false)
-
-    const handleUpdate = async (e) => {
-        e.preventDefault()
-        if(insurerName===""&&address===""&&officeNumber===""&&email===""){
-            const newError = { err: 'empty', message: 'Please provide all fields' };
-                setError(prevError => [...prevError, newError]);
-                setTimeout(() => {
-                    setError(prevError => prevError.filter(error => error !== newError));
-                }, 2000);
-        }
-        else {
-            setLoading(true)
-            dispatch(postInsurer({
-                insurerName,
-                insurerLogo: "string",
-                address,
-                secondAddress,
-                mobileNumber,
-                officeNumber,
-                email,
-                websiteUrl,
-                isActive
-            }))
-            .then((response)=>{
-                if(response.payload&&response.payload.success){
-                    setSuccess(true)
+        const fetchAsyncRegions = async () => {
+            try {
+                const response = await InsuranceApi.get('/region')
+                if(response.data.code==="OK"&&response.data.data.length>0){
+                    setRegions(response.data.data)
                 }
-                else{
-                    setFailed(true)
-                }            
-            })
-            .finally(()=>{
-                setTimeout(()=>{
-                    setLoading(false)
-                    setFailed(false)
-                    setSuccess(false)
-                    setInsurerName('')
-                    setPrice('')
-                    setProductDescription('')
-                    setProductCategoryId(0)
-                    setAddOnSuccess(1)
-                },5000)
-            })
+                else if (response.data.code==="OK"&&response.data.data.length<1){
+                    setRegionResponse("No regions found")
+                }
+            } catch (error) {
+                setRegionResponse('Error fetching regions')
+                console.error("Error fetching regions: ", error)
+            }
+        }
+        fetchAsyncRegions()
+    },[])
+
+    const fetchTowns = async (id) => {
+        try{
+            const response = await InsuranceApi.get(`/town/region/${id}`)
+            if(response.data.code==="OK"&&response.data.data.length>0){
+                setTowns(response.data.data)
+            }
+            else if (response.data.code==="OK"&&response.data.data.length<1){
+                setTownResponse("No towns found for this region")
+            }
+        }
+        catch(err){
+            setTownResponse("Error fetching towns")
+        }
+        
+    }
+
+    const fetchShops = async (id) => {
+        try{
+            const response = await InsuranceApi.get(`/shop/town/${id}`)
+            if(response.data.code==="OK"&&response.data.data.length>0){
+                setShops(response.data.data)
+            }
+            else if (response.data.code==="NOT_FOUND"){
+                setShopResponse("No shops found for this town")
+            }
+        }
+        catch(err){
+            setShopResponse("Error fetching towns")
         }
     }
 
-    const roles = [ 
-        "SUPER_ADMINISTRATOR", 
-        "SALES_AGENT", 
-        "SHOP_SUPERVISOR", 
-        "BUSINESS_PERFORMANCE_SUPERVISOR", 
-        "AREA_BUSINESS_MANAGER", 
-        "REGIONAL_GENERAL_MANAGER", 
-        "REGIONAL_ACCOUNTANT", 
-        "FINANCE_MANAGER", 
-        "ADMIN" 
-    ]
-    
-    const getModal =(isOpen)=>{
-        props.setModal(isOpen)
+    useEffect(() => {
+        if (data) {
+        setDomainName(data.domainName || "")
+        setRole(data.role || "")
+        setRegionId(data.regionId || "")
+        setTownId(data.townId || "")
+        setShopId(data.shopId || "")
+        }
+    }, [data])
+
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        if (domainName === "" || role === "") {
+            setError([{ err: "empty", message: "Please provide all required fields" }])
+            return
+        }
+
+        setLoading(true)
+        try {
+            const response = await InsuranceApi.put(``)
+
+            if (response.success) {
+                setSuccess(true)
+                refresh()
+            } else {
+                setFailed(true)
+            }
+        } catch (err) {
+            setFailed(true)
+            setError([{ err: "submit", message: "Error submitting form. Please try again." }])
+            } finally {
+            setLoading(false)
+            setTimeout(() => {
+                setSuccess(false)
+                setFailed(false)
+                setError([])
+            }, 3000)
+        }
     }
+
+    const roles = [
+        "SUPER_ADMINISTRATOR",
+        "SALES_AGENT",
+        "SHOP_SUPERVISOR",
+        "BUSINESS_PERFORMANCE_SUPERVISOR",
+        "AREA_BUSINESS_MANAGER",
+        "REGIONAL_GENERAL_MANAGER",
+        "REGIONAL_ACCOUNTANT",
+        "FINANCE_MANAGER",
+        "ADMIN",
+    ]
 
     return (
-        <>
-            <Modal setModal={getModal}>
-                <h2 className="text-lg font-semibold">Insurance Company Details Modification</h2>
-                <p className="text-xs mb-4">Edit Fields</p>
-                <div className='space-y-1'>
-                {
-                        Object.keys(error).length>0&&
-                        error.map((error, index) => {
-                            if (error.err === "empty") {
-                                return <h6 key={index} className='text-red-500 mb-1'>{error.message}</h6>;
-                            }
-                            return null;
-                        })
-                    }
-                    <div className="sm:col-span-3 flex items-center">
-                        <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900 w-1/4">
+        <Modal setModal={setModal}>
+            <h2 className="text-lg font-semibold">Internal User Details</h2>
+            <p className="text-xs mb-4">{data ? "Edit" : "Add"} User</p>
+            <form onSubmit={handleSubmit} className="space-y-4">
+                {error.map((err, index) => (
+                    <p key={index} className="text-red-500">
+                        {err.message}
+                    </p>
+                ))}
+                <div className="flex items-center">
+                    <label htmlFor="domainName" className="block text-sm font-medium leading-6 text-gray-900 w-1/4">
                         Domain Name
-                        </label>
-                        <div className="mt-2 flex-1">
-                            {
-                                Object.keys(error).length>0&&
-                                error.map((error, index) => {
-                                    if (error.err === "domain") {
-                                        return <h6 key={index} className='text-red-500 mb-1'>{error.message}</h6>;
-                                    }
-                                    return null;
-                                })
-                            }
-                            <input
-                                type="text"
-                                name="domainName"
-                                id="domainName"
-                                autoComplete="family-name"
-                                placeholder='Domain Name'
-                                value={domainName}
-                                onChange={(e)=>setDomainName(e.target.value)}
-                                className="block w-full rounded-xs border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
-                            />
-                        </div>
+                    </label>
+                    <div className="mt-2 flex-1">
+                        <input
+                        type="text"
+                        id="domainName"
+                        value={domainName}
+                        onChange={(e) => setDomainName(e.target.value)}
+                        className="block w-full rounded-xs border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
+                        placeholder={data.email}
+                        required
+                        />
                     </div>
-                    <div className="sm:col-span-3 flex items-center">
-                        <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900 w-1/4">
+                </div>
+                <div className="flex items-center">
+                    <label htmlFor="role" className="block text-sm font-medium leading-6 text-gray-900 w-1/4">
                         User Role
+                    </label>
+                    <div className="mt-2 flex-1">
+                        <select
+                            id="role"
+                            value={role}
+                            onChange={(e) => setRole(e.target.value)}
+                            className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
+                            required
+                        >
+                        <option value="">Select User Role</option>
+                        {roles.map((r) => (
+                            <option key={r} value={r}>
+                            {r}
+                            </option>
+                        ))}
+                        </select>
+                    </div>
+                </div>
+                {role &&
+                (role === "SALES_AGENT" ||
+                    role === "AREA_BUSINESS_MANAGER" ||
+                    role === "SHOP_SUPERVISOR" ||
+                    role === "BUSINESS_PERFORMANCE_SUPERVISOR" ||
+                    role === "REGIONAL_ACCOUNTANT" ||
+                    role === "REGIONAL_GENERAL_MANAGER") && (
+                    <div className="flex items-center">
+                        <label htmlFor="region" className="block text-sm font-medium leading-6 text-gray-900 w-1/4">
+                            Region
                         </label>
                         <div className="mt-2 flex-1">
-                            {
-                                Object.keys(error).length>0&&
-                                error.map((error, index) => {
-                                    if (error.err === "role") {
-                                        return <h6 key={index} className='text-red-500 mb-1'>{error.message}</h6>;
-                                    }
-                                    return null;
-                                })
-                            }
                             <select
-                                id="insuranceType"
-                                name="insuranceType"
+                                id="regionId"
+                                name="regionId"
+                                value={regionId}
+                                onChange={(e) => {setRegionId(Number(e.target.value));fetchTowns(e.target.value)}}
                                 className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
                             >
-                                <option 
-                                    className='font-bold italic'
-                                    onClick={()=>{
-                                        setRole("")
-                                        setRegionId("")
-                                        setTownId("")
-                                        setShopId("")
-                                    }}
-                                >Select User Role</option>
-                                {
-                                    roles.map((role, index)=>(
-                                        <option key={index} onClick={(e)=>setRole(e.target.value)}>{role}</option>
+                                <option value={0}>Select Parent Region</option>
+                                {regions ? (
+                                    regions.map((region) => (
+                                    <option key={region.id} value={region.id}>
+                                        {region.name}
+                                    </option>
                                     ))
-                                }
-                                
+                                ) : (
+                                    <option value={0} className='text-red-500'>{regionResponse}</option>
+                                )}
                             </select>
                         </div>
                     </div>
-                    {
-                        role && (role === "SALES_AGENT" || role === "AREA_BUSINESS_MANAGER" || role === "SHOP_SUPERVISOR" || role === "BUSINESS_PERFORMANCE_SUPERVISOR" || role === "REGIONAL_ACCOUNTANT" || role === "REGIONAL_GENERAL_MANAGER") &&
-                        <div className="sm:col-span-3 flex items-center">
-                            <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900 w-1/4">
-                                Region
-                            </label>
-                            <div className="mt-2 flex-1">
-                                {
-                                    Object.keys(error).length>0&&
-                                    error.map((error, index) => {
-                                        if (error.err === "region") {
-                                            return <h6 key={index} className='text-red-500 mb-1'>{error.message}</h6>;
-                                        }
-                                        return null;
-                                    })
-                                }
-                                <select
-                                    id="insuranceType"
-                                    name="insuranceType"
-                                    className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
-                                >
-                                    <option 
-                                        className='font-bold italic'
-                                        onClick={()=>{
-                                            setRegionId("")
-                                            setTownId("")
-                                            setShopId("")
-                                        }}
-                                    >Select User Region</option>
-                                    {
-                                        regions.map((region, index)=>(
-                                            <option key={index} onClick={(e)=>setRegionId(region.id)}>{region.name}</option>
-                                        ))
-                                    }
-                                    
-                                </select>
-                            </div>
+                )}
+                {role &&
+                regionId &&
+                (   
+                    role === "SALES_AGENT" ||
+                    role === "AREA_BUSINESS_MANAGER" ||
+                    role === "BUSINESS_PERFORMANCE_SUPERVISOR" ||
+                    role === "SHOP_SUPERVISOR") && (
+                    <div className="flex items-center">
+                        <label htmlFor="town" className="block text-sm font-medium leading-6 text-gray-900 w-1/4">
+                            Town
+                        </label>
+                        <div className="mt-2 flex-1">
+                            <select
+                                id="townId"
+                                name="townId"
+                                value={townId}
+                                onChange={(e) => {setTownId(Number(e.target.value));fetchShops(e.target.value)}}
+                                className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
+                            >
+                                <option value={0}>Select User Town</option>
+                                {towns ? (
+                                    towns.map((town) => (
+                                    <option key={town.id} value={town.id}>
+                                        {town.name}
+                                    </option>
+                                    ))
+                                ) : (
+                                    <option value={0}>{townResponse}</option>
+                                )}
+                            </select>
                         </div>
-                    }
-                    {
-                        role && regionId && (role === "SALES_AGENT" || role === "AREA_BUSINESS_MANAGER" || role === "BUSINESS_PERFORMANCE_SUPERVISOR" || role === "SHOP_SUPERVISOR") &&
-                        <div className="sm:col-span-3 flex items-center">
-                            <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900 w-1/4">
-                                Town
-                            </label>
-                            <div className="mt-2 flex-1">
-                                {
-                                    Object.keys(error).length>0&&
-                                    error.map((error, index) => {
-                                        if (error.err === "town") {
-                                            return <h6 key={index} className='text-red-500 mb-1'>{error.message}</h6>;
-                                        }
-                                        return null;
-                                    })
-                                }
-                                <select
-                                    id="insuranceType"
-                                    name="insuranceType"
-                                    className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
-                                >
-                                    <option 
-                                        className='font-bold italic'
-                                        onClick={()=>{
-                                            setTownId("")
-                                            setShopId("")
-                                        }}
-                                    >Select User Town</option>
-                                    {
-                                        towns.map((town, index)=>(
-                                            <option key={index} onClick={(e)=>setTownId(town.id)}>{town.name}</option>
-                                        ))
-                                    }
-                                    
-                                </select>
-                            </div>
+                    </div>
+                )}
+                {role && townId && (role === "SALES_AGENT" || role === "SHOP_SUPERVISOR") && (
+                    <div className="flex items-center">
+                        <label htmlFor="shop" className="block text-sm font-medium leading-6 text-gray-900 w-1/4">
+                        Shop
+                        </label>
+                        <div className="mt-2 flex-1">
+                            <select
+                                id="shopId"
+                                name="shopId"
+                                value={shopId}
+                                onChange={(e) => {setShopId(Number(e.target.value));fetchAgents(e.target.value)}}
+                                className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
+                            >
+                                <option value={0}>Select User Shop</option>
+                                {shops ? (
+                                    shops.map((shop) => (
+                                    <option key={shop.id} value={shop.id}>
+                                        {shop.name}
+                                    </option>
+                                    ))
+                                ) : (
+                                    <option value={0}>{shopResponse}</option>
+                                )}
+                            </select>
                         </div>
-                    }
-                    {
-                        role && townId && (role === "SALES_AGENT" || role === "SHOP_SUPERVISOR") &&
-                        <div className="sm:col-span-3 flex items-center">
-                            <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900 w-1/4">
-                                Shop
-                            </label>
-                            <div className="mt-2 flex-1">
-                                {
-                                    Object.keys(error).length>0&&
-                                    error.map((error, index) => {
-                                        if (error.err === "shop") {
-                                            return <h6 key={index} className='text-red-500 mb-1'>{error.message}</h6>;
-                                        }
-                                        return null;
-                                    })
-                                }
-                                <select
-                                    id="insuranceType"
-                                    name="insuranceType"
-                                    className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
-                                >
-                                    <option 
-                                        className='font-bold italic'
-                                        onClick={()=>{
-                                            setShopId("")
-                                        }}
-                                    >Select User Shop</option>
-                                    {
-                                        shops.map((shop, index)=>(
-                                            <option key={index} onClick={(e)=>setShopId(shop.id)}>{shop.name}</option>
-                                        ))
-                                    }
-                                    
-                                </select>
-                            </div>
-                        </div>
-                    }
-                </div>
-                <div className='flex space-x-2 pt-10'>
+                    </div>
+                )}
+                <div className="flex space-x-2 pt-6">
                     <button
-                        onClick={handleUpdate}
-                        className={`border border-gray-300 rounded-sm px-4 py-2 bg-blue-500 text-gray-100 hover:text-gray-700 hover:bg-white w-40`}
+                        type="submit"
+                        disabled={loading}
+                        className={`border border-gray-300 rounded-sm px-4 py-2 bg-blue-500 text-gray-100 hover:text-gray-700 hover:bg-white w-40 ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
                     >
-                    Submit
+                        {loading ? "Submitting..." : "Submit"}
                     </button>
                     <button
-                        onClick={()=>props.setModal(close)}
-                        className={`border border-gray-300 rounded-sm px-4 py-2 bg-gray-700 text-gray-100 hover:text-gray-700 hover:bg-white w-40`}
+                        type="button"
+                        onClick={() => setModal(false)}
+                        className="border border-gray-300 rounded-sm px-4 py-2 bg-gray-700 text-gray-100 hover:text-gray-700 hover:bg-white w-40"
                     >
-                    Cancel
+                        Cancel
                     </button>
                 </div>
-            </Modal>
-        </>
-    )
+            </form>
+            {success && <p className="text-green-500 mt-2">User successfully {data ? "updated" : "added"}!</p>}
+            {failed && <p className="text-red-500 mt-2">Failed to {data ? "update" : "add"} user. Please try again.</p>}
+        </Modal>
+  )
 }
+

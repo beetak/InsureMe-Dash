@@ -42,7 +42,7 @@ export default function Reports() {
     { title: "Agent Sales", icon: "fas fa-book", tab:(userRole==='INSURER_ADMIN' || userRole==='SALES_AGENT')?1:3 },
     // { title: "Tax", icon: "fas fa-book", tab:5 },
     // { title: "Policy", icon: "fas fa-book", tab:6 },
-    // { title: "Insurer", icon: "fas fa-book", tab:7 },
+    { title: "Insurer", icon: "fas fa-book", tab:7 },
     // { title: "Sales", icon: "fas fa-book", tab:userRole==='INSURER_ADMIN'?2:'' },
     { title: "Daily Sales", icon: "fas fa-book", tab:userRole==='INSURER_ADMIN'?3:8},
     { title: "Transaction", icon: "fas fa-book", tab:(userRole==='INSURER_ADMIN' || userRole==='SALES_AGENT')?4:9 },

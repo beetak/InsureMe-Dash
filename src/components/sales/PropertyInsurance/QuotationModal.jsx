@@ -130,7 +130,7 @@ export default function QuotationModal({ setModal }) {
                     coverType = 'HOUSEHOLD_ITEMS';
                 }
                 // Remove empty properties
-                const { currency, buildingAddress, propertyAddress, propertyValue, ...restPropertyData } = propertyData;
+                const { buildingAddress, propertyAddress, propertyValue, ...restPropertyData } = propertyData;
                 const modifiedPropertyData = {
                     ...restPropertyData,
                     coverType: coverType || 'undefined', // Default value if none applies

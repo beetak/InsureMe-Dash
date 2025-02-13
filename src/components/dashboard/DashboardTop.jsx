@@ -75,7 +75,7 @@ export default function DashboardTop() {
     };
 
     const navigateToUsers = () => {
-        navigate('/users?userTab=true');
+        navigate('/customers?userTab=true');
     };
 
     const navigateToPolicies = () => {

@@ -42,7 +42,7 @@ export default function InsurerModal({ data, refresh, setModal }) {
     const [loading, setLoading] = useState(false)
     const [success, setSuccess] = useState(false)
     const [failed, setFailed] = useState(false)
-    const [image, setImage] = useState([])
+    const [image, setImage] = useState('')
     const [imageName, setImageName] = useState("")
     const [currentImage, setCurrentImage] = useState(false)
     const [iceCashId, setIceCashId] = useState("")

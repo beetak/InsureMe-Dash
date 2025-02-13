@@ -2,13 +2,20 @@ import React, { useEffect, useState } from 'react'
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteCategory, fetchAsyncCategory, getCategories } from '../../store/category-store';
 import { ScaleLoader } from 'react-spinners';
 import CategoryModal from '../category/CategoryModal';
 import CategoryViewModal from '../category/CategoryViewModal';
 import { fetchSalesByDate } from '../../store/payments-store';
+import useAuth from '../../hooks/useAuth';
+import InsuranceApi, { setupInterceptors } from '../api/InsuranceApi';
 
 export default function DailySales() {
+
+    const { user, setUser } = useAuth()
+
+    useEffect(()=>{
+        setupInterceptors(()=> user, setUser)
+    },[])
 
     const [catResponse, setCatResponse] = useState('')
     const [message, setMessage] = useState('')
@@ -19,29 +26,36 @@ export default function DailySales() {
     const [transactionDate, setTransactionDate] = useState(new Date());
     const [sales, setSales] = useState("")
 
-    const dispatch = useDispatch()
-
-    const handleSearch = () => {
+    const handleSearch = async() => {
         setLoading(true)
-        setMessage("Processing...")
-        const formattedTransactionDate = new Date(transactionDate).toISOString().slice(0, 10);
-        dispatch(fetchSalesByDate({
-            transactionDate: formattedTransactionDate
-        }))
-        .then((response)=>{
-            if(response.payload&&response.payload.success){
-                console.log("search result ", response.payload.data)
-                setMessage("")
-                setSales(response.payload.data.data)
+        setMessage("Loading, Please wait a moment");
+        const formattedStartDate = new Date(transactionDate).toISOString().slice(0, 10);
+        const formattedEndDate = new Date(transactionDate).toISOString().slice(0, 10);
+        try{
+            const response = await InsuranceApi.get(`/product-payments/by-date?startDate=${formattedStartDate}&endDate=${formattedEndDate}`)
+            console.log("post results: ", response)
+            if(response.data.code==="OK"&&response.data.data.length>0){
+                const aggregatedSales = aggregateSales(response.data.data);
+                setSales(aggregatedSales);
+                setLoading(true)
+            }
+            else if(response.data.code==="NOT_FOUND"){
+                setMessage("No sales record found")
             }
             else{
-                setLoading(true)
-            }            
-        })
-        .finally(()=>{
+                setLoading(false)
+                setMessage("Error Fetching Resource")
+            }
+        }
+        catch(err){
             setLoading(false)
-            setMessage("")
-        })
+            setMessage("Error Fetching Resource")
+        }
+        finally{
+            setTimeout(()=>{
+                setLoading(false)
+            },1000)
+        }
     }
         
     const renderTableHeader = () => {

@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { useDispatch, useSelector } from 'react-redux';
-import { deleteCategory, fetchAsyncCategory, getCategories } from '../../store/category-store';
 import { ScaleLoader } from 'react-spinners';
 import CategoryModal from '../category/CategoryModal';
 import CategoryViewModal from '../category/CategoryViewModal';
-import { fetchAsyncRegions, fetchShopsByTownId, fetchTownsByRegionId, getRegions, getShops, getTowns } from '../../store/entity-store';
 import jsPDF from 'jspdf'
 import "jspdf-autotable";
 import commissions from './commissions.json'
@@ -21,23 +18,17 @@ export default function AgentSales() {
 
     useEffect(()=>{
         setupInterceptors(()=> user, setUser)
-        dispatch(fetchAsyncRegions())
-    },[dispatch])
+    },[])
 
     const [message, setMessage] = useState('Enter date range and click search')
     const [searchActive, setSearchActive] = useState(false)
     const [loading, setLoading] = useState(false)
-    const [isOpen, setIsOpen] = useState(false)
-    const [viewOpen, setViewOpen] = useState(false)
-    const [modalData, setModalData] = useState(null)
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date());
     const [sales, setSales] = useState("")
     const [users, setUsers] = useState([])
     const [userResponse, setUserResponse] = useState("")
     const [selectedUser, setSelectedUser] = useState({ id: null, name: '' });
-
-    const dispatch = useDispatch()
 
     const handleSearch = async() => {
         setLoading(true)
@@ -54,7 +45,7 @@ export default function AgentSales() {
             const response = await InsuranceApi.get(`/product-payments/by-sales-agent/${selectedUser.id||user.userId}?startDate=${formattedStartDate}&endDate=${formattedEndDate}`)
             console.log("post results: ", response)
             if(response.data.code==="OK"&&response.data.data.length>0){
-                setSales(response.data.data)
+                setSales(response.data.data);
                 setLoading(true)
             }
             else if(response.data.code==="NOT_FOUND"){
@@ -80,13 +71,12 @@ export default function AgentSales() {
         const columns = [
           { key: 'item', label: '#', width: "1" },
           { key: 'policy', label: 'Policy Name' },
-          { key: 'qty', label: 'Quantity' },
           {
             key: 'revenue',
             label: 'Revenue Collections',
             subHeaders: [
-              { key: 'usd', label: 'USD' },
-              { key: 'ZWG', label: 'Payment Method' },
+              { key: 'ZWG', label: 'ZWG' },
+              { key: 'USD', label: 'USD' },
             ],
           },
         ];
@@ -94,17 +84,17 @@ export default function AgentSales() {
         return columns.map((column) => (
           <th
             key={column.key}
-            className={`text-sm font-bold tracking-wide text-left ${column.width ? "p-3 w-" + column.width : "py-3"} ${column.key === 'revenue' && "text-center"} ${column.key === 'action' && "text-center"}`}
+            className={`text-sm font-bold tracking-wide text-left ${column.width ? "p-3 w-" + column.width : "py-3"} ${column.key === 'revenue' && "text-end"} ${column.key === 'action' && "text-center"}`}
           >
-            <span className="mr-2">{column.label}</span>
+            <span className={`mr-2 ${column.key === 'revenue' && "pr-3"}`}>{column.label}</span>
             {column.subHeaders && (
-              <div className="flex w-full justify-around">
-                {column.subHeaders.map((subHeader) => (
-                  <span key={subHeader.key} className="text-xs font-semibold">
-                    {subHeader.label}
-                  </span>
-                ))}
-              </div>
+                <div className="flex w-full">
+                    {column.subHeaders.map((subHeader) => (
+                        <div key={subHeader.key} className="flex-1 text-xs font-semibold text-right pr-5">
+                            {subHeader.label}
+                        </div>
+                    ))}
+                </div>
             )}
           </th>
         ));
@@ -127,36 +117,29 @@ export default function AgentSales() {
     }
 
     const renderTableRows = () => {
-        return sales?sales.map((item, index) => (
-        <tr key={index} className={`${index%2!==0&&" bg-gray-100"} p-3 text-sm text-gray-600 font-semibold`}>
-            <td className='font-bold text-blue-5 justify-center items-center w-7'><div className='w-full justify-center flex items-center'>{++index}</div></td>
-            <td>{item.insuranceCategory}</td>
-            <td>{item.paymentStatus}</td>
-            {/* <td>{formatDate(item.createdAt)}</td> */}
-            <div className="flex w-full justify-around">
-                <td>
-                    {item.amount.toLocaleString('en-US', {
-                        style: 'currency',
-                        currency: 'USD',
-                    })}
+        return sales ? sales.map((item, index) => (
+            <tr key={index} className={`${index % 2 !== 0 && " bg-gray-100"} p-3 text-sm text-gray-600 font-semibold`}>
+                <td className='font-bold text-blue-5 justify-center items-center w-7'>
+                    <div className='w-full justify-center flex items-center'>{index + 1}</div>
                 </td>
+                <td>{item.insuranceCategory}</td>
                 <td>
-                    {item.paymentMethod}
+                    <div className="flex w-full justify-around">
+                        <div className="flex-1 text-xs font-semibold text-right pr-5">
+                            {item.amounts.ZWG?item.amounts.ZWG:""}
+                        </div>
+                        <div className="flex-1 text-xs font-semibold text-right pr-5">
+                            {item.amounts.USD?item.amounts.USD:""}
+                        </div>
+                    </div>
                 </td>
-            </div>
-        </tr>
-        )):
-        <tr className=''>
-            <td colSpan={7} style={{ textAlign: 'center' }}>{message || "Error fetching resource"}</td>
-        </tr>
+            </tr>
+        )) : (
+            <tr>
+                <td colSpan={4} style={{ textAlign: 'center' }}>{message || "Error fetching resource"}</td>
+            </tr>
+        );
     };
-
-    const getModal =(isOpen)=>{
-        setIsOpen(isOpen)
-    }
-    const getViewModal =(isOpen)=>{
-        setViewOpen(isOpen)
-    }
 
     const handleNameChange = async(e) => {
         setUsers([])
@@ -297,12 +280,6 @@ export default function AgentSales() {
     return (
         <>
             <div className="p-5 bg-white rounded-md border border-gray-200 border-solid border-1">
-                {
-                    isOpen&& <CategoryModal setModal={getModal} data={modalData}/>
-                }
-                {
-                    viewOpen&& <CategoryViewModal setModal={getViewModal} data={modalData}/>
-                }
                 <h2 className="text-lg font-semibold">Agent Sales Report</h2>
                 <div className='flex-col py-4 space-y-2'>
                     <div className={`${user.role==="SALES_AGENT"?" grid-cols-3 ":" grid-cols-4 "}grid items-center justify-between rounded-full border border-gray-400 gap-2`}>
@@ -332,9 +309,9 @@ export default function AgentSales() {
                                 name="transactionStatus"
                                 className=" bg-inherit rounded-xs cursor-pointer"
                             >
-                                <option value="5" onClick={()=>setIsOpen(true)}>Transaction Status</option>
-                                <option value="5" onClick={()=>setIsOpen(true)}>Successful Transactions</option>
-                                <option value="5" onClick={()=>setIsOpen(true)}>Failed Transactions</option>
+                                <option value="5">Transaction Status</option>
+                                <option value="5">Successful Transactions</option>
+                                <option value="5">Failed Transactions</option>
                             </select>
                         </div>
                         <div className={`${user.role==="SALES_AGENT"?"hidden":""} flex p-1 px-2 relative`}>

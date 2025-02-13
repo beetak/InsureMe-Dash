@@ -9,85 +9,84 @@ import { fetchAsyncRegions, fetchShopsByTownId, fetchTownsByRegionId, getRegions
 import { authActions, fetchUserByShopId, findUserLike, getUsers } from '../../store/user-store';
 import { fetchSalesByDateRange } from '../../store/payments-store';
 import { fetchAsyncInsurer, getInsurers } from '../../store/insurer-store';
+import useAuth from '../../hooks/useAuth';
+import InsuranceApi from '../api/InsuranceApi';
 
 export default function InsurerSales() {
 
-    const [catResponse, setCatResponse] = useState('')
-    const [insurerResponse, setInsurerResponse] = useState('')
+    const {user} = useAuth()
+
     const [message, setMessage] = useState('')
-    const [townState, setTownState] = useState(false)
-    const [shopState, setShopState] = useState(false)
-    const [searchActive, setSearchActive] = useState(false)
     const [loading, setLoading] = useState(false)
-    const [isOpen, setIsOpen] = useState(false)
-    const [viewOpen, setViewOpen] = useState(false)
-    const [modalData, setModalData] = useState(null)
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date());
     const [sales, setSales] = useState("")
-
-    const dispatch = useDispatch()
-    
-    const insurers = useSelector(getInsurers)
-
-    const handleSearch = () => {
-        setLoading(true)
-        setMessage("Processing...")
-        const formattedStartDate = new Date(startDate).toISOString().slice(0, 10);
-        const formattedEndDate = new Date(endDate).toISOString().slice(0, 10);
-        dispatch(fetchSalesByDateRange({
-            startDate: formattedStartDate,
-            endDate: formattedEndDate
-        }))
-        .then((response)=>{
-            if(response.payload&&response.payload.success){
-                console.log("search result ", response.payload.data)
-                setMessage("")
-                setSales(response.payload.data.data)
-            }
-            else{
-                setLoading(true)
-            }            
-        })
-        .finally(()=>{
-            setLoading(false)
-            setMessage("")
-        })
-    }
-
-    const fetchInsurers = () => {
-        setLoading(true)
-        dispatch(fetchAsyncInsurer())
-        .then((res)=>{
-            setLoading(false)
-            if(!res.payload.success){
-                setInsurerResponse("Error fetching resource, Please check your network connection")
-            }
-            else if(res.payload.success&&!res.payload.data){
-                setInsurerResponse("No Insurers found")
-            }
-        })
-        .finally(()=>{
-            setLoading(false)
-        })
-    }
+    const [insurers, setInsurers] = useState("")
+    const [insurerId, setInsurerId] = useState("")
 
     useEffect(()=>{
-        fetchInsurers()
-        dispatch(fetchAsyncRegions())
-    },[dispatch])
+        fetchInsurer()
+    },[])
+
+    const handleSearch = async() => {
+        setLoading(true)
+        setMessage("Loading, Please wait a moment");
+        setSales('')
+        const formattedStartDate = new Date(startDate).toISOString().slice(0, 10);
+        const formattedEndDate = new Date(endDate).toISOString().slice(0, 10);
+        try{
+            const response = await InsuranceApi.get(`/product-payments/by-insurer/${insurerId}?startDate=${formattedStartDate}&endDate=${formattedEndDate}`)
+            console.log("post results: ", response)
+            if(response.data.code==="OK"&&response.data.data.length>0){
+                setSales(response.data.data);
+                setLoading(true)
+            }
+            else if(response.data.code==="NOT_FOUND"){
+                setMessage("No sales record found")
+            }
+            else{
+                setLoading(false)
+                setMessage("Error Fetching Resource")
+            }
+        }
+        catch(err){
+            setLoading(false)
+            setMessage("Error Fetching Resource")
+        }
+        finally{
+            setTimeout(()=>{
+                setLoading(false)
+            },1000)
+        }
+    }
+
+    const fetchInsurer = async () => {
+        setLoading(true)
+        try{
+          const response = await InsuranceApi.get('/insurers')
+          if(response){
+            console.log(response)
+            setInsurers(response.data.data)
+          }
+        }
+        catch(err){
+            console.log(error)
+        }
+        finally{
+          setLoading(false)
+        }
+    }
         
     const renderTableHeader = () => {
         const columns = [
           { key: 'item', label: '#', width: "1" },
           { key: 'policy', label: 'Policy Name' },
-          { key: 'qty', label: 'Quantity' },
           {
             key: 'revenue',
             label: 'Revenue Collections',
             subHeaders: [
-              { key: 'usd', label: 'USD' },
               { key: 'ZWG', label: 'ZWG' },
+              { key: 'USD', label: 'USD' },
             ],
           },
         ];
@@ -95,17 +94,17 @@ export default function InsurerSales() {
         return columns.map((column) => (
           <th
             key={column.key}
-            className={`text-sm font-bold tracking-wide text-left ${column.width ? "p-3 w-" + column.width : "py-3"} ${column.key === 'revenue' && "text-center"} ${column.key === 'action' && "text-center"}`}
+            className={`text-sm font-bold tracking-wide text-left ${column.width ? "p-3 w-" + column.width : "py-3"} ${column.key === 'revenue' && "text-end"} ${column.key === 'action' && "text-center"}`}
           >
-            <span className="mr-2">{column.label}</span>
+            <span className={`mr-2 ${column.key === 'revenue' && "pr-3"}`}>{column.label}</span>
             {column.subHeaders && (
-              <div className="flex w-full justify-around">
-                {column.subHeaders.map((subHeader) => (
-                  <span key={subHeader.key} className="text-xs font-semibold">
-                    {subHeader.label}
-                  </span>
-                ))}
-              </div>
+                <div className="flex w-full">
+                    {column.subHeaders.map((subHeader) => (
+                        <div key={subHeader.key} className="flex-1 text-xs font-semibold text-right pr-5">
+                            {subHeader.label}
+                        </div>
+                    ))}
+                </div>
             )}
           </th>
         ));
@@ -127,57 +126,34 @@ export default function InsurerSales() {
         </div>
     }
 
-    function formatDate(dateString) {
-        const options = { day: '2-digit', month: 'long', year: 'numeric' };
-        const formattedDate = new Date(dateString).toLocaleDateString('en-US', options);
-        return formattedDate;
-    }
-
     const renderTableRows = () => {
-        return sales?sales.map((item, index) => (
-        <tr key={index} className={`${index%2!==0&&" bg-gray-100"} p-3 text-sm text-gray-600 font-semibold`}>
-            <td className='font-bold text-blue-5 justify-center items-center w-7'><div className='w-full justify-center flex items-center'>{++index}</div></td>
-            <td>{item.categoryName}</td>
-            <td>{formatDate(item.createdAt)}</td>
-            <div className="flex w-full justify-around">
-                <td>$200.40</td>
-                <td>$7450.50</td>
-            </div>
-        </tr>
-        )):
-        <tr className=''>
-        <td colSpan={7} style={{ textAlign: 'center' }}>{catResponse}</td>
-        </tr>
+        return sales ? sales.map((item, index) => (
+            <tr key={index} className={`${index % 2 !== 0 && " bg-gray-100"} p-3 text-sm text-gray-600 font-semibold`}>
+                <td className='font-bold text-blue-5 justify-center items-center w-7'>
+                    <div className='w-full justify-center flex items-center'>{index + 1}</div>
+                </td>
+                <td>{item.insuranceCategory}</td>
+                <td>
+                    <div className="flex w-full justify-around">
+                        <div className="flex-1 text-xs font-semibold text-right pr-5">
+                            {item.amounts.ZWG?item.amounts.ZWG:""}
+                        </div>
+                        <div className="flex-1 text-xs font-semibold text-right pr-5">
+                            {item.amounts.USD?item.amounts.USD:""}
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        )) : (
+            <tr>
+                <td colSpan={4} style={{ textAlign: 'center' }}>{message || "Error fetching resource"}</td>
+            </tr>
+        );
     };
 
-    const getModal =(isOpen)=>{
-        setIsOpen(isOpen)
-        // isOpen&&fetchCategoryData()
-    }
-    const getViewModal =(isOpen)=>{
-        setViewOpen(isOpen)
-    }
-
-    const handleNameChange = (e) => {
-        if (e.target.value.length > 2) {
-          dispatch(findUserLike({firstname:e.target.value}))
-            .then((response) => {
-              console.log("name ", response);
-            })
-            .catch((error) => {
-              console.error("Error:", error);
-            });
-        }
-    };
     return (
         <>
             <div className="p-5 bg-white rounded-md border border-gray-200 border-solid border-1">
-                {
-                    isOpen&& <CategoryModal setModal={getModal} data={modalData}/>
-                }
-                {
-                    viewOpen&& <CategoryViewModal setModal={getViewModal} data={modalData}/>
-                }
                 <h2 className="text-lg font-semibold">Insurer Sales Report</h2>
                 <div className='flex-col py-4 space-y-2'>
                     <div className="grid grid-cols-4 items-center justify-between rounded-full border border-gray-400 gap-2">
@@ -207,23 +183,29 @@ export default function InsurerSales() {
                                 name="systemAdOns"
                                 className=" bg-inherit rounded-xs cursor-pointer"
                             >
-                                <option value="5" onClick={()=>setIsOpen(true)}>Transaction Status</option>
-                                <option value="5" onClick={()=>setIsOpen(true)}>Successful Transactions</option>
-                                <option value="5" onClick={()=>setIsOpen(true)}>Failed Transactions</option>
+                                <option value="5">Transaction Status</option>
+                                <option value="5">Successful Transactions</option>
+                                <option value="5">Failed Transactions</option>
                             </select>
                         </div>
                         <div className="flex p-1 px-2">
                             <select
-                                id="systemAdOns"
-                                name="systemAdOns"
+                                id="insurerId"
+                                name="insurerId"
+                                value={insurerId}
+                                onChange={(e) => setInsurerId(Number(e.target.value))}
                                 className=" bg-inherit rounded-xs cursor-pointer"
                             >
-                                <option value="" onClick={()=>setIsOpen(true)}>Select Insurer</option>
-                                {
-                                    insurers?insurers.map((insurer, index)=>(
-                                        <option key={index} value="" onClick={()=>setIsOpen(true)}>{insurer.insurerName}</option>
-                                    )):<option value="5" onClick={()=>setIsOpen(true)}>{insurerResponse}</option>
-                                }
+                                <option value={0}>Select Insurer</option>
+                                {insurers ? (
+                                    insurers.map((insurer) => (
+                                    <option key={insurer.insurerId} value={insurer.insurerId}>
+                                        {insurer.insurerName}
+                                    </option>
+                                    ))
+                                ) : (
+                                    <option value={0}>No data found</option>
+                                )}
                             </select>
                         </div>
                     </div>
