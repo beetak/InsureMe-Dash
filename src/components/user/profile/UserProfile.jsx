@@ -55,6 +55,7 @@ export default function UserProfile() {
       if (response && response.data.message === "User found") {
         setAccountInfo(response.data)
         setSuccessMessage("Password updated successfully")
+        fetchUser()
       }
     } catch (err) {
       console.log(err)
@@ -228,8 +229,9 @@ export default function UserProfile() {
         <div className="flex flex-col flex-1 relative">
           <div className="flex space-x-4">
             <div className="flex w-32 h-32 overflow-hidden rounded-md">
+            {/* <img src={`${companyDetails?.insurerLogo}`} alt="Logo" className={`w-28 duration-500`} /> */}
               <img
-                src="images/user.png"
+                src={accountInfo.userLogo?accountInfo.userLogo:"images/user.png"}
                 alt="Profile"
                 className="w-32 h-32 bg-gradient-to-b from-main-color to-secondary-color mb-4 object-cover"
               />

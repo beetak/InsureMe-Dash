@@ -19,10 +19,6 @@ export default function RegionForm() {
 
     const handlePost = async (e) => {
         e.preventDefault()
-
-        const postData = {
-            
-        }
         if(name===""){
             setError({err: 'empty', message: 'Please provide the description'})
             setTimeout(()=>{

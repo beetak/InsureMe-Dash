@@ -28,12 +28,23 @@ export default function Reports() {
   }, [])
 
   useEffect(() => {
-      const params = new URLSearchParams(location.search)
-      const refId = params.get('referenceId')
-      if (refId) {
-          setActiveTab((userRole==='INSURER_ADMIN' || userRole==='SALES_AGENT') ? 4 : 9)
+    const params = new URLSearchParams(location.search);
+    const refId = params.get('referenceId');
+    if (refId) {
+      setActiveTab((userRole === 'INSURER_ADMIN' || userRole === 'SALES_AGENT') ? 4 : 9);
+    } else {
+      setActiveTab(getFirstValidTab());
+    }
+  }, [location]);
+  
+  const getFirstValidTab = () => {
+    for (const menu of menus) {
+      if (menu.tab) {
+        return menu.tab; // Return the first valid tab
       }
-  }, [location])
+    }
+    return 1; // Fallback to 1 if no valid tab is found
+  };  
 
   const menus = [
     // { title: "National Sales", icon: "fas fa-pen-nib", tab:1 },

@@ -57,13 +57,7 @@ export default function ShopModal({ data, refresh, setModal }) {
     e.preventDefault()
     setLoading(true)
     try {
-      const response = await InsuranceApi.put(`/shop/${data.id}`, {
-        name,
-        phoneNumber,
-        address,
-        townId,
-        active,
-      })
+      const response = await InsuranceApi.put(`/shop/${data.id}?name=${name}&phoneNumber=${phoneNumber}&address=${address}&active=${active}&townId=${townId}`)
       if (response.data && response.data.code === "OK") {
         setSuccess(true)
       } else {

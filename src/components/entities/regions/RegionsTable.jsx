@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { deleteRegion, fetchAsyncRegions } from '../../../store/entity-store';
 import { ScaleLoader } from 'react-spinners';
 import RegionModal from './RegionModal';
 import RegionViewModal from './RegionViewModal';

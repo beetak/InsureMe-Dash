@@ -61,7 +61,6 @@ export default function InsurerSales() {
     }
 
     const fetchInsurer = async () => {
-        setLoading(true)
         try{
           const response = await InsuranceApi.get('/insurers')
           if(response){
@@ -71,9 +70,6 @@ export default function InsurerSales() {
         }
         catch(err){
             console.log(error)
-        }
-        finally{
-          setLoading(false)
         }
     }
         

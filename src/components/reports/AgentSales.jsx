@@ -26,9 +26,10 @@ export default function AgentSales() {
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date());
     const [sales, setSales] = useState("")
-    const [users, setUsers] = useState([])
     const [userResponse, setUserResponse] = useState("")
-    const [selectedUser, setSelectedUser] = useState({ id: null, name: '' });
+    const [inputValue, setInputValue] = useState("")
+    const [users, setUsers] = useState([])
+    const [selectedUser, setSelectedUser] = useState({ id: null, name: "" })
 
     const handleSearch = async() => {
         setLoading(true)
@@ -141,19 +142,33 @@ export default function AgentSales() {
         );
     };
 
-    const handleNameChange = async(e) => {
+    const handleNameChange = async (e) => {
+        const value = e.target.value
+        setInputValue(value)
         setUsers([])
-        if (e.target.value.length > 2) {
-            const response = await InsuranceApi.get(`/users/search?startingWord=${e.target.value}`)
-            console.log("post results: ", response)
-            if(response.data.code==="OK"&&response.data.data.length>0){
-                setUsers(response.data.data)
+        if (value.length > 2) {
+          try {
+            const response = await InsuranceApi.get(`/users/search?startingWord=${value}`)
+            if (response.data.code === "OK" && response.data.data.length > 0) {
+              setUsers(response.data.data)
+              setSearchActive(true)
+            } else {
+              setUserResponse("Not Found")
             }
-            else{
-                setUserResponse("Not Found")
-            }
+          } catch (error) {
+            console.error("Error fetching users:", error)
+            setUserResponse("Error fetching users")
+          }
+        } else {
+          setSearchActive(false)
         }
-    };
+      }
+    
+      const handleUserSelect = (user) => {
+        setSelectedUser({ id: user.id, name: `${user.firstname} ${user.lastname}` })
+        setInputValue(`${user.firstname} ${user.lastname}`)
+        setSearchActive(false)
+      }
 
     const printDocument = () => {    
         const headers = [
@@ -319,23 +334,21 @@ export default function AgentSales() {
                                 type="text"
                                 name="name"
                                 id="name"
-                                autoComplete="family-name"
-                                placeholder='Name'
-                                onFocus={()=>setSearchActive(true)}
+                                autoComplete="off"
+                                placeholder="Name"
+                                value={inputValue}
                                 onChange={handleNameChange}
+                                onFocus={() => setSearchActive(true)}
                                 className="block w-full rounded-xs border-0 px-3 text-gray-900 shadow-sm placeholder:text-gray-400 focus:ring-0 bg-gray-200 rounded-full outline-none sm:text-sm sm:leading-6"
                             />
-                            {users && users.length>0 && searchActive && (
+                            {users.length > 0 && searchActive && (
                                 <div className="absolute mt-7 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
                                     <ul className="py-2">
                                         {users.map((user) => (
                                             <li
                                                 key={user.id}
                                                 className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                                                onClick={() => {
-                                                    setSelectedUser({ id: user.id, name: `${user.firstname} ${user.lastname}` });
-                                                    setSearchActive(false);
-                                                }}
+                                                onClick={() => handleUserSelect(user)}
                                             >
                                                 {user.firstname} {user.lastname}
                                             </li>
