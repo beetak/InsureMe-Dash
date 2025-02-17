@@ -393,23 +393,20 @@ export default function InternalUserForm() {
                             <select
                                 id="role"
                                 name="role"
+                                value={role}
+                                onChange={(e) => {setRole(e.target.value)}}
                                 className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
                             >
-                                <option 
-                                    className='font-bold italic'
-                                    onClick={()=>{
-                                        setRole("")
-                                        setRegionId("")
-                                        setTownId("")
-                                        setShopId("")
-                                    }}
-                                >Select User Role</option>
-                                {
-                                    roles.map((role, index)=>(
-                                        <option key={index} onClick={(e)=>setRole(e.target.value)}>{role}</option>
+                                <option value={0}>Select User Role</option>
+                                {roles ? (
+                                    roles.map((role) => (
+                                    <option key={role} value={role}>
+                                        {role}
+                                    </option>
                                     ))
-                                }
-                                
+                                ) : (
+                                    <option value={0} className='text-red-500'>Not Found</option>
+                                )}
                             </select>
                         </div>
                     </div>

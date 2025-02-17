@@ -19,13 +19,13 @@ export default function CustomersTable() {
     const fetchCustomers = async () => {
         setLoading(true)
         try{
-            const response = await InsuranceApi.get('/town')
+            const response = await InsuranceApi.get('/clients/current-day')
             if(response&&response.data){
                 console.log(response.data)
                 setCustomers(response.data.data)
             }
             else{
-                setCustomerResponse("No Categories found")
+                setCustomerResponse("No Customers found")
             }
         }
         catch(err){
@@ -45,12 +45,9 @@ export default function CustomersTable() {
     const renderTableHeader = () => {
       const columns = [
         { key: 'item', label: '#', width: "1" },
-        { key: 'name', label: 'Name' },
-        { key: 'category', label: 'Email Address' },
-        { key: 'price', label: 'Phone Number' },
-        { key: 'datecreated', label: 'First Seen' },
-        { key: 'status', label: 'D.O.B' },
-        { key: 'action', label: 'Action' },
+        { key: 'name', label: 'Username' },
+        { key: 'fullname', label: 'Fullname' },
+        { key: 'phone', label: 'Phone Number' }
       ];
   
       return columns.map((column) => (
@@ -81,39 +78,9 @@ export default function CustomersTable() {
         return customers?customers.map((item, index) => (
         <tr key={index} className={`${index%2!==0&&" bg-gray-100"} p-3 text-sm text-gray-600 font-semibold`}>
             <td className='font-bold text-blue-5 justify-center items-center w-7'><div className='w-full justify-center flex items-center'>{++index}</div></td>
-            <td>{item.productName}</td>
-            <td>{item.categoryId}</td>
-            <td>{item.price }</td>
-            <td>Undefined</td>
-            <td className=''><div className='w-full justify-center flex items-center'> <span className={` font-semibold uppercase text-xs tracking-wider px-3 text-white ${item.statusCode?" bg-green-600": " bg-red-600 "} rounded-full py-1`}>{item.statusCode?"Active":"Inactive"}</span></div></td>
-            <td className='py-1 space-x-0 justify-center'>
-            <div className='w-full justify-center flex items-center'>
-                <button
-                onClick={
-                    ()=>{
-                    printVouchers()
-                    dispatch(navActions.toggleInvoice(false))
-                    }
-                }
-                className={`space-x-2 items-center border-gray-300 rounded-l-full px-4 h-6 m bg-gray-700 text-gray-100 hover:text-gray-700 hover:bg-white`}
-                >
-                <i className='fas fa-eye text-xs'/>
-                <span className='text-xs'>View</span>
-                </button>                  
-                <button
-                onClick={
-                    ()=>{
-                    printVouchers()
-                    dispatch(navActions.toggleInvoice(false))
-                    }
-                }
-                className={`space-x-2 border-gray-300 rounded-r-full px-4 h-6 bg-gray-700 text-gray-100 hover:text-gray-700 hover:bg-white`}
-                >
-                <i className='fas fa-pen text-xs'/>
-                <span className='text-xs'>Update</span>
-                </button>
-            </div>  
-            </td>
+            <td>{item.username}</td>
+            <td>{item.fullName}</td>
+            <td>{item.phoneNumber }</td>
         </tr>
         )):
         <tr className=''>

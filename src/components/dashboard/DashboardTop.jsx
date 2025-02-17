@@ -16,17 +16,25 @@ export default function DashboardTop() {
     const [newClients, setNewClients] = useState('')
     const [totalPolicies, setTotalPolicies] = useState('')
     const [totalInsurers, setTotalInsurers] = useState('')
+    const [userData, setUserData] = useState('')
 
     useEffect(() => {
         setupInterceptors(() => user, setUser)
         getNewUsers()
         getTotalPolicies()
         getTotalInsurers()
+        getUser()
     },[])
 
+    const getUser = async () => {
+        const response = await InsuranceApi.get(`/users/userId/${user.userId}`)
+        if(response.data.code==="OK"){
+            setUserData(response.data.data)
+        }
+    }
 
     const getNewUsers = async () => {
-        const response = await InsuranceApi.get(`/clients/current-day`)
+        const response = await InsuranceApi.get(`/clients/count/current-day`)
         if(response.data.code==="OK"){
             setNewClients(response.data.data)
         }
@@ -147,7 +155,7 @@ export default function DashboardTop() {
                 <div className="flex w-80">
                     <div className="flex flex-col p-2 space-y-2 items-center bg-gray-400 w-full rounded-md">
                         <div className="rounded-full overflow-hidden mt-8 h-36 w-36">
-                            <img src="images/user.png" className='w-96 bg-gradient-to-b from-main-color to-secondary-color' alt="" />
+                            <img src={userData.userLogo?userData.userLogo:"images/user.png"} className='w-96 bg-gradient-to-b from-main-color to-secondary-color' alt="" />
                         </div>
                         <h1 className='text-white text-xl'>Fidelis Gwokuda</h1>
                         <h1  className='text-xs text-bold text-white' >{userRole}</h1>

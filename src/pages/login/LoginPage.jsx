@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { loginInsurerUser, loginUser } from '../../store/user-store';
-import { navActions } from '../../store/nav-store';
 import { decodeToken } from './tokenUtils';
 import useAuth from '../../hooks/useAuth';
 import axiosInstance from '../../components/api/AuthApi';

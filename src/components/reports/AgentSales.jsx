@@ -2,11 +2,8 @@ import React, { useEffect, useState } from 'react'
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { ScaleLoader } from 'react-spinners';
-import CategoryModal from '../category/CategoryModal';
-import CategoryViewModal from '../category/CategoryViewModal';
 import jsPDF from 'jspdf'
 import "jspdf-autotable";
-import commissions from './commissions.json'
 import InsuranceApi, { setupInterceptors } from '../api/InsuranceApi';
 import useAuth from '../../hooks/useAuth';
 const img = "images/icon.png"
@@ -170,128 +167,127 @@ export default function AgentSales() {
         setSearchActive(false)
       }
 
-    const printDocument = () => {    
+    const printDocument = () => {
         const headers = [
-                ["Broker", "Policy", "Revenue Collections","", "TelOne Commission","", "Broker Remmitance",""],
-                ["", "", "USD","ZWG", "USD","ZWG", "USD","ZWG"]
-        ];
+          ["#", "Policy Name", "Revenue Collections", ""],
+          ["", "", "ZWG", "USD"],
+        ]
     
-        let invoiceContent = {
-            startY: 170, // Adjust the spacing as needed
-            head: headers,
-            headStyles: {
-                fillColor: [31, 41, 55], // Set the fill color of the header cells to white
-                textColor: [255, 255, 255], // Set the text color of the header cells to white
-                halign: 'start', // Center the text in the header cells
-                fontStyle: 'bold',
-                fontSize: 7,
-                cellPadding: 3, // Increase the cell padding for better appearance
-                lineWidth: 0.5, // Add a border to the header cells
-                lineHeight: 0.5, // Add a border to the header cells
-                lineColor: [31, 41, 55], // Set the border color of the header cells
-                borderRadius: 5 // Add rounded corners to the header cells
-            },
-            margin: { left: 45, right: 35 },
-            body: commissions.flatMap(broker => [
-                [broker.brokerName], // Add the brokerName as a separate row
-                ...broker.policyDetails.map(policy => [
-                    '', // Leave the first column empty for the policy details
-                    policy.policyName,
-                    policy.totalAmountUsd,
-                    policy.totalAmountZWG,
-                    policy.telOneCommissionUsd,
-                    policy.telOneCommissionZWG,
-                    policy.brokerRemmitanceUsd,
-                    policy.brokerRemmitanceZWG
-                ])
+        // Calculate totals
+        const totals = sales.reduce(
+          (acc, item) => {
+            acc.ZWG += Number.parseFloat(item.amounts.ZWG) || 0
+            acc.USD += Number.parseFloat(item.amounts.USD) || 0
+            return acc
+          },
+          { ZWG: 0, USD: 0 },
+        )
+    
+        const invoiceContent = {
+          startY: 170,
+          head: headers,
+          headStyles: {
+            fillColor: [31, 41, 55],
+            textColor: [255, 255, 255],
+            halign: "start",
+            fontStyle: "bold",
+            fontSize: 7,
+            cellPadding: 3,
+            lineWidth: 0.5,
+            lineHeight: 0.5,
+            lineColor: [31, 41, 55],
+            borderRadius: 5,
+          },
+          margin: { left: 45, right: 35 },
+          body: [
+            ...sales.map((item, index) => [
+              index + 1,
+              item.insuranceCategory,
+              item.amounts.ZWG || "",
+              item.amounts.USD || "",
             ]),
-            bodyStyles: {
-                fillColor: [255, 255, 255], // Set the fill color of the body cells to white
-                textColor: [0, 0, 0], // Set the text color of the body cells to black
-                fontSize: 7,
-                halign: 'left', // Center the text in the body cells
-                cellPadding: 3 // Increase the cell padding for better appearance
-            },
-            columnStyles: {
-                0: { cellWidth: 80 }, // Width for the first column (empty column)
-                1: { cellWidth: 75 }, // Width for the "Description" column
-                2: { cellWidth: 35, align: 'right', colSpan: 2 }, // Width for the "Quantity" column
-                3: { cellWidth: 35, align: 'right' }, // Width for the "Unit Price" column
-                4: { cellWidth: 35, align: 'right' }, // Width for the "Unit Price" column
-                5: { cellWidth: 35, align: 'right' }, // Width for the "Remmitance" column
-                6: { cellWidth: 35, align: 'right' }, // Width for the "Remmitance" column
-                7: { cellWidth: 35, align: 'right' }, // Width for the "Broker Remmitance" column
-            },
-            theme: 'grid', // Use the 'grid' theme for the table
-            styles: {
-                tableWidth: 'auto', // Set the table width to 'auto'
-                overflow: 'linebreak', // Wrap the text in the cells
-                cellPadding: 4, // Increase the cell padding
-                fontSize: 9, // Set the font size for the table
-                lineWidth: 0.5, // Set the line width for the table borders
-                lineColor: [220, 220, 220] // Set the line color for the table borders
+            // Add totals row
+            ["", "Total", totals.ZWG.toFixed(2), totals.USD.toFixed(2)],
+          ],
+          bodyStyles: {
+            fillColor: [255, 255, 255],
+            textColor: [0, 0, 0],
+            fontSize: 7,
+            halign: "left",
+            cellPadding: 3,
+          },
+          columnStyles: {
+            0: { cellWidth: 20, halign: "center" },
+            1: { cellWidth: 245 },
+            2: { cellWidth: 50, halign: "right" },
+            3: { cellWidth: 50, halign: "right" },
+          },
+          theme: "grid",
+          styles: {
+            tableWidth: "auto",
+            overflow: "linebreak",
+            cellPadding: 4,
+            fontSize: 9,
+            lineWidth: 0.5,
+            lineColor: [220, 220, 220],
+          },
+          didDrawCell: (data) => {
+            // Style the totals row
+            if (data.section === "body" && data.row.index === sales.length) {
+              doc.setFont("Times New Roman", "bold")
+              doc.setFillColor(240, 240, 240)
             }
-        };
-
-        const contentHeight = invoiceContent.head.length * 10 + invoiceContent.body.length * 15;
-
-        const current = new Date();
-        var today = new Date(),
-            curTime = today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
-
-        const dateString = new Date(current);
-        const formattedDate = dateString.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
-
-        var doc = new jsPDF('potrait', 'px', 'a4', 'false')
-
-        const pageHeight = doc.internal.pageSize.height;
-        const footerY = pageHeight - 40; // Adjust the spacing as needed
-        const pageWidth = doc.internal.pageSize.width;
-        const text = "107 Kwame Nkrumah Avenue, Harare, Zimbabwe\nP.O Box CY 331, Causeway, Harare, Zimbabwe\n24 Hour Call Center - +263 0242 700950"
-        const textWidth = doc.getTextWidth(text);
-        const centerX = (pageWidth - textWidth) / 2;
-        const textX = centerX - (textWidth / -2); // Adjust the horizontal position to align in the center
-
-        doc.addImage(telone, 'PNG', 45, 40, 72, 28)
-        doc.addImage(img, 'PNG', 340, 40, 72, 28)
-        doc.setFont('Times New Roman', 'bold')
+          },
+        }
+    
+        const current = new Date()
+        const formattedDate = current.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })
+    
+        var doc = new jsPDF("portrait", "px", "a4", "false")
+    
+        const pageHeight = doc.internal.pageSize.height
+        const footerY = pageHeight - 40
+        const pageWidth = doc.internal.pageSize.width
+        const text =
+          "107 Kwame Nkrumah Avenue, Harare, Zimbabwe\nP.O Box CY 331, Causeway, Harare, Zimbabwe\n24 Hour Call Center - +263 0242 700950"
+        const textWidth = doc.getTextWidth(text)
+        const centerX = (pageWidth - textWidth) / 2
+        const textX = centerX - textWidth / -2
+    
+        doc.addImage(telone, "PNG", 45, 40, 72, 28)
+        doc.addImage(img, "PNG", 340, 40, 72, 28)
+        doc.setFont("Times New Roman", "bold")
         doc.setFontSize(16)
-        doc.setTextColor(15, 145, 209); // set text color to #3675D4
-        doc.text(410, 95, 'Commission Report', { align: 'right' })
-
-        doc.setLineWidth(0.5); // Set the width of the line
-        doc.line(45, 110, 410, 110); // Draw the line from (340, 100) to (570, 100)
-
-        doc.setFont('Times New Roman', 'bold');
-        doc.setFontSize(12);
-        doc.text(410, 125, 'Invoice To', { align: 'right' });
-
-        doc.setFont('Times New Roman', 'regular');
-        doc.setFontSize(9);
-        // doc.text(410, 135, formatAddress("addressTo"), { align: 'right' });
-
-        doc.setFont('Times New Roman', 'bold');
-        doc.setFontSize(12);
+        doc.setTextColor(15, 145, 209)
+        doc.text(410, 95, "Agent Sales Report", { align: "right" })
+    
+        doc.setLineWidth(0.5)
+        doc.line(45, 110, 410, 110)
+    
+        doc.setFont("Times New Roman", "bold")
+        doc.setFontSize(12)
         doc.setTextColor(15, 145, 209)
         doc.text(45, 125, formattedDate)
-
-        doc.setFont('Times New Roman', 'medium')
+    
+        doc.setFont("Times New Roman", "medium")
         doc.setTextColor(0, 0, 0)
         doc.setFontSize(9)
-        // doc.text(45, 135, formatAddress("addressFrom"))
-
-        doc.autoTable(invoiceContent);
-
-        doc.setLineWidth(0.5); // Set the width of the line
-        doc.line(45, footerY - 10, 410, footerY - 10); // Draw the line from (340, 100) to (570, 100)
-
-        doc.setFontSize(9);
-        doc.setTextColor(112, 112, 112);
-        doc.setFont('Times New Roman', 'regular');
-        doc.text(textX, footerY, text, { align: "center" });
-
-        doc.save('insureme.pdf')
-    }
+        doc.text(45, 140, `Agent: ${selectedUser?.name || user.name}`)
+        doc.text(45, 155, `Date Range: ${startDate.toLocaleDateString()} - ${endDate.toLocaleDateString()}`)
+    
+        doc.autoTable(invoiceContent)
+    
+        doc.setLineWidth(0.5)
+        doc.line(45, footerY - 10, 410, footerY - 10)
+    
+        doc.setFontSize(9)
+        doc.setTextColor(112, 112, 112)
+        doc.setFont("Times New Roman", "regular")
+        doc.text(textX, footerY, text, { align: "center" })
+    
+        doc.save("agent_sales_report.pdf")
+      }
+    
     return (
         <>
             <div className="p-5 bg-white rounded-md border border-gray-200 border-solid border-1">

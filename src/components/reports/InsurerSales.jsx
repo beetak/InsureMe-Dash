@@ -1,16 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { useDispatch, useSelector } from 'react-redux';
 import { ScaleLoader } from 'react-spinners';
-import CategoryModal from '../category/CategoryModal';
-import CategoryViewModal from '../category/CategoryViewModal';
-import { fetchAsyncRegions, fetchShopsByTownId, fetchTownsByRegionId, getRegions, getShops, getTowns } from '../../store/entity-store';
-import { authActions, fetchUserByShopId, findUserLike, getUsers } from '../../store/user-store';
-import { fetchSalesByDateRange } from '../../store/payments-store';
-import { fetchAsyncInsurer, getInsurers } from '../../store/insurer-store';
 import useAuth from '../../hooks/useAuth';
 import InsuranceApi from '../api/InsuranceApi';
+import jsPDF from 'jspdf'
+import "jspdf-autotable";
+const img = "images/icon.png"
+const telone = "images/telone-logo.png"
 
 export default function InsurerSales() {
 
@@ -23,6 +20,7 @@ export default function InsurerSales() {
     const [sales, setSales] = useState("")
     const [insurers, setInsurers] = useState("")
     const [insurerId, setInsurerId] = useState("")
+    const [insurerLogo, setInsurerLogo] = useState("")
 
     useEffect(()=>{
         fetchInsurer()
@@ -72,6 +70,128 @@ export default function InsurerSales() {
             console.log(error)
         }
     }
+    
+    const printDocument = () => {
+        const headers = [
+            ["#", "Policy Name", "Revenue Collections", ""],
+            ["", "", "ZWG", "USD"],
+        ]
+    
+        // Calculate totals
+        const totals = sales.reduce(
+            (acc, item) => {
+            acc.ZWG += Number.parseFloat(item.amounts.ZWG) || 0
+            acc.USD += Number.parseFloat(item.amounts.USD) || 0
+            return acc
+            },
+            { ZWG: 0, USD: 0 },
+        )
+    
+        const invoiceContent = {
+            startY: 170,
+            head: headers,
+            headStyles: {
+            fillColor: [31, 41, 55],
+            textColor: [255, 255, 255],
+            halign: "start",
+            fontStyle: "bold",
+            fontSize: 7,
+            cellPadding: 3,
+            lineWidth: 0.5,
+            lineHeight: 0.5,
+            lineColor: [31, 41, 55],
+            borderRadius: 5,
+            },
+            margin: { left: 45, right: 35 },
+            body: [
+            ...sales.map((item, index) => [
+                index + 1,
+                item.insuranceCategory,
+                item.amounts.ZWG || "",
+                item.amounts.USD || "",
+            ]),
+            // Add totals row
+            ["", "Total", totals.ZWG.toFixed(2), totals.USD.toFixed(2)],
+            ],
+            bodyStyles: {
+            fillColor: [255, 255, 255],
+            textColor: [0, 0, 0],
+            fontSize: 7,
+            halign: "left",
+            cellPadding: 3,
+            },
+            columnStyles: {
+            0: { cellWidth: 20, halign: "center" },
+            1: { cellWidth: 245 },
+            2: { cellWidth: 50, halign: "right" },
+            3: { cellWidth: 50, halign: "right" },
+            },
+            theme: "grid",
+            styles: {
+            tableWidth: "auto",
+            overflow: "linebreak",
+            cellPadding: 4,
+            fontSize: 9,
+            lineWidth: 0.5,
+            lineColor: [220, 220, 220],
+            },
+            didDrawCell: (data) => {
+            // Style the totals row
+            if (data.section === "body" && data.row.index === sales.length) {
+                doc.setFont("Times New Roman", "bold")
+                doc.setFillColor(240, 240, 240)
+            }
+            },
+        }
+    
+        const current = new Date()
+        const formattedDate = current.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })
+    
+        var doc = new jsPDF("portrait", "px", "a4", "false")
+    
+        const pageHeight = doc.internal.pageSize.height
+        const footerY = pageHeight - 40
+        const pageWidth = doc.internal.pageSize.width
+        const text =
+            "107 Kwame Nkrumah Avenue, Harare, Zimbabwe\nP.O Box CY 331, Causeway, Harare, Zimbabwe\n24 Hour Call Center - +263 0242 700950"
+        const textWidth = doc.getTextWidth(text)
+        const centerX = (pageWidth - textWidth) / 2
+        const textX = centerX - textWidth / -2
+    
+        doc.addImage(telone, "PNG", 45, 40, 72, 28)
+        doc.addImage(img, "PNG", 340, 40, 72, 28)
+        doc.setFont("Times New Roman", "bold")
+        doc.setFontSize(16)
+        doc.setTextColor(15, 145, 209)
+        doc.text(410, 95, "Agent Sales Report", { align: "right" })
+    
+        doc.setLineWidth(0.5)
+        doc.line(45, 110, 410, 110)
+    
+        doc.setFont("Times New Roman", "bold")
+        doc.setFontSize(12)
+        doc.setTextColor(15, 145, 209)
+        doc.text(45, 125, formattedDate)
+    
+        doc.setFont("Times New Roman", "medium")
+        doc.setTextColor(0, 0, 0)
+        doc.setFontSize(9)
+        // doc.text(45, 140, `Agent: ${selectedUser?.name || user.name}`)
+        doc.text(45, 155, `Date Range: ${startDate.toLocaleDateString()} - ${endDate.toLocaleDateString()}`)
+    
+        doc.autoTable(invoiceContent)
+    
+        doc.setLineWidth(0.5)
+        doc.line(45, footerY - 10, 410, footerY - 10)
+    
+        doc.setFontSize(9)
+        doc.setTextColor(112, 112, 112)
+        doc.setFont("Times New Roman", "regular")
+        doc.text(textX, footerY, text, { align: "center" })
+    
+        doc.save("insurer_sales_report.pdf")
+    }
+        
         
     const renderTableHeader = () => {
         const columns = [

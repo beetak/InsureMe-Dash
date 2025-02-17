@@ -106,17 +106,13 @@ export default function Transaction() {
     }
 
     function renderTransactionItems() {
-        
         if (sales?.insuranceCategory === 'MOTOR_VEHICLE') {
-            return <Motor sales={sales}/>
-        }
-        else if(sales?.insuranceCategory === 'TRAVEL') {
-            return <Travel sales={sales}/>
-        }
-        else if(sales?.insuranceCategory === 'PROPERTY') {
-            return <Property sales={sales}/>
-        }
-        else{
+            return <Motor sales={sales} printDocument={handlePrint} />;
+        } else if (sales?.insuranceCategory === 'TRAVEL') {
+            return <Travel sales={sales} printDocument={handlePrint} />;
+        } else if (sales?.insuranceCategory === 'PROPERTY') {
+            return <Property sales={sales} printDocument={handlePrint} />;
+        } else {
             return (
                 <div className="bg-white rounded-xl shadow-md overflow-hidden">
                     <div className="flex flex-col">
@@ -127,7 +123,7 @@ export default function Transaction() {
                         </div>
                     </div>
                 </div>
-            )
+            );
         }
     }
 
@@ -164,10 +160,7 @@ export default function Transaction() {
                                 <span className='text-xs'>Search</span>
                             </button>
                             <button
-                                onClick={() => {
-                                    setModalData(sales)
-                                    setIsOpen(true)
-                                }}
+                                onClick={printDocument}
                                 className="space-x-2 border-gray-300 rounded-r-full px-3 h-8 items-center bg-gray-500 text-gray-100 hover:bg-gray-600"
                                 aria-label="Print"
                                 disabled={!sales}
