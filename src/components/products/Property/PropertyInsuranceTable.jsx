@@ -40,7 +40,7 @@ export default function PropertyInsuranceTable() {
   const getPropertyProducts = async () => {
     setLoading(true)
     const url =
-      user.role === "INSURER_ADMIN" ? `/insurer-property-rates/insurer/${user.companyId}` : `/insurer-property-rates`
+      (user.role === "INSURER_ADMIN"||user.role==="IT_ADMIN"||user.role==="TREASURY_ACCOUNTANT"||user.role==="IT_SUPPORT"||user.role==="MANAGER"||user.role==="PRODUCT_MANAGER") ? `/insurer-property-rates/insurer/${user.companyId}` : `/insurer-property-rates`
     try {
       const response = await InsuranceApi.get(url)
       if (response.data.code === "OK" && response.data.data.length > 0) {

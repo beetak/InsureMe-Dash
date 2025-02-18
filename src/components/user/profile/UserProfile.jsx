@@ -1,108 +1,129 @@
-import { useEffect, useState } from "react"
-import ImageModal from "./ImageModal"
-import useAuth from "../../../hooks/useAuth"
-import InsuranceApi, { setupInterceptors } from "../../api/InsuranceApi"
+import { useEffect, useState } from "react";
+import ImageModal from "./ImageModal";
+import useAuth from "../../../hooks/useAuth";
+import InsuranceApi, { setupInterceptors } from "../../api/InsuranceApi";
 
 export default function UserProfile() {
-  const { user, setUser } = useAuth()
-  const { userId } = user
+  const { user, setUser } = useAuth();
+  const { userId } = user;
 
-  const [image, setImage] = useState([])
-  const [imageName, setImageName] = useState("")
-  const [currentImage, setCurrentImage] = useState(false)
-  const [currentPage, setCurrentPage] = useState(true)
-  const [accountInfo, setAccountInfo] = useState("")
-  const [activeTab, setActiveTab] = useState("password")
-  const [error, setError] = useState("")
-  const [updateInfo, setUpdateInfo] = useState({})
-  const [loading, setLoading] = useState(false)
-  const [successMessage, setSuccessMessage] = useState("")
-
-  useEffect(() => {
-    setupInterceptors(() => user, setUser)
-    fetchUser()
-  }, [])
+  const [image, setImage] = useState([]);
+  const [imageName, setImageName] = useState("");
+  const [currentImage, setCurrentImage] = useState(false);
+  const [currentPage, setCurrentPage] = useState(true);
+  const [accountInfo, setAccountInfo] = useState("");
+  const [activeTab, setActiveTab] = useState("password");
+  const [message, setMessage] = useState(""); // Combined state for success and error messages
+  const [updateInfo, setUpdateInfo] = useState({});
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (successMessage) {
+    setupInterceptors(() => user, setUser);
+    fetchUser();
+  }, []);
+
+  useEffect(() => {
+    if (message) {
       const timer = setTimeout(() => {
-        setSuccessMessage("")
-      }, 3000)
-      return () => clearTimeout(timer)
+        setMessage("");
+      }, 3000);
+      return () => clearTimeout(timer);
     }
-  }, [successMessage])
+  }, [message]);
 
   const fetchUser = async () => {
     try {
-      const url = user.role === "INSURER_ADMIN" ? `/insurer-users/user/${userId}` : `/users/userId/${userId}`
-      const response = await InsuranceApi.get(url)
+      const url =
+       ( user.role === "INSURER_ADMIN" || user.role === "IT_ADMIN" || user.role === "PRODUCT_MANAGER" || user.role === "IT_SUPPORT" || user.role === "MANAGER" || user.role === "TREASURY_ACCOUNTANT")
+          ? `/insurer-users/user/${userId}`
+          : `/users/userId/${userId}`;
+      const response = await InsuranceApi.get(url);
       if (response && (response.data.message === "User found" || response.data.message === "retrieved successfully")) {
-        console.log(response)
-        setAccountInfo(response.data.data)
+        console.log(response);
+        setAccountInfo(response.data.data);
       }
     } catch (err) {
-      console.log(err)
-      setError("Error fetching user")
+      console.log(err);
+      setMessage("Error fetching user");
     }
-  }
+  };
 
   const updateUser = async () => {
-    setLoading(true)
-    setError("")
-    setSuccessMessage("")
+    setLoading(true);
+    setMessage("Updating Password...");
+    let modifiedUpdateInfo = { ...updateInfo }; // Create a copy of updateInfo
+  
+    if (
+      user.role === "INSURER_ADMIN" ||
+      user.role === "IT_ADMIN" ||
+      user.role === "PRODUCT_MANAGER" ||
+      user.role === "IT_SUPPORT" ||
+      user.role === "MANAGER" ||
+      user.role === "TREASURY_ACCOUNTANT"
+    ) {
+      // Remove confirmationPassword and add email
+      const { confirmationPassword, ...rest } = modifiedUpdateInfo;
+      modifiedUpdateInfo = { ...rest, email: accountInfo.email };
+    }
+  
     try {
-      const response = await InsuranceApi.patch(`/users/change-password`, updateInfo)
-      if (response && response.data.message === "User found") {
-        setAccountInfo(response.data)
-        setSuccessMessage("Password updated successfully")
-        fetchUser()
+      const response = await (user.role === "INSURER_ADMIN" || user.role === "IT_ADMIN" || user.role === "PRODUCT_MANAGER" || user.role === "IT_SUPPORT" || user.role === "MANAGER" || user.role === "TREASURY_ACCOUNTANT")
+        ? InsuranceApi.put(`insurer-users/change-password`, modifiedUpdateInfo)
+        : InsuranceApi.patch(`/users/change-password`, modifiedUpdateInfo);
+  
+      // Check if response is valid and log it
+      console.log("Response:", response);
+  
+      if (response && (response.data.data.message === "User found" || response.data.data.message === "Password changed successfully")) {
+        setAccountInfo(response.data.data);
+        setMessage("Password updated successfully");
+        fetchUser();
       }
     } catch (err) {
-      console.log(err)
-      setError("Error updating password")
+      console.log("Error:", err); // Log the error if the API call fails
+      setMessage("Error updating password");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const updateUserImage = async () => {
-    setLoading(true)
-    setError("")
-    setSuccessMessage("")
+    setLoading(true);
+    setMessage("Updating Profile Picture...");
     try {
       const response = await InsuranceApi.patch(`/users/logo`, {
         userLogo: image,
-      })
+      });
       if (response && response.data.message === "User found") {
-        console.log(response)
-        setAccountInfo(response.data)
-        setSuccessMessage("Profile picture updated successfully")
+        console.log(response);
+        setAccountInfo(response.data);
+        setMessage("Profile picture updated successfully");
       }
     } catch (err) {
-      console.log(err)
-      setError("Error updating image")
+      console.log(err);
+      setMessage("Error updating image");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const getModal = (isOpen) => {
-    setCurrentImage(isOpen)
-  }
+    setCurrentImage(isOpen);
+  };
 
   const getImage = (image, imageName) => {
-    setImage(image)
-    setImageName(imageName)
-  }
+    setImage(image);
+    setImageName(imageName);
+  };
 
   const showModal = (showPage) => {
-    setCurrentPage(true)
-  }
+    setCurrentPage(true);
+  };
 
   const handlePasswordChange = (e) => {
-    const { name, value } = e.target
-    setUpdateInfo({ ...updateInfo, [name]: value })
-  }
+    const { name, value } = e.target;
+    setUpdateInfo({ ...updateInfo, [name]: value });
+  };
 
   const passwordReset = () => {
     return (
@@ -158,8 +179,7 @@ export default function UserProfile() {
             />
           </div>
         </div>
-        {error && <p className="text-red-500 mt-2">{error}</p>}
-        {successMessage && <p className="text-green-500 mt-2">{successMessage}</p>}
+        {message && <p className={`mt-2 ${message.includes("Error") ? "text-red-500" : "text-green-500"}`}>{message}</p>}
         <div className="flex space-x-2 pt-10">
           <button
             onClick={updateUser}
@@ -175,8 +195,8 @@ export default function UserProfile() {
           </button>
         </div>
       </>
-    )
-  }
+    );
+  };
 
   const imageUpdate = () => {
     return (
@@ -196,8 +216,7 @@ export default function UserProfile() {
             </label>
           </div>
         </div>
-        {error && <p className="text-red-500 mt-2">{error}</p>}
-        {successMessage && <p className="text-green-500 mt-2">{successMessage}</p>}
+        {message && <p className={`mt-2 ${message.includes("Error") ? "text-red-500" : "text-green-500"}`}>{message}</p>}
         <div className="flex space-x-2 pt-10">
           <button
             onClick={updateUserImage}
@@ -213,25 +232,23 @@ export default function UserProfile() {
           </button>
         </div>
       </>
-    )
-  }
+    );
+  };
 
   const displayUserRole = (role) => {
-    if (role === "SUPER_ADMINISTRATOR") return "Super Administrator"
-    if (role === "ADMIN" || role === "INSURER_ADMIN") return "System Administrator"
-    if (role === "SALES_AGENT") return "Cashier"
-  }
+    if (role === "SUPER_ADMINISTRATOR") return "Super Administrator";
+    if (role === "ADMIN" || role === "INSURER_ADMIN") return "System Administrator";
+    if (role === "SALES_AGENT") return "Cashier";
+  };
 
   if (accountInfo)
     return (
       <div className="p-8 flex justify-between w-full">
-        {/* User Profile Component */}
         <div className="flex flex-col flex-1 relative">
           <div className="flex space-x-4">
             <div className="flex w-32 h-32 overflow-hidden rounded-md">
-            {/* <img src={`${companyDetails?.insurerLogo}`} alt="Logo" className={`w-28 duration-500`} /> */}
               <img
-                src={accountInfo.userLogo?accountInfo.userLogo:"images/user.png"}
+                src={accountInfo.userLogo ? accountInfo.userLogo : "images/user.png"}
                 alt="Profile"
                 className="w-32 h-32 bg-gradient-to-b from-main-color to-secondary-color mb-4 object-cover"
               />
@@ -282,7 +299,7 @@ export default function UserProfile() {
               Edit Password
             </button>
             <button
-              className="bg-gradient-to-r from-secondary-color to-main-color rounded-full py-1 w-48 text-white"
+              className={`${(user.role === "ADMIN" || user.role === "IT_ADMIN" || user.role === "PRODUCT_MANAGER" || user.role === "IT_SUPPORT" || user.role === "MANAGER" || user.role === "TREASURY_ACCOUNTANT") ? "hidden" : ""} bg-gradient-to-r from-secondary-color to-main-color rounded-full py-1 w-48 text-white`}
               onClick={() => setActiveTab("profile")}
             >
               <i className="fa fa-edit mr-2" />
@@ -292,7 +309,7 @@ export default function UserProfile() {
           {activeTab === "password" ? passwordReset() : imageUpdate()}
         </div>
       </div>
-    )
-  return <div className="p-8 flex justify-between w-full">{error}</div>
-}
+    );
 
+  return <div className="p-8 flex justify-between w-full">{message}</div>;
+}

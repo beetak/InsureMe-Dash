@@ -34,12 +34,20 @@ export default function MonthlySalesCharts() {
 
     const zwgSeries = {
       name: "ZWG Sales",
-      data: months.map((month) => products.reduce((sum, product) => sum + (data[product]?.[month]?.ZWG || 0), 0)),
+      data: months.map((month) =>
+        parseFloat(
+          products.reduce((sum, product) => sum + (data[product]?.[month]?.ZWG || 0), 0).toFixed(2)
+        )
+      ),
     }
 
     const usdSeries = {
       name: "USD Sales",
-      data: months.map((month) => products.reduce((sum, product) => sum + (data[product]?.[month]?.USD || 0), 0)),
+      data: months.map((month) =>
+        parseFloat(
+          products.reduce((sum, product) => sum + (data[product]?.[month]?.USD || 0), 0).toFixed(2)
+        )
+      ),
     }
 
     return [zwgSeries, usdSeries]

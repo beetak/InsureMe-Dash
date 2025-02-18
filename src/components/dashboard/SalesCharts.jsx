@@ -57,7 +57,7 @@ export default function SalesCharts() {
   const createBarSeries = (data, currency) => {
     return data.map((item) => ({
       name: item.insurerName,
-      data: [item.totalSales[currency] || 0],
+      data: [parseFloat((item.totalSales[currency] || 0).toFixed(2))],
     }))
   }
 

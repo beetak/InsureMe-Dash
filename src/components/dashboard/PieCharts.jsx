@@ -80,15 +80,15 @@ export default function PieCharts() {
     <div className="flex flex-row w-full py-2 space-x-4">
       <div className="w-full bg-white rounded-lg shadow-md overflow-hidden">
         <div className="p-4 border-b">
-          <h2 className="text-xl font-semibold text-gray-800">Monthly Sales by Category</h2>
-          <p className="text-sm text-gray-600">Distribution of sales across different insurance categories</p>
+          <h2 className="text-xl font-semibold text-gray-800">Monthly Sales by Policy</h2>
+          <p className="text-sm text-gray-600">Distribution of sales across different insurance policies</p>
         </div>
         <div className="p-4 flex space-x-4">
-          <div className="flex-1">
+          {/* <div className="flex-1">
             <Suspense fallback={<div>Loading chart...</div>}>
               <Chart options={state.options} series={state.series} type="donut" width="100%" height={250} />
             </Suspense>
-          </div>
+          </div> */}
           <div className="flex-1">
             <Suspense fallback={<div>Loading chart...</div>}>
               <Chart options={state.options1} series={state.series1} type="donut" width="100%" height={250} />

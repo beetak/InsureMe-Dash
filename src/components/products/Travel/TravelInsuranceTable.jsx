@@ -43,7 +43,7 @@ export default function TravelInsuranceTable() {
   const getTravelProducts = async () => {
     setLoading(true)
     const url =
-      user.role === "INSURER_ADMIN" ? `/travel-special-plan/insurer/${user.companyId}` : `/travel-special-plan`
+      (user.role === "INSURER_ADMIN"||user.role==="IT_ADMIN"||user.role==="TREASURY_ACCOUNTANT"||user.role==="IT_SUPPORT"||user.role==="MANAGER"||user.role==="PRODUCT_MANAGER") ? `/travel-special-plan/insurer/${user.companyId}` : `/travel-special-plan`
     const response = await InsuranceApi.get(url)
     if (response.data.code === "OK" && response.data.data.length > 0) {
       setTravelInsurance(response.data)

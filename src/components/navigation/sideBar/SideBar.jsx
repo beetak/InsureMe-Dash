@@ -167,10 +167,12 @@ export default function SideBar() {
                         <div className="ml-4">
                             <h2 className="text-md font-bold h-6">Welcome <span className='text-main-color'>{firstname}</span></h2>
                             <p className="text-gray-600 text-xs">
-                                {userRole === "INSURER_ADMIN" ? "Administrator" :
+                                {(userRole === "INSURER_ADMIN" || userRole==="IT_ADMIN" || userRole==="ADMIN")? "Administrator" :
                                  userRole === "SALES_AGENT" ? "Cashier" :
                                  userRole === "SUPER_ADMINISTRATOR" ? "Super User" :
-                                 userRole === "ADMIN" ? "Administrator" : ""}
+                                 userRole === "TREASURY_ACCOUNTANT" ? "Accountant" :
+                                 userRole === "PRODUCT_MANAGER" ? "Product Manager" :
+                                 userRole === "MANAGER" ? "Finance Manager" : ""}
                             </p>
                         </div>
                     </div>
