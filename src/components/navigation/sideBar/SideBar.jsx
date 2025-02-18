@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { getDropdownStatus, getNavStatus, navActions } from '../../../store/nav-store'
 import useAuth from '../../../hooks/useAuth'
-import InsuranceApi from '../../api/InsuranceApi'
 import useTheme from '../../../hooks/useTheme'
 
 export default function SideBar() {
@@ -16,10 +15,7 @@ export default function SideBar() {
     const firstname = user.firstname
 
     const [isOpen, setIsOpen] = useState(true)
-    const [loading, setLoading] = useState(true)
     const [selectedTab, setSelectedTab] = useState("")
-    // const [companyDetails, setCompanyDetails] = useState("")
-    const [comResp, setComResp] = useState("")
 
     const navState = useSelector(getNavStatus)
     const dropdownState = useSelector(getDropdownStatus)
@@ -63,25 +59,25 @@ export default function SideBar() {
     ]
 
     const filteredMenus = menus.filter((menu) => {
-        if (menu.title === "Dashboard" && (userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN" || userRole === "INSURER_ADMIN")) {
+        if (menu.title === "Dashboard" && (userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN" || userRole === "INSURER_ADMIN" || userRole === "IT_ADMIN" || userRole === "PRODUCT_MANAGER" || userRole === "IT_SUPPORT" || userRole === "MANAGER" || userRole === "TREASURY_ACCOUNTANT")) {
             return true;
         } 
         if (menu.title === "Sales" && userRole === "SALES_AGENT") {
             return true;
         } 
-        if (menu.title === "Products" && (userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN" || userRole === "SALES_ADMIN" || userRole === "INSURER_ADMIN")) {
+        if (menu.title === "Products" && (userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN" || userRole === "SALES_ADMIN" || userRole === "INSURER_ADMIN" || userRole === "IT_ADMIN" || userRole === "PRODUCT_MANAGER" || userRole === "IT_SUPPORT" || userRole === "MANAGER" || userRole === "TREASURY_ACCOUNTANT")) {
             const filteredSubmenuItems = menu.submenuItems.filter((submenu) => {
                 // Submenu filtering logic based on userRole
-                if (submenu.title === "Category" &&(userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN" || userRole === "INSURER_ADMIN")) {
+                if (submenu.title === "Category" && (userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN")) {
                     return true;
                 }
-                if (submenu.title === "Policy" &&(userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN" || userRole === "INSURER_ADMIN")) {
+                if (submenu.title === "Policy" && (userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN")) {
                     return true;
                 }
-                if (submenu.title === "Insurance" &&(userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN" || userRole === "INSURER_ADMIN")) {
+                if (submenu.title === "Insurance" && (userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN" || userRole === "INSURER_ADMIN" || userRole === "IT_ADMIN" || userRole === "PRODUCT_MANAGER" || userRole === "IT_SUPPORT" || userRole === "MANAGER" || userRole === "TREASURY_ACCOUNTANT")) {
                     return true;
                 }
-                if (submenu.title === "Leads Tracking" && userRole === "INSURER_ADMIN") {
+                if (submenu.title === "Leads Tracking" && (userRole === "INSURER_ADMIN" || userRole === "IT_ADMIN" || userRole === "PRODUCT_MANAGER" || userRole === "IT_SUPPORT" || userRole === "MANAGER" || userRole === "TREASURY_ACCOUNTANT")) {
                     return true;
                 }
     
@@ -91,22 +87,22 @@ export default function SideBar() {
             menu.submenuItems = filteredSubmenuItems;
             return true;
         } 
-        if (menu.title === "Insurance" && (userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN" )) {
+        if (menu.title === "Insurance" && (userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN")) {
           return true;
         } 
-        if (menu.title === "Revenue" && (userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN" || userRole === "SALES_AGENT" || userRole === "INSURER_ADMIN")) {
+        if (menu.title === "Revenue" && (userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN" || userRole === "SALES_AGENT" || userRole === "INSURER_ADMIN" || userRole === "IT_ADMIN" || userRole === "PRODUCT_MANAGER" || userRole === "IT_SUPPORT" || userRole === "MANAGER" || userRole === "TREASURY_ACCOUNTANT")) {
             const filteredSubmenuItems = menu.submenuItems.filter((submenu) => {
                 // Submenu filtering logic based on userRole
-                if (submenu.title === "Commissions" &&(userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN" || userRole === "INSURER_ADMIN")) {
+                if (submenu.title === "Commissions" &&(userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN")) {
                     return true;
                 }
-                if (submenu.title === "Reports" &&(userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN" || userRole === "INSURER_ADMIN" || userRole === "SALES_AGENT")) {
+                if (submenu.title === "Reports" &&(userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN" || userRole === "INSURER_ADMIN" || userRole === "SALES_AGENT" || userRole === "IT_ADMIN" || userRole === "PRODUCT_MANAGER" || userRole === "IT_SUPPORT" || userRole === "MANAGER" || userRole === "TREASURY_ACCOUNTANT")) {
                     return true;
                 }    
-                if (submenu.title === "Cover Notes" &&(userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN" || userRole === "INSURER_ADMIN")) {
+                if (submenu.title === "Cover Notes" &&(userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN" || userRole === "INSURER_ADMIN" || userRole === "IT_ADMIN" || userRole === "PRODUCT_MANAGER" || userRole === "IT_SUPPORT" || userRole === "MANAGER" || userRole === "TREASURY_ACCOUNTANT")) {
                     return true;
                 }    
-                if (submenu.title === "Claims" &&(userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN" || userRole === "INSURER_ADMIN")) {
+                if (submenu.title === "Claims" &&(userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN" || userRole === "INSURER_ADMIN" || userRole === "IT_ADMIN" || userRole === "PRODUCT_MANAGER" || userRole === "IT_SUPPORT" || userRole === "MANAGER" || userRole === "TREASURY_ACCOUNTANT")) {
                     return true;
                 }    
                 return false;
@@ -118,10 +114,10 @@ export default function SideBar() {
         if (menu.title === "Entities" && (userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN")) {
           return true;
         } 
-        if (menu.title === "User Management" && (userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN" || userRole === "INSURER_ADMIN")) {
+        if (menu.title === "User Management" && (userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN" || userRole === "INSURER_ADMIN" || userRole === "IT_ADMIN" || userRole === "PRODUCT_MANAGER" || userRole === "IT_SUPPORT" || userRole === "MANAGER" || userRole === "TREASURY_ACCOUNTANT")) {
             const filteredSubmenuItems = menu.submenuItems.filter((submenu) => {
                 // Submenu filtering logic based on userRole
-                if (submenu.title === "Insurer Users" &&(userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN" || userRole === "INSURER_ADMIN")) {
+                if (submenu.title === "Insurer Users" &&(userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN" || userRole === "INSURER_ADMIN" || userRole === "IT_ADMIN" || userRole === "PRODUCT_MANAGER" || userRole === "IT_SUPPORT" || userRole === "MANAGER" || userRole === "TREASURY_ACCOUNTANT")) {
                     return true;
                 }
                 if (submenu.title === "Internal Users" &&(userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN")) {

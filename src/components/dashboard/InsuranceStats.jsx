@@ -70,7 +70,7 @@ export default function InsuranceStats() {
                         <h1  className='text-xs text-bold text-white' >{userRole}</h1>
                         <h1  className='text-xs text-bold text-white' >
                             {
-                                user.role !== "INSURER_ADMIN" ? (
+                                (user.role !== "INSURER_ADMIN" && user.role !== "IT_ADMIN" && user.role !== "IT_SUPPORT" && user.role !== "TREASURY_ACCOUNTANT" && user.role !== "MANAGER" && user.role !== "PRODUCT_MANAGER") ? (
                                     shopName ? (
                                         <span>{shopName} Shop</span>
                                     ) : townName ? (

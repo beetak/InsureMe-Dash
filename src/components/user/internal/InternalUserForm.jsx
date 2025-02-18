@@ -130,29 +130,35 @@ export default function InternalUserForm() {
                                     phoneNumber,
                                     role
                                 })
-                                try{
-                                    const res = await InsuranceApi.post(`/user-region`,{
-                                        userId: response.data.data.id,
-                                        regionId
-                                    })
-                                    if(response.data.code==="CREATED"){
-                                        setSuccess(true)
-                                        setMessage({status: true, data: response.data.data, region: res.data.data.regionId});
+                                if(response){
+                                    try{
+                                        const res = await InsuranceApi.post(`/user-region`,{
+                                            userId: response.data.data.id,
+                                            regionId
+                                        })
+                                        if(response.data.code==="CREATED"){
+                                            setSuccess(true)
+                                            setMessage({status: true, data: response.data.data, region: res.data.data.regionId,  code: 'User Creation Successful'});
+                                        }
+                                        else{
+                                            setMessage({status: true, data: response.data.data, region: "", code: 'Region Assignment Failed'})
+                                        }
                                     }
-                                    else{
-                                        setMessage({status: true, data: response.data.data, region: "Region Assignment Failed"})
+                                    catch(err){
+                                        setMessage({status: true, data: response.data.data, region: "",  code: 'Region Assignment Failed'});
                                     }
                                 }
-                                catch(err){
-                                    setMessage({status: true, data: response.data.data, region: "User Assignment Failed"});
+                                else{
+                                    
                                 }
                             }
                             else{
+                                setMessage({status: true, data: "", code: "User Creation Failed"});
                                 setFailed(true)
                             }
                         }
                         catch(err){
-                            setMessage({status: true, data: "User Creation Failed"});
+                            setMessage({status: true, data: "", code: "User Creation Failed"});
                         }
                     }
                 }
@@ -174,16 +180,16 @@ export default function InternalUserForm() {
                     }
                     else if(regionId!==""&&townId!==""){
                         setLoading(true)
-                        setMessage({status: false, data: ''});
+                        setMessage({status: false, data: ''});                        
                         
+                        const response = await InsuranceApi.post(`/auth/register`,{
+                            firstname,
+                            lastname,
+                            email: domainName,
+                            phoneNumber,
+                            role
+                        })
                         if(response.data.code==="CREATED"){
-                            const response = await InsuranceApi.post(`/auth/register`,{
-                                firstname,
-                                lastname,
-                                email: domainName,
-                                phoneNumber,
-                                role
-                            })
                             try{
                                 const res = await InsuranceApi.post(`/user-town`,{
                                     userId:response.data.data.id,
@@ -191,18 +197,19 @@ export default function InternalUserForm() {
                                 })
                                 if(res.data.code==="CREATED"){
                                     setSuccess(true)
-                                    setMessage({status: true, data: response.data.data, town: res.data.data.townId});
+                                    setMessage({status: true, data: response.data.data, town: res.data.data.townId, code: 'User Creation Successful'});
                                 }
                                 else{
-                                    setMessage({status: true, data: response.data.data, town: "Assigning Town Failed"})
+                                    setMessage({status: true, data: response.data.data, town: "", code: "Town Assignment Failed"})
                                 }
                             }
                             catch(err){
-                                setMessage({status: true, data: response.data.data, town: "Town Assignment Failed"});
+                                setMessage({status: true, data: response.data.data, town: "", code: "Town Assignment Failed"});
                             }
                         }
                         else{
                             setFailed(true)
+                            setMessage({status: true, data: "", code: "User Creation Failed"});
                         }
                     }
                 }
@@ -240,7 +247,6 @@ export default function InternalUserForm() {
                             role
                         })
                         if(response.data.code==="CREATED"){
-                            console.log("user post data ", response)
                             try{
                                 const res = await InsuranceApi.post(`/user-shop`,{
                                     userId:response.data.data.id,
@@ -248,18 +254,19 @@ export default function InternalUserForm() {
                                 })
                                 if(res.data.code==="CREATED"){
                                     setSuccess(true)
-                                    setMessage({status: true, data: response.data, shop: res.data.data});
+                                    setMessage({status: true, data: response.data, shop: res.data.data, code: 'User Creation Successful'});
                                 }
                                 else{
-                                    setMessage({status: true, data: response.data.data, shop: "Shop Assignment Failed"})
+                                    setMessage({status: true, data: response.data.data, shop: "", code: "Shop Assignment Failed"})
                                 }
                             }
                             catch(err){
-                                setMessage({status: true, data: response.data.data, shop: "Shop Assignment Failed"});
+                                setMessage({status: true, data: response.data.data, shop: "", code: "Shop Assignment Failed"});
                             }
                         }
                         else{
                             setFailed(true)
+                            setMessage({status: true, data: "", code: "User Creation Failed"});
                         }
                     }
                 }
@@ -276,13 +283,14 @@ export default function InternalUserForm() {
                         })
                         if (response.data.code==="CREATED") {
                             setSuccess(true);
-                            setMessage({status: true, data: response.data.data});
+                            setMessage({status: true, data: response.data.data, code: 'User Creation Successful'});
                         } else {
                             setFailed(true);
+                            setMessage({status: true, data: "", code: 'User Creation Failed'});
                         }
                     }
                     catch(err){
-                        setFailed(true)
+                        setMessage({status: true, data: "", code: 'User Creation Failed'});
                     }
                 }
             }

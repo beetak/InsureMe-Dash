@@ -114,25 +114,6 @@ export default function CustomersTable() {
                             Entries
                         </label>
                     </div>
-                    <div className="flex items-center space-x-2">
-                    <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900">
-                        Policy
-                    </label>
-                    <div className="">
-                        <select
-                        id="systemAdOns"
-                        name="systemAdOns"
-                        className="border border-gray-300 bg-inherit rounded-xs px-3 py-1.5"
-                        >
-                        <option value="5">Policy Type</option>
-                        {
-                            customers?customers.map((category, index)=>(
-                            <option value="5">{category.description}</option>
-                            )):<option value="5">No Categories</option>
-                        }
-                        </select>
-                    </div>
-                    </div>
                 </div>
                 <div className='overflow-auto rounded:xl shadow-md'>
                     <table className='w-full'>

@@ -1,6 +1,4 @@
 import React, { useState } from 'react'
-import SideBar from '../../components/navigation/sideBar/SideBar';
-import TopBar from '../../components/navigation/topBar/TopBar';
 import useAuth from '../../hooks/useAuth';
 import AdminDashboard from '../../components/dashboard/admin/AdminDashboard';
 import InsurerDashboard from '../../components/dashboard/insurer/InsurerDashboard';
@@ -18,7 +16,7 @@ export default function Dashboard() {
           ( userRole === "ADMIN" || userRole === "SUPER_ADMINISTRATOR" ) && <AdminDashboard/>
         }
         {
-          userRole === "INSURER_ADMIN" && <InsurerDashboard/>
+          ( userRole === "INSURER_ADMIN" || userRole === "MANAGER" ) && <InsurerDashboard/>
         }
       </DisplayLayout>
     </>

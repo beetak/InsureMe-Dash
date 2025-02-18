@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { motion } from "framer-motion"
 import { useLocation } from 'react-router-dom'
 import { ScaleLoader } from 'react-spinners'
-import CategoryModal from '../category/CategoryModal'
-import CategoryViewModal from '../category/CategoryViewModal'
 import InsuranceApi, { setupInterceptors } from '../api/InsuranceApi'
 import useAuth from '../../hooks/useAuth'
 import Motor from './TransactionalReport/Motor'
@@ -16,9 +13,6 @@ export default function Transaction() {
 
     const [loading, setLoading] = useState(false)
     const [message, setMessage] = useState('Enter reference ID and click search')
-    const [isOpen, setIsOpen] = useState(false)
-    const [viewOpen, setViewOpen] = useState(false)
-    const [modalData, setModalData] = useState(null)
     const [sales, setSales] = useState(null)
     const [referenceId, setReferenceId] = useState("")
 
@@ -105,6 +99,16 @@ export default function Transaction() {
         )
     }
 
+    const handlePrint = () => {
+        if (sales?.insuranceCategory === "MOTOR_VEHICLE") {
+          Motor.printDocument()
+        } else if (sales?.insuranceCategory === "TRAVEL") {
+          Travel.printDocument()
+        } else if (sales?.insuranceCategory === "PROPERTY") {
+          Property.printDocument()
+        }
+    }
+
     function renderTransactionItems() {
         if (sales?.insuranceCategory === 'MOTOR_VEHICLE') {
             return <Motor sales={sales} printDocument={handlePrint} />;
@@ -160,7 +164,7 @@ export default function Transaction() {
                                 <span className='text-xs'>Search</span>
                             </button>
                             <button
-                                onClick={printDocument}
+                                onClick={()=> handlePrint()}
                                 className="space-x-2 border-gray-300 rounded-r-full px-3 h-8 items-center bg-gray-500 text-gray-100 hover:bg-gray-600"
                                 aria-label="Print"
                                 disabled={!sales}

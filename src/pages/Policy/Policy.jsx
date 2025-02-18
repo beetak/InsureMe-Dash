@@ -26,7 +26,7 @@ export default function Policy() {
     if (menu.title === "Create Policy" && (userRole === "ADMIN")) {
       return true;
     } 
-    if (menu.title === "View All Policies" && (userRole === "ADMIN" || userRole === "INSURER_ADMIN")) {
+    if (menu.title === "View All Policies" && (userRole === "ADMIN" || userRole === "INSURER_ADMIN" || userRole === "IT_ADMIN" || userRole === "PRODUCT_MANAGER" || userRole === "IT_SUPPORT" || userRole === "MANAGER" || userRole === "TREASURY_ACCOUNTANT")) {
       return true;
     }   
     return false;

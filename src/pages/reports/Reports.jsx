@@ -31,7 +31,7 @@ export default function Reports() {
     const params = new URLSearchParams(location.search);
     const refId = params.get('referenceId');
     if (refId) {
-      setActiveTab((userRole === 'INSURER_ADMIN' || userRole === 'SALES_AGENT') ? 4 : 9);
+      setActiveTab((userRole === 'INSURER_ADMIN' || userRole === 'SALES_AGENT' || userRole === "IT_ADMIN" || userRole === "PRODUCT_MANAGER" || userRole === "IT_SUPPORT" || userRole === "MANAGER" || userRole === "TREASURY_ACCOUNTANT") ? 4 : 9);
     } else {
       setActiveTab(getFirstValidTab());
     }
@@ -56,7 +56,7 @@ export default function Reports() {
     { title: "Insurer", icon: "fas fa-book", tab:7 },
     // { title: "Sales", icon: "fas fa-book", tab:userRole==='INSURER_ADMIN'?2:'' },
     { title: "Daily Sales", icon: "fas fa-book", tab:userRole==='INSURER_ADMIN'?3:8},
-    { title: "Transaction", icon: "fas fa-book", tab:(userRole==='INSURER_ADMIN' || userRole==='SALES_AGENT')?4:9 },
+    { title: "Transaction", icon: "fas fa-book", tab:(userRole==='INSURER_ADMIN'||userRole==='SALES_AGENT'||userRole==="IT_ADMIN"||userRole==="PRODUCT_MANAGER"||userRole==="IT_SUPPORT"||userRole==="MANAGER"||userRole==="TREASURY_ACCOUNTANT")?4:9 },
     // { title: "Commissions", icon: "fas fa-book", tab:userRole==='INSURER_ADMIN'?5:10 },
   ]
 
@@ -64,7 +64,7 @@ export default function Reports() {
     if (menu.title === "National Sales" && (userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN")) {
       return true;
     }
-    if (menu.title === "Agent Sales" && (userRole === "INSURER_ADMIN" || userRole === "ADMIN" || userRole === "SALES_AGENT" )) {
+    if (menu.title === "Agent Sales" && (userRole === "INSURER_ADMIN" || userRole === "ADMIN" || userRole === "SALES_AGENT" || userRole === "INSURER_ADMIN" || userRole === "IT_ADMIN" || userRole === "PRODUCT_MANAGER" || userRole === "IT_SUPPORT" || userRole === "MANAGER" || userRole === "TREASURY_ACCOUNTANT" )) {
       return true;
     }
     if (menu.title === "Policy" && (userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN")) {
@@ -76,7 +76,7 @@ export default function Reports() {
     if (menu.title === "Insurer" && (userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN")) {
       return true;
     }
-    if (menu.title === "Transaction" && (userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN" || userRole === "INSURER_ADMIN" || userRole === "SALES_AGENT")) {
+    if (menu.title === "Transaction" && (userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN" || userRole === "INSURER_ADMIN" || userRole === "SALES_AGENT" || userRole === "IT_ADMIN" || userRole === "PRODUCT_MANAGER" || userRole === "IT_SUPPORT" || userRole === "MANAGER" || userRole === "TREASURY_ACCOUNTANT")) {
         return true;
     }
     if (menu.title === "Sales" && (userRole === "INSURER_ADMIN")) {
@@ -224,8 +224,7 @@ export default function Reports() {
                           </div>
                         }
                       </>
-                    }
-                  
+                    }                  
                 </div>
               </div>
             </div>

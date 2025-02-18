@@ -105,7 +105,7 @@ export default function LoginPage(props) {
               
               showToastMessage("Login successful", "success");
               
-              if (role === 'INSURER_ADMIN') {
+              if (role === 'INSURER_ADMIN' || role === 'MANAGER') {
                 navigate('/dashboard');
               } else if (role === 'SALES_AGENT') {
                 navigate('/sales');

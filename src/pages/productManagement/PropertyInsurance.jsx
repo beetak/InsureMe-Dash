@@ -11,20 +11,20 @@ export default function PropertyInsurance() {
 
   const menus = [
     { title: "Create Insurance", icon: "fas fa-pen-nib", tab:1 },
-    { title: "View Policies", icon: "fas fa-book", tab:2 },
-    { title: "Insurance Products", icon: "fas fa-book", tab:userRole==='ADMIN'?3:2 },
+    { title: "View Policies", icon: "fas fa-book", tab:(userRole==="MANAGER"||userRole==="TREASURY_ACCOUNTANT")?1:2 },
+    // { title: "Insurance Products", icon: "fas fa-book", tab:userRole==='ADMIN'?3:2 },
   ]
 
   const filteredMenus = menus.filter((menu) => {
-    if (menu.title === "Create Insurance" && (userRole === "ADMIN" || userRole === "INSURER_ADMIN")) {
+    if (menu.title === "Create Insurance" && (userRole==="ADMIN"||userRole==="INSURER_ADMIN"||userRole==="IT_ADMIN"||userRole==="PRODUCT_MANAGER"||userRole==="IT_SUPPORT")) {
       return true;
     } 
-    if (menu.title === "View Policies" && userRole === "ADMIN") {
+    if (menu.title === "View Policies" && (userRole==="ADMIN"||userRole==="INSURER_ADMIN"||userRole==="IT_ADMIN"||userRole==="PRODUCT_MANAGER"||userRole==="IT_SUPPORT"||userRole==="MANAGER"||userRole==="TREASURY_ACCOUNTANT")) {
       return true;
     } 
-    if (menu.title === "Insurance Products" && userRole === "INSURER_ADMIN") {
-      return true;
-    }   
+    // if (menu.title === "Insurance Products" && (userRole === "INSURER_ADMIN")) {
+    //   return true;
+    // }   
     return false;
   });
 
@@ -58,7 +58,7 @@ export default function PropertyInsurance() {
                 {/* Tab content */}
                 <div>
                   {
-                    userRole === 'ADMIN' ? <>
+                    (userRole==="ADMIN"||userRole==="INSURER_ADMIN"||userRole==="IT_ADMIN"||userRole==="PRODUCT_MANAGER"||userRole==="IT_SUPPORT") ? <>
                       {/* Tab 1 content */}
                       {
                         activeTab === 1 && 
@@ -84,13 +84,6 @@ export default function PropertyInsurance() {
                       {/* Tab 1 content */}
                       {
                         activeTab === 1 && 
-                        <div className="p-7 bg-white rounded-xs border border-gray-200 border-solid border-1">
-                          <PropertyInsuranceForm/>
-                        </div>
-                      }
-                      {/* Tab 2 content */}
-                      {
-                        activeTab === 2 && 
                         <div className="p-7 bg-white rounded-xs border border-gray-200 border-solid border-1">
                           <PropertyInsuranceTable/>
                         </div>

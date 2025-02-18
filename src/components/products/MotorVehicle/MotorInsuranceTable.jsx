@@ -142,36 +142,41 @@ export default function MotorInsuranceTable() {
             </td>
             <td className='py-1 space-x-0 justify-center'>
                 <div className='w-full justify-center flex items-center'>
+                <button
+              onClick={() => {
+                setModalData(item)
+                setViewOpen(true)
+              }}
+              className={`${(user.role==="TREASURY_ACCOUNTANT"||user.role==="MANAGER"||user.role==="PRODUCT_MANAGER")? " rounded-full w-32":" rounded-l-full"} space-x-2 items-center border-gray-300 px-4 h-6 m bg-gray-700 text-gray-100 hover:text-gray-700 hover:bg-white`}
+            >
+              <i className="fas fa-eye text-xs" />
+              <span className="text-xs">View</span>
+              </button>
+                {
+                  (user.role !== "TREASURY_ACCOUNTANT" && user.role !== "MANAGER" && user.role !== "PRODUCT_MANAGER") &&
+                  <>
                     <button
-                        onClick={() => {
-                            setModalData(item);
-                            setViewOpen(true);
-                        }}
-                        className={`space-x-2 items-center border-gray-300 rounded-l-full px-4 h-6 m bg-gray-700 text-gray-100 hover:text-gray-700 hover:bg-white`}
+                      onClick={() => {
+                        setModalData(item)
+                        setIsOpen(true)
+                      }}
+                      className={`space-x-2 border-gray-300 items-center px-4 h-6 bg-blue-500 text-gray-100 hover:text-blue-500 hover:bg-white`}
                     >
-                        <i className='fas fa-eye text-xs' />
-                        <span className='text-xs'>View</span>
+                      <i className="fas fa-pen text-xs" />
+                      <span className="text-xs">Update</span>
                     </button>
                     <button
-                        onClick={() => {
-                            setModalData(item);
-                            setIsOpen(true);
-                        }}
-                        className={`space-x-2 border-gray-300 items-center px-4 h-6 bg-blue-500 text-gray-100 hover:text-blue-500 hover:bg-white`}
+                      onClick={() => {
+                        setItemId(item.insuranceId)
+                        setIsDelete(true)
+                      }}
+                      className={`space-x-2 border-gray-300 items-center rounded-r-full px-4 h-6 bg-gray-700 text-gray-100 hover:text-gray-700 hover:bg-white`}
                     >
-                        <i className='fas fa-pen text-xs' />
-                        <span className='text-xs'>Update</span>
+                      <i className="fas fa-trash text-xs" />
+                      <span className="text-xs">Delete</span>
                     </button>
-                    <button
-                        onClick={() => {
-                            setItemId(item.insuranceId);
-                            setIsDelete(true);
-                        }}
-                        className={`space-x-2 border-gray-300 items-center rounded-r-full px-4 h-6 bg-gray-700 text-gray-100 hover:text-gray-700 hover:bg-white`}
-                    >
-                        <i className='fas fa-trash text-xs' />
-                        <span className='text-xs'>Delete</span>
-                    </button>
+                  </>
+                }
                 </div>
             </td>
         </tr>
@@ -225,7 +230,7 @@ export default function MotorInsuranceTable() {
               Entries
             </label>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className={`${(user.role==="TREASURY_ACCOUNTANT"||user.role==="MANAGER"||user.role==="PRODUCT_MANAGER")? "hidden" : ""} flex items-center space-x-2`}>
             <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900">
             Filter By Insurance Company
             </label>
