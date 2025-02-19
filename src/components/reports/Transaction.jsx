@@ -6,9 +6,11 @@ import useAuth from '../../hooks/useAuth'
 import Motor from './TransactionalReport/Motor'
 import Property from './TransactionalReport/Property'
 import Travel from './TransactionalReport/Travel'
+import { usePrint } from '../../context/PrinterProvider'
 
 export default function Transaction() {
     const { user, setUser } = useAuth()
+    const { setPrintData } = usePrint();
     const location = useLocation()
 
     const [loading, setLoading] = useState(false)
@@ -99,15 +101,19 @@ export default function Transaction() {
         )
     }
 
+    // const handlePrint = () => {
+    //     if (sales?.insuranceCategory === "MOTOR_VEHICLE") {
+    //       Motor.printDocument()
+    //     } else if (sales?.insuranceCategory === "TRAVEL") {
+    //       Travel.printDocument()
+    //     } else if (sales?.insuranceCategory === "PROPERTY") {
+    //       Property.printDocument()
+    //     }
+    // }
+
     const handlePrint = () => {
-        if (sales?.insuranceCategory === "MOTOR_VEHICLE") {
-          Motor.printDocument()
-        } else if (sales?.insuranceCategory === "TRAVEL") {
-          Travel.printDocument()
-        } else if (sales?.insuranceCategory === "PROPERTY") {
-          Property.printDocument()
-        }
-    }
+        setPrintData(sales?.insuranceCategory);
+    };
 
     function renderTransactionItems() {
         if (sales?.insuranceCategory === 'MOTOR_VEHICLE') {
@@ -164,7 +170,7 @@ export default function Transaction() {
                                 <span className='text-xs'>Search</span>
                             </button>
                             <button
-                                onClick={()=> handlePrint()}
+                                onClick={()=>handlePrint()}
                                 className="space-x-2 border-gray-300 rounded-r-full px-3 h-8 items-center bg-gray-500 text-gray-100 hover:bg-gray-600"
                                 aria-label="Print"
                                 disabled={!sales}

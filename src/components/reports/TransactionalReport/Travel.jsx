@@ -1,7 +1,22 @@
 import React from 'react'
 import { motion } from 'framer-motion'
+import { usePrint } from '../../../context/PrinterProvider';
+import jsPDF from "jspdf"
+import "jspdf-autotable"
+const telone = "/images/telone-logo.png"
+const img = "/images/insureme-umbrella.png"
 
 export default function Travel({sales}) {
+
+    const { printData, setPrintData } = usePrint(); // Access print data
+    
+    useEffect(()=>{
+        if(printData==="TRAVEL"){
+          printDocument()
+          return
+        }
+        return
+    },[printData])
 
     const formatDate = (dateString) => {
         const [year, month, day] = dateString.split("-").map(Number)
@@ -9,9 +24,119 @@ export default function Travel({sales}) {
       
         const options = { day: "numeric", month: "short", year: "numeric" }
         return new Intl.DateTimeFormat("en-US", options).format(date)
-      }
+    }
       
-      
+    const printDocument = () => {
+        const doc = new jsPDF()
+    
+        // Add header
+        doc.setFillColor(31, 41, 55)
+        doc.rect(0, 0, 210, 40, "F")
+        doc.addImage(telone, "PNG", 15, 10, 50, 20)
+        doc.addImage(img, "PNG", 150, 10, 50, 20)
+    
+        // Add title
+        doc.setFont("helvetica", "bold")
+        doc.setFontSize(18)
+        doc.setTextColor(255, 255, 255)
+        doc.text("Travel Insurance Report", 105, 35, { align: "center" })
+    
+        doc.setFont("helvetica", "normal")
+        doc.setTextColor(0, 0, 0)
+        doc.setFontSize(10)
+        doc.text(
+          "Runhare House, 107 Kwame Nkrumah Avenue \nP. O. Box CY 331, Causeway Harare, Zimbabwe\nPhone: +263 (24) 279 8111 \nEmail: clientservices@telone.co.zw",
+          15,
+          50,
+        )
+    
+        // Add client details
+        doc.setFont("helvetica", "bold")
+        doc.setFontSize(11)
+        doc.text("Client Details", 15, 75)
+        doc.setFont("helvetica", "normal")
+        doc.text(`Fullname: ${sales.transactionDescription.user.fullName}`, 15, 80)
+        doc.text(`Age: ${sales.transactionDescription.user.age}`, 15, 85)
+        doc.text(`Passport Number: ${sales.transactionDescription.user.passportNumber}`, 15, 90)
+        doc.text(`Phone Number: ${sales.transactionDescription.user.phone}`, 15, 95)
+        doc.text(`Email: ${sales.transactionDescription.user.email}`, 15, 100)
+    
+        // Add travel details
+        doc.setFont("helvetica", "bold")
+        doc.text("Travel Details", 15, 110)
+        doc.setFont("helvetica", "normal")
+        doc.text(`Destination Country: ${sales.transactionDescription.travelDetails.destination}`, 15, 115)
+        doc.text(`Residence Country: ${sales.transactionDescription.travelDetails.residence}`, 15, 120)
+        doc.text(`Start Date: ${formatDate(sales.transactionDescription.travelDetails.startDate)}`, 15, 125)
+        doc.text(`End Date: ${formatDate(sales.transactionDescription.travelDetails.endDate)}`, 15, 130)
+    
+        // Add insurance details
+        const insuranceDetails = [
+          ["Insurance Category", sales.insuranceCategory],
+          ["Payment Method", sales.paymentMethod],
+          ["Payment Status", sales.paymentStatus],
+          ["Amount", `${sales.currency} ${sales.amount.toFixed(2)}`],
+          ["Reference Number", sales.referenceNumber],
+          ["Payment Date", formatDate(sales.paymentDate)],
+          ["Insurer Name", sales.insurerName],
+          [
+            "Premium",
+            `${sales.transactionDescription.coverDetails.currency} ${sales.transactionDescription.coverDetails.premium.toFixed(2)}`,
+          ],
+        ]
+    
+        doc.autoTable({
+          startY: 140,
+          head: [["Description", "Details"]],
+          body: insuranceDetails,
+          headStyles: {
+            fillColor: [31, 41, 55],
+            textColor: [255, 255, 255],
+            halign: "center",
+            fontStyle: "bold",
+          },
+          theme: "grid",
+        })
+    
+        // Add additional travelers if any
+        if (sales.transactionDescription.traveler && sales.transactionDescription.traveler.length > 1) {
+          doc.addPage()
+          doc.setFont("helvetica", "bold")
+          doc.setFontSize(14)
+          doc.text("Additional Travelers", 15, 20)
+    
+          const travelersData = sales.transactionDescription.traveler.map((traveler) => [
+            traveler.fullName,
+            traveler.passportNumber,
+            traveler.age,
+          ])
+    
+          doc.autoTable({
+            startY: 30,
+            head: [["Traveler's Name", "Passport Number", "Age"]],
+            body: travelersData,
+            headStyles: {
+              fillColor: [31, 41, 55],
+              textColor: [255, 255, 255],
+              halign: "center",
+              fontStyle: "bold",
+            },
+            theme: "grid",
+          })
+        }
+    
+        // Add footer
+        const pageCount = doc.internal.getNumberOfPages()
+        doc.setFont("helvetica", "italic")
+        doc.setFontSize(8)
+        for (let i = 1; i <= pageCount; i++) {
+          doc.setPage(i)
+          doc.text("Page " + String(i) + " of " + String(pageCount), 210 - 20, 297 - 10, { align: "right" })
+        }
+    
+        doc.save("travel_insurance_report.pdf")
+        setPrintData(null)
+    }
 
     return (
         <>

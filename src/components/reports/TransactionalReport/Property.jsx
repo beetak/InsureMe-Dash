@@ -1,136 +1,132 @@
 import React, { useEffect } from 'react'
 import { motion } from 'framer-motion'
+import { usePrint } from '../../../context/PrinterProvider';
+import jsPDF from "jspdf"
+import "jspdf-autotable"
+const telone = "/images/telone-logo.png"
+const img = "/images/insureme-umbrella.png"
 
 export default function Property({ sales }) {
+
+  const { printData, setPrintData } = usePrint(); // Access print data
+
+  useEffect(()=>{
+    if(printData==="PROPERTY"){
+      printDocument()
+      return
+    }
+    return
+  },[printData])
+ 
   const formatDate = (dateString) => {
     const [year, month, day] = dateString.split("-").map(Number)
     const date = new Date(year, month - 1, day)
-  
+
     const options = { day: "numeric", month: "short", year: "numeric" }
     return new Intl.DateTimeFormat("en-US", options).format(date)
   }
 
-
-
-  const handlePrint = () => {
-    const headers = [
-      ["#", "Policy Name", "Revenue Collections", ""],
-      ["", "", "ZWG", "USD"],
-    ]
-
-    // Calculate totals
-    const totals = sales.reduce(
-      (acc, item) => {
-        acc.ZWG += Number.parseFloat(item.amounts.ZWG) || 0
-        acc.USD += Number.parseFloat(item.amounts.USD) || 0
-        return acc
-      },
-      { ZWG: 0, USD: 0 },
-    )
+  const printDocument = () => {
+    const headers = [["Description", "Details"]]
 
     const invoiceContent = {
-      startY: 170,
+      startY: 120,
       head: headers,
       headStyles: {
         fillColor: [31, 41, 55],
         textColor: [255, 255, 255],
-        halign: "start",
+        halign: "center",
         fontStyle: "bold",
-        fontSize: 7,
-        cellPadding: 3,
+        fontSize: 10,
+        cellPadding: 1.5,
         lineWidth: 0.5,
-        lineHeight: 0.5,
         lineColor: [31, 41, 55],
-        borderRadius: 5,
       },
-      margin: { left: 45, right: 35 },
       body: [
-        ...sales.map((item, index) => [
-          index + 1,
-          item.insuranceCategory,
-          item.amounts.ZWG || "",
-          item.amounts.USD || "",
-        ]),
-        // Add totals row
-        ["", "Total", totals.ZWG.toFixed(2), totals.USD.toFixed(2)],
+        ["Insurance Category", sales.insuranceCategory],
+        ["Payment Method", sales.paymentMethod],
+        ["Payment Status", sales.paymentStatus],
+        ["Amount", `${sales.currency} ${sales.amount.toFixed(2)}`],
+        ["Reference Number", sales.referenceNumber],
+        ["Payment Date", formatDate(sales.paymentDate)],
+        ["Insurer Name", sales.insurerName],
+        [
+          "Premium",
+          `${sales.transactionDescription.coverDetails.currency} ${sales.transactionDescription.coverDetails.premium.toFixed(2)}`,
+        ],
+        ["Rate", `${sales.transactionDescription.coverDetails.rate}%`],
+        [
+          "House Value",
+          `${sales.transactionDescription.coverDetails.currency} ${sales.transactionDescription.houseDetails.value}`,
+        ],
+        ["Roof Type", sales.transactionDescription.houseDetails.roofType],
+        ["House Description", sales.transactionDescription.houseDetails.houseDescription],
       ],
       bodyStyles: {
-        fillColor: [255, 255, 255],
-        textColor: [0, 0, 0],
-        fontSize: 7,
-        halign: "left",
-        cellPadding: 3,
+        fontSize: 9,
+        cellPadding: 1,
+      },
+      alternateRowStyles: {
+        fillColor: [245, 245, 245],
       },
       columnStyles: {
-        0: { cellWidth: 20, halign: "center" },
-        1: { cellWidth: 245 },
-        2: { cellWidth: 50, halign: "right" },
-        3: { cellWidth: 50, halign: "right" },
+        0: { cellWidth: "auto", fontStyle: "bold" },
+        1: { cellWidth: "auto" },
       },
       theme: "grid",
-      styles: {
-        tableWidth: "auto",
-        overflow: "linebreak",
-        cellPadding: 4,
-        fontSize: 9,
-        lineWidth: 0.5,
-        lineColor: [220, 220, 220],
-      },
-      didDrawCell: (data) => {
-        // Style the totals row
-        if (data.section === "body" && data.row.index === sales.length) {
-          doc.setFont("Times New Roman", "bold")
-          doc.setFillColor(240, 240, 240)
-        }
-      },
+      tableWidth: "auto",
     }
 
-    const current = new Date()
-    const formattedDate = current.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })
+    const doc = new jsPDF()
 
-    var doc = new jsPDF("portrait", "px", "a4", "false")
+    // Add header
+    doc.setFillColor(31, 41, 55)
+    doc.rect(0, 0, 210, 40, "F")
+    doc.addImage(telone, "PNG", 15, 10, 50, 20)
+    doc.addImage(img, "PNG", 150, 10, 50, 20)
 
-    const pageHeight = doc.internal.pageSize.height
-    const footerY = pageHeight - 40
-    const pageWidth = doc.internal.pageSize.width
-    const text =
-      "107 Kwame Nkrumah Avenue, Harare, Zimbabwe\nP.O Box CY 331, Causeway, Harare, Zimbabwe\n24 Hour Call Center - +263 0242 700950"
-    const textWidth = doc.getTextWidth(text)
-    const centerX = (pageWidth - textWidth) / 2
-    const textX = centerX - textWidth / -2
+    // Add title
+    doc.setFont("helvetica", "bold")
+    doc.setFontSize(18)
+    doc.setTextColor(255, 255, 255)
+    doc.text("Property Insurance Report", 105, 35, { align: "center" })
 
-    doc.addImage(telone, "PNG", 45, 40, 72, 28)
-    doc.addImage(img, "PNG", 340, 40, 72, 28)
-    doc.setFont("Times New Roman", "bold")
-    doc.setFontSize(16)
-    doc.setTextColor(15, 145, 209)
-    doc.text(410, 95, "Agent Sales Report", { align: "right" })
-
-    doc.setLineWidth(0.5)
-    doc.line(45, 110, 410, 110)
-
-    doc.setFont("Times New Roman", "bold")
-    doc.setFontSize(12)
-    doc.setTextColor(15, 145, 209)
-    doc.text(45, 125, formattedDate)
-
-    doc.setFont("Times New Roman", "medium")
+    doc.setFont("helvetica", "normal")
     doc.setTextColor(0, 0, 0)
-    doc.setFontSize(9)
-    doc.text(45, 140, `Agent: ${selectedUser?.name || user.name}`)
-    doc.text(45, 155, `Date Range: ${startDate.toLocaleDateString()} - ${endDate.toLocaleDateString()}`)
+    doc.setFontSize(10)
+    doc.text('Runhare House, 107 Kwame Nkrumah Avenue \nP. O. Box CY 331, Causeway Harare, Zimbabwe\nPhone: +263 (24) 279 8111 \nEmail: clientservices@telone.co.zw', 15, 50);
 
+
+    // Add client details
+    doc.setFont("helvetica", "bold")
+    doc.setFontSize(11)
+    doc.text('Client Details', 15, 75)
+    doc.setFont("helvetica", "normal")
+    doc.text(`Client: ${sales.transactionDescription.user.fullName}`, 15, 80)
+    doc.text(`ID Number: ${sales.transactionDescription.user.idNumber}`, 15, 85)
+    doc.text(`Phone: ${sales.transactionDescription.user.phone}`, 15, 90)
+    doc.text(`Email: ${sales.transactionDescription.user.email}`, 15, 95)
+
+    // Add property address
+    doc.setFont("helvetica", "bold")
+    doc.text("Property Address:", 15, 105)
+    doc.setFont("helvetica", "normal")
+    doc.text(sales.transactionDescription.houseDetails.address, 15, 110)
+
+    // Add table
     doc.autoTable(invoiceContent)
 
-    doc.setLineWidth(0.5)
-    doc.line(45, footerY - 10, 410, footerY - 10)
+    // Add footer
+    const pageCount = doc.internal.getNumberOfPages()
+    doc.setFont("helvetica", "italic")
+    doc.setFontSize(8)
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i)
+      doc.text("Page " + String(i) + " of " + String(pageCount), 210 - 20, 297 - 10, { align: "right" })
+    }
 
-    doc.setFontSize(9)
-    doc.setTextColor(112, 112, 112)
-    doc.setFont("Times New Roman", "regular")
-    doc.text(textX, footerY, text, { align: "center" })
-
-    doc.save("property_sales_report.pdf")
+    doc.save("property_insurance_report.pdf")
+    setPrintData(null)
   }
   
   return (

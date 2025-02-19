@@ -8,16 +8,19 @@ import store from './store/index.jsx'
 import { BrowserRouter as Router } from 'react-router-dom'
 import { AuthProvider } from './context/AuthProvider.jsx'
 import { ColorProvider } from './context/ColorProvider.jsx'
+import { PrintProvider } from './context/PrinterProvider.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <AuthProvider>
       <Provider store={store}>
-        <ColorProvider>
-          <Router>
-            <App />
-          </Router>
-        </ColorProvider>
+        <PrintProvider>
+          <ColorProvider>
+            <Router>
+              <App />
+            </Router>
+          </ColorProvider>
+        </PrintProvider>
       </Provider>
     </AuthProvider>
   </React.StrictMode>

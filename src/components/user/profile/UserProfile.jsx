@@ -299,7 +299,7 @@ export default function UserProfile() {
               Edit Password
             </button>
             <button
-              className={`${(user.role === "ADMIN" || user.role === "IT_ADMIN" || user.role === "PRODUCT_MANAGER" || user.role === "IT_SUPPORT" || user.role === "MANAGER" || user.role === "TREASURY_ACCOUNTANT") ? "hidden" : ""} bg-gradient-to-r from-secondary-color to-main-color rounded-full py-1 w-48 text-white`}
+              className={`${(user.role === "INSURER_ADMIN" || user.role === "IT_ADMIN" || user.role === "PRODUCT_MANAGER" || user.role === "IT_SUPPORT" || user.role === "MANAGER" || user.role === "TREASURY_ACCOUNTANT") ? "hidden" : ""} bg-gradient-to-r from-secondary-color to-main-color rounded-full py-1 w-48 text-white`}
               onClick={() => setActiveTab("profile")}
             >
               <i className="fa fa-edit mr-2" />

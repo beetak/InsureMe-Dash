@@ -201,7 +201,7 @@ export default function QuotationModal({ setModal }) {
           const paymentBody = {
             customerMobileNumber: mobile ? `+263${mobile}` : propertyData.phoneNumber,
             merchantRef,
-            amount: 0.01,
+            amount: quotation.calculatedPrice,
             transactionDescription: "Insurance Payment",
           }
           try {

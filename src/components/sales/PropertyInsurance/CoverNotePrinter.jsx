@@ -4,14 +4,12 @@ import 'jspdf-autotable';
 import logo from '/images/icon.png'; // Ensure this path is correct
 import { motion } from 'framer-motion';
 import { StepperContext } from '../../../context/StepperContext';
-import vehicleClasses from './../../vehicleClass.json'
-import insuranceTypes from '../../insuranceTypes.json'
 import useAuth from '../../../hooks/useAuth';
 
 const CoverNotePrinter = (quoteData) => {
   const { user } = useAuth()
-  const { travelData } = useContext(StepperContext);
-  console.log("cnote data ",travelData)
+  const { quoteData } = useContext(StepperContext);
+  console.log("cnote data ",quoteData)
 
   // Function to format phone number
   const formatPhoneNumber = (phoneNumber) => {
@@ -119,11 +117,11 @@ const CoverNotePrinter = (quoteData) => {
     // Add policy details
     addText(45, 200, 'Certificate of Travel Insurance', 12, 'bold');
     addText(45, 210, `Insurer:\nAgent:\nTravel Plan:\nPayment Date\nPassport No.:`, 10, 'normal');
-    addText(130, 210, `${quoteData.data[0].insurerName.charAt(0).toUpperCase() + quoteData.data[0].insurerName.slice(1)}\n${user.firstname} ${user.surname}\n${travelData.planName}\n${formattedDate}\n${travelData.travelers[0].passportNumber.toUpperCase()}`, 10, 'normal');
+    addText(130, 210, `${quoteData.data[0].insurerName.charAt(0).toUpperCase() + quoteData.data[0].insurerName.slice(1)}\n${user.firstname} ${user.surname}\n${quoteData.planName}\n${formattedDate}\n${quoteData.travelers[0].passportNumber.toUpperCase()}`, 10, 'normal');
 
     let yPosition = 290 
 
-    travelData.travelers.forEach((traveler, index) => {
+    quoteData.travelers.forEach((traveler, index) => {
       addText(45, yPosition, `TRAVEL'S NAME:`, 7, "italic")
       addText(100, yPosition, `${traveler.fullName}`, 10, "normal")
 
@@ -140,23 +138,6 @@ const CoverNotePrinter = (quoteData) => {
     const thirdLineY = 270;
     doc.setDrawColor(0, 0, 0);
     doc.line(45, thirdLineY, doc.internal.pageSize.width - 35, thirdLineY);
-
-    // Certificate details
-    // addText(45, 320, 'Insured Details', 12, 'bold');
-    // addText(45, 330, `Passport Number\nName:\nAge:\nPhone:\nEmail:`, 10, 'normal');
-    // const formattedPhone = formatPhoneNumber(travelData.phoneNumber);
-    // addText(130, 320, `${travelData.travelers[0].passportNumber.toUpperCase()}\n${travelData.travelers[0].fullName}\n${travelData.travelers[0].age}\n${formattedPhone}\n${travelData.email}`, 10, 'normal');
-
-    // let currentY = 370;
-
-    // if (travelData.travelers.length > 1) {
-    //   for (let i = 1; i < travelData.travelers.length; i++) {
-    //     currentY += 10;
-    //     addText(45, currentY, `Passport Number\nName:\nAge:`, 10, 'normal');
-    //     addText(130, currentY, `${travelData.travelers[i].passportNumber.toUpperCase()}\n${travelData.travelers[i].fullName}\n${travelData.travelers[i].age}`, 10, 'normal');
-    //     currentY += 20;
-    //   }
-    // }
 
     const fifthLineY = 510;
     doc.setDrawColor(0, 0, 0);
