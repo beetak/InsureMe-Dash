@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { StepperContext } from '../../../context/StepperContext';
 import useAuth from '../../../hooks/useAuth';
 
-const CoverNotePrinter = (quoteData) => {
+const CoverNotePrinter = (quoteD1ata) => {
   const { user } = useAuth()
   const { quoteData } = useContext(StepperContext);
   console.log("cnote data ",quoteData)
