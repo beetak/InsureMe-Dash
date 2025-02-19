@@ -287,7 +287,7 @@ export default function TravelInsuranceTable() {
               Entries
             </label>
           </div>
-          <div className={`${(user.role==="TREASURY_ACCOUNTANT"||user.role==="MANAGER"||user.role==="PRODUCT_MANAGER")? "hidden" : ""} flex items-center space-x-2`}>
+          <div className={`${(user.role==="TREASURY_ACCOUNTANT"||user.role==="MANAGER"||user.role==="PRODUCT_MANAGER"||user.role==="INSURER_ADMIN"||user.role==="IT_SUPPORT"||user.role==="IT_ADMIN")? "hidden " : ""} flex items-center space-x-2`}>
             <label htmlFor="insuranceCompany" className="block text-sm font-medium leading-6 text-gray-900">
               Filter By Insurance Company
             </label>

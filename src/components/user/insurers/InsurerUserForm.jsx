@@ -143,7 +143,6 @@ export default function InsurerUserForm() {
 
     const roles = [ 
         "INSURER_ADMIN", 
-        "IT_ADMIN", 
         "TREASURY_ACCOUNTANT", 
         "PRODUCT_MANAGER", 
         "IT_SUPPORT", 

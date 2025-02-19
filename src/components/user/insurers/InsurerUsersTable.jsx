@@ -19,6 +19,9 @@ export default function InsurerUsersTable() {
   const [modalData, setModalData] = useState(null)
   const [users, setUsers] = useState([])
   const [itemId, setItemId] = useState("")
+  const [insurers, setInsurers] = useState("")
+  const [selectedRole, setSelectedRole] = useState("")
+  const [selectedInsurer, setSelectedInsurer] = useState("")
   const [isDelete, setIsDelete] = useState(false)
 
   // Pagination states
@@ -29,6 +32,7 @@ export default function InsurerUsersTable() {
   useEffect(() => {
     setupInterceptors(() => user, setUser)
     fetchUsers()
+    fetchInsurer()
   }, [user, setUser]) // Added dependencies
 
   useEffect(() => {
@@ -38,7 +42,7 @@ export default function InsurerUsersTable() {
   const fetchUsers = async () => {
     setLoading(true)
     try {
-      const url = user.role === "INSURER_ADMIN" ? `/insurer-users/insurer/${user.companyId}` : `/insurer-users`
+      const url = (user.role === "INSURER_ADMIN" || user.role === "IT_SUPPORT" || user.role === "TREASURY_ACCOUNTANT" || user.role === "MANAGER" || user.role === "PRODUCT_MANAGER") ? `/insurer-users/insurer/${user.companyId}` : `/insurer-users`
       const response = await InsuranceApi.get(url)
       if (response.data.code === "OK" && response.data.data) {
         setUsers(response.data.data)
@@ -51,6 +55,73 @@ export default function InsurerUsersTable() {
         setUserResponse("No Users found")
       }
     } finally {
+      setLoading(false)
+    }
+  }
+
+  const fetchInsurerUsers = async (insurerId) => {
+    setUsers([])
+    setLoading(true)
+    try {
+      const response = await InsuranceApi.get(`/insurer-users/insurer/${insurerId}`)
+      if (response.data.code === "OK" && response.data.data) {
+        setUsers(response.data.data)
+      }
+    } catch (err) {
+      if (err.response) {
+        if (err.response.status === 404) {
+          setUserResponse("No Insurers found");
+        } else {
+          setUserResponse("An error occurred: " + err.response.data.message);
+        }
+      } else if (err.request) {
+        setUserResponse("No response received from the server");
+      } else {
+        setUserResponse("Error: " + err.message);
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const fetchInsurerUsersByRole = async (insurerId, role) => {
+    setUsers([])
+    setLoading(true)
+    try {
+      const response = await InsuranceApi.get(`/insurer-users/insurer/${insurerId}/${role}`)
+      if (response.data.code === "OK" && response.data.data) {
+        setUsers(response.data.data)
+      }
+    } catch (err) {
+      if (err.response) {
+        if (err.response.status === 404) {
+          setUserResponse("No Insurers found");
+        } else {
+          setUserResponse("An error occurred: " + err.response.data.message);
+        }
+      } else if (err.request) {
+        setUserResponse("No response received from the server");
+      } else {
+        setUserResponse("Error: " + err.message);
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const fetchInsurer = async () => {
+    setLoading(true)
+    try{
+      const response = await InsuranceApi.get('/insurers')
+      if(response){
+        console.log(response)
+        setInsurers(response.data.data)
+      }
+    }
+    catch(err){
+      console.log(error)
+    }
+    finally{
       setLoading(false)
     }
   }
@@ -232,6 +303,14 @@ export default function InsurerUsersTable() {
     )
   }
 
+  const roles = [ 
+    "INSURER_ADMIN", 
+    "TREASURY_ACCOUNTANT", 
+    "PRODUCT_MANAGER", 
+    "IT_SUPPORT", 
+    "MANAGER"
+  ]
+
   return (
     <>
       <div className="p-5 bg-white rounded-md border border-gray-200 border-solid border-1">
@@ -244,7 +323,7 @@ export default function InsurerUsersTable() {
             onDelete={() => handleDelete(itemId)}
           />
         )}
-        <h2 className="text-lg font-semibold">Internal Users Table</h2>
+        <h2 className="text-lg font-semibold">Insurer Users Table</h2>
         <div className="flex justify-between py-4">
           <div className="flex items-center rounded-full border overflow-hidden border-gray-500 text-xs">
             <label
@@ -273,6 +352,77 @@ export default function InsurerUsersTable() {
             >
               Entries
             </label>
+          </div>
+          <div className="flex items-center rounded-full border overflow-hidden border-gray-500 text-xs ml-4">
+            <label
+              htmlFor="insurerId" 
+              className="w-16 font-medium leading-6 px-2 py-1 bg-gray-500 justify-center flex text-white"
+            >
+              Filter By:
+            </label>
+            <label
+              htmlFor="insurerId" 
+              className={`${(user.role==="TREASURY_ACCOUNTANT"||user.role==="MANAGER"||user.role==="PRODUCT_MANAGER"||user.role==="INSURER_ADMIN"||user.role==="IT_SUPPORT"||user.role==="IT_ADMIN") ? "hidden " : ""} w-16 font-medium leading-6 px-2 py-1 bg-gray-500 justify-center flex text-white`}
+            >
+              Insurer
+            </label>
+            <div className={`${(user.role==="TREASURY_ACCOUNTANT"||user.role==="MANAGER"||user.role==="PRODUCT_MANAGER"||user.role==="INSURER_ADMIN"||user.role==="IT_SUPPORT"||user.role==="IT_ADMIN") ? "hidden " : ""}`}>
+              <select
+                id="insurerId"
+                name="insurerId"
+                className="bg-inherit px-3 py-1 cursor-pointer"
+                // onChange={(e) => {;fetchInsurerUsers(e.target.value)}}
+                onChange={(e) => {
+                  setSelectedInsurer(e.target.value)
+                  if (e.target.value === "") {
+                    fetchUsers()
+                  } else {
+                    fetchInsurerUsers(e.target.value)
+                  }
+                }}
+                value={selectedInsurer}
+              >
+                <option value="">Select Insurer</option>
+                <option value="" className="italic">Select for all</option>
+                {Array.isArray(insurers) &&
+                  insurers.map((insurer) => (
+                    <option key={insurer.insurerId} value={insurer.insurerId}>
+                      {insurer.insurerName}
+                    </option>
+                  ))}
+              </select>
+            </div>
+            <label
+              htmlFor="insurerId"
+              className="w-16 font-medium leading-6 px-2 py-1 bg-gray-500 justify-center flex text-white"
+            >
+              Role
+            </label>
+            <div className="">
+              <select
+                id="role"
+                name="role"
+                className="bg-inherit px-3 py-1 cursor-pointer"
+                // onChange={(e) => setSelectedRole(e.target.value)}
+                onChange={(e) => {
+                  setSelectedInsurer(e.target.value)
+                  if (e.target.value === "") {
+                    fetchUsers()
+                  } else {
+                    fetchInsurerUsersByRole(selectedInsurer, e.target.value)
+                  }
+                }}
+                value={selectedRole}
+              >
+                <option value="">Select Role</option>
+                <option value="" className="italic">Select for all</option>
+                {roles.map((role) => (
+                  <option key={role} value={role}>
+                    {role}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
         <div className="overflow-auto rounded:xl shadow-md">

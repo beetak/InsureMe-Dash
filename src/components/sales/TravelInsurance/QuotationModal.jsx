@@ -269,7 +269,7 @@ export default function QuotationModal({ setModal }) {
         const transactionDescription = {
             user: {
                 fullName: travelData.travelers[0].fullName,
-                age: travelData.travelers[0].age,
+                age: travelData.travelers[0].dob,
                 passportNumber: travelData.travelers[0].passportNumber,
                 phone: travelData.phoneNumber,
                 email: travelData.email
@@ -509,7 +509,7 @@ export default function QuotationModal({ setModal }) {
                                 <h2 className="text-lg font-semibold mb-2">Vehicle Details</h2>
                                 <p className='text-sm flex uppercase'><span className='w-16 font-semibold'>Name:</span>{travelData.travelers[0].fullName}</p>
                                 <p className='text-sm flex uppercase'><span className='w-16 font-semibold'>Pass N.:</span>{travelData.travelers[0].passportNumber}</p>
-                                <p className='text-sm flex'><span className='w-16 font-semibold'>Age:</span>{travelData.travelers[0].age}</p>
+                                <p className='text-sm flex'><span className='w-16 font-semibold'>Age:</span>{travelData.travelers[0].dob}</p>
                                 <p className='text-sm flex'><span className='w-16 font-semibold'>Res:</span>{travelData.residence}</p>
                                 <p className='text-sm flex'><span className='w-16 font-semibold'>Dest:</span>{travelData.destination}</p>
                             </div>

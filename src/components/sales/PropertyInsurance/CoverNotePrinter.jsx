@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from 'react';
+import React, { useContext } from 'react';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import logo from '/images/icon.png'; // Ensure this path is correct

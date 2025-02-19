@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { usePrint } from '../../../context/PrinterProvider';
 import jsPDF from "jspdf"
@@ -79,10 +79,6 @@ export default function Travel({sales}) {
           ["Reference Number", sales.referenceNumber],
           ["Payment Date", formatDate(sales.paymentDate)],
           ["Insurer Name", sales.insurerName],
-          [
-            "Premium",
-            `${sales.transactionDescription.coverDetails.currency} ${sales.transactionDescription.coverDetails.premium.toFixed(2)}`,
-          ],
         ]
     
         doc.autoTable({

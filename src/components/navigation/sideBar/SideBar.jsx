@@ -16,6 +16,7 @@ export default function SideBar() {
 
     const [isOpen, setIsOpen] = useState(true)
     const [selectedTab, setSelectedTab] = useState("")
+    const [userData, setUserData] = useState('')
 
     const navState = useSelector(getNavStatus)
     const dropdownState = useSelector(getDropdownStatus)
@@ -162,8 +163,8 @@ export default function SideBar() {
                             : <img src={`${isOpen ? "images/icon.png" : "images/insureme-umbrella.png"}`} alt="Logo" className={`w-28 duration-500`} />
                         }
                     </div>
-                    <div className={`logo flex items-center ps-4 ${!isOpen && "hidden"}`}>
-                        <img src={user.userLogo?user.userLogo:"images/user.png"} alt="Logo" className="w-10 rounded-full bg-gradient-to-b from-main-color to-secondary-color" />
+                    <div className={`logo flex items-center ps-1 ${!isOpen && "hidden"}`}>
+                        {/* <img src={user.userLogo?user.userLogo:"images/user.png"} alt="Logo" className="w-10 rounded-full bg-gradient-to-b from-main-color to-secondary-color" /> */}
                         <div className="ml-4">
                             <h2 className="text-md font-bold h-6">Welcome <span className='text-main-color'>{firstname}</span></h2>
                             <p className="text-gray-600 text-xs">
@@ -174,6 +175,7 @@ export default function SideBar() {
                                  userRole === "PRODUCT_MANAGER" ? "Product Manager" :
                                  userRole === "MANAGER" ? "Finance Manager" : ""}
                             </p>
+                            <h2 className="text-md font-bold h-6">Shop <span className='text-main-color'>{firstname}</span></h2>
                         </div>
                     </div>
                     <ul className="space-y-2 mt-3">

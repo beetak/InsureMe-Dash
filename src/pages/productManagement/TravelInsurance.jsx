@@ -72,7 +72,7 @@ export default function TravelInsurance() {
                 {/* Tab content */}
                 <div>
                   {
-                    userRole === 'ADMIN' ? <>
+                    (userRole==="ADMIN"||userRole==="INSURER_ADMIN"||userRole==="IT_ADMIN"||userRole==="PRODUCT_MANAGER"||userRole==="IT_SUPPORT") ? <>
                       {/* Tab 1 content */}
                       {
                         activeTab === 1 && 

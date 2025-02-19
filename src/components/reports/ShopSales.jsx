@@ -10,14 +10,13 @@ import { fetchUserByShopId, getUsers } from '../../store/user-store';
 import { fetchAsyncCategory, getCategories } from '../../store/category-store';
 import { getInsurers } from '../../store/insurer-store';
 import { fetchSalesByDateRange } from '../../store/payments-store';
+import useAuth from '../../hooks/useAuth';
+import { setupInterceptors } from '../api/InsuranceApi';
 
 export default function ShopSales() {
 
     const [catResponse, setCatResponse] = useState('')
     const [message, setMessage] = useState('')
-    const [townState, setTownState] = useState(false)
-    const [shopState, setShopState] = useState(false)
-    const [userState, setUserState] = useState(false)
     const [loading, setLoading] = useState(false)
     const [isOpen, setIsOpen] = useState(false)
     const [viewOpen, setViewOpen] = useState(false)
@@ -25,13 +24,82 @@ export default function ShopSales() {
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date());
     const [regions, setRegions] = useState("");
+    const [regionId, setRegionId] = useState("");
     const [towns, setTowns] = useState("");
-    const [shops, setShops] = useState("");const [sales, setSales] = useState("")
+    const [townId, setTownId] = useState("");
+    const [shops, setShops] = useState("");
+    const [shopId, setShopId] = useState("");
+    const [sales, setSales] = useState("")
+
+    const { user, setUser } = useAuth()
+
+    const [regionResponse, setRegionResponse] = useState('')
+    const [townResponse, setTownResponse] = useState('')
+    const [shopResponse, setShopResponse] = useState('')
+
+    useEffect(()=>{
+        setupInterceptors(() => user, setUser)
+        fetchRegions()
+    },[user, setUser])
+
+    const fetchRegions = async () => {
+        setLoading(true)
+        try{
+            const response = await InsuranceApi.get('/region')
+            if(response.data.code==="OK"&&response.data.data.length>0){
+                setRegions(response.data.data)
+            }
+            else if (response.data.code==="OK"&&response.data.data.length<1){
+                setRegionResponse("No Regions found")
+            }
+        }
+        catch(err){
+            if(err){
+                setRegionResponse("Error fetching resource, Please check your network connection")
+            }
+            else if(err){
+                setRegionResponse("No Regions found")
+            }
+        }
+        finally{
+            setLoading(false)
+        }
+    }
+
+    const fetchTowns = async (id) => {
+        try{
+            const response = await InsuranceApi.get(`/town/region/${id}`)
+            if(response.data.code==="OK"&&response.data.data.length>0){
+                setTowns(response.data.data)
+            }
+            else if (response.data.code==="OK"&&response.data.data.length<1){
+                setTownResponse("No towns found for this region")
+            }
+        }
+        catch(err){
+            setTownResponse("Error fetching towns")
+        }
+        
+    }
+    
+    const fetchShops = async (id) => {
+        try{
+            const response = await InsuranceApi.get(`/shop/town/${id}`)
+            if(response.data.code==="OK"&&response.data.data.length>0){
+                setShops(response.data.data)
+            }
+            else if (response.data.code==="NOT_FOUND"){
+                setShopResponse("No shops found for this town")
+            }
+        }
+        catch(err){
+            setShopResponse("Error fetching towns")
+        }
+    }
 
     const dispatch = useDispatch()
     
     const categories = useSelector(getCategories)
-    const insurers = useSelector(getInsurers)
 
     const handleSearch = () => {
         setLoading(true)
@@ -75,54 +143,6 @@ export default function ShopSales() {
         .finally(()=>{
             setLoading(false)
             setMessage("")
-        })
-    }
-
-    const fetchTowns = (id) => {
-        // setLoading(true)
-        // setMessage("Processing...")
-        dispatch(fetchTownsByRegionId(id))
-        .then((res)=>{
-            console.log("search response ", res)
-            // setLoading(false)
-            if(!res.payload.success){
-                setCatResponse("Error fetching resource, Please check your network connection")
-            }
-            else if(res.payload.success&&!res.payload.data){
-                setCatResponse("No Categories found")
-            }
-            if(res.payload.success){
-                setTownState(true)
-                setTowns(res.payload.data)
-            }
-        })
-        .finally(()=>{
-            // setLoading(false)
-            // setMessage("")
-        })
-    }
-    
-    const fetchShops = (id) => {
-        // setLoading(true)
-        // setMessage("Processing...")
-        dispatch(fetchShopsByTownId(id))
-        .then((res)=>{
-            console.log("search response ", res)
-            // setLoading(false)
-            if(!res.payload.success){
-                setCatResponse("Error fetching resource, Please check your network connection")
-            }
-            else if(res.payload.success&&!res.payload.data){
-                setCatResponse("No Categories found")
-            }
-            if(res.payload.success){
-                setShopState(true)
-                setShops(res.payload.data)
-            }
-        })
-        .finally(()=>{
-            // setLoading(false)
-            // setMessage("")
         })
     }
 
@@ -254,51 +274,60 @@ export default function ShopSales() {
                             <select
                                 id="regionId"
                                 name="regionId"
+                                value={regionId}
+                                onChange={(e) => {setRegionId(Number(e.target.value));fetchTowns(e.target.value)}}
                                 className=" bg-inherit rounded-xs cursor-pointer min-w-48"
                             >
-                                <option className='w-full' onClick={()=>{setTownState(false);setTowns("")}} value="5">Select Region</option>
-                                {
-                                    regions?regions.map((region, i)=>{
-                                        return(
-                                            <option key={i} value="" onClick={()=>fetchTowns(region.id)}>{region.name}</option>
-                                        )
-                                        
-                                    }):<option value="">Error getting regions</option>
-                                }
+                                <option value={0}>Select Parent Region</option>
+                                {regions ? (
+                                    regions.map((region) => (
+                                    <option key={region.id} value={region.id}>
+                                        {region.name}
+                                    </option>
+                                    ))
+                                ) : (
+                                    <option value={0} className='text-red-500'>{regionResponse}</option>
+                                )}
                             </select>
                         </div>
                         <div className="flex rounded-full p-1 px-2 border-r border-gray-400">
                             <select
                                 id="townId"
                                 name="townId"
-                                className=" bg-inherit rounded-xs cursor-pointer min-w-48"
+                                value={townId}
+                                onChange={(e) => {setTownId(Number(e.target.value));fetchShops(e.target.value)}}
+                                className=" bg-inherit rounded-xs cursor-pointer"
                             >
-                                <option value="" onClick={()=>setShopState(false)}>{townState?"Select Town":"Select Region First"}</option>
-                                {
-                                    towns?towns.map((town, i)=>{
-                                        return(
-                                            <option key={i} value="" onClick={()=>fetchShops(town.id)}>{town.name}</option>
-                                        )
-                                        
-                                    }):<option value="">Error getting towns</option>
-                                }
+                                <option value={0}>Select User Town</option>
+                                {towns ? (
+                                    towns.map((town) => (
+                                    <option key={town.id} value={town.id}>
+                                        {town.name}
+                                    </option>
+                                    ))
+                                ) : (
+                                    <option value={0}>{townResponse}</option>
+                                )}
                             </select>
                         </div>
                         <div className="flex rounded-full p-1 px-2 border-r border-gray-400">
                             <select
                                 id="shopId"
                                 name="shopId"
+                                value={shopId}
+                                onChange={(e) => {setShopId(Number(e.target.value));fetchAgents(e.target.value)}}
                                 className=" bg-inherit rounded-xs cursor-pointer"
                             >
-                                <option value="" onClick={()=>setUserState(true)}>{shopState?"Select Shop":"Select Town First"}</option>
-                                {
-                                    shops?shops.map((shop, i)=>{
-                                        return(
-                                            <option key={i} value="" onClick={()=>fetchAgents(shop.id)}>{shop.name}</option>
-                                        )
-                                        
-                                    }):<option value="">Error getting shops</option>
-                                }
+                                <option value={0}>Select User Shop</option>
+                                {shops ? (
+                                    shops.map((shop) => (
+                                    <option key={shop.id} value={shop.id}>
+                                        {shop.name}
+                                    </option>
+                                    ))
+                                ) : (
+                                    <option value={0}>{shopResponse}</option>
+                                )}
                             </select>
                         </div>
                     </div>

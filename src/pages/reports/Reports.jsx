@@ -31,7 +31,7 @@ export default function Reports() {
     const params = new URLSearchParams(location.search);
     const refId = params.get('referenceId');
     if (refId) {
-      setActiveTab((userRole === 'INSURER_ADMIN' || userRole === 'SALES_AGENT' || userRole === "IT_ADMIN" || userRole === "PRODUCT_MANAGER" || userRole === "IT_SUPPORT" || userRole === "MANAGER" || userRole === "TREASURY_ACCOUNTANT") ? 4 : 9);
+      setActiveTab((userRole === 'INSURER_ADMIN' || userRole === 'SALES_AGENT' || userRole === "IT_ADMIN" || userRole === "PRODUCT_MANAGER" || userRole === "IT_SUPPORT" || userRole === "MANAGER" || userRole === "TREASURY_ACCOUNTANT") ? 2 : 9);
     } else {
       setActiveTab(getFirstValidTab());
     }
@@ -50,13 +50,13 @@ export default function Reports() {
     // { title: "National Sales", icon: "fas fa-pen-nib", tab:1 },
     // { title: "Shop Sales", icon: "fas fa-book", tab:2 },
     // { title: "Commission", icon: "fas fa-book", tab:4 },
-    { title: "Agent Sales", icon: "fas fa-book", tab:(userRole==='INSURER_ADMIN' || userRole==='SALES_AGENT')?1:3 },
+    { title: "Agent Sales", icon: "fas fa-book", tab:(userRole==='ADMIN' || userRole==='SALES_AGENT')?1:3 },
     // { title: "Tax", icon: "fas fa-book", tab:5 },
     // { title: "Policy", icon: "fas fa-book", tab:6 },
     { title: "Insurer", icon: "fas fa-book", tab:7 },
     // { title: "Sales", icon: "fas fa-book", tab:userRole==='INSURER_ADMIN'?2:'' },
-    { title: "Daily Sales", icon: "fas fa-book", tab:userRole==='INSURER_ADMIN'?3:8},
-    { title: "Transaction", icon: "fas fa-book", tab:(userRole==='INSURER_ADMIN'||userRole==='SALES_AGENT'||userRole==="IT_ADMIN"||userRole==="PRODUCT_MANAGER"||userRole==="IT_SUPPORT"||userRole==="MANAGER"||userRole==="TREASURY_ACCOUNTANT")?4:9 },
+    { title: "Daily Sales", icon: "fas fa-book", tab:(userRole==='INSURER_ADMIN'||userRole==="IT_ADMIN"||userRole==="PRODUCT_MANAGER"||userRole==="IT_SUPPORT"||userRole==="MANAGER"||userRole==="TREASURY_ACCOUNTANT")?1:8},
+    { title: "Transaction", icon: "fas fa-book", tab:(userRole==='INSURER_ADMIN'||userRole==='SALES_AGENT'||userRole==="IT_ADMIN"||userRole==="PRODUCT_MANAGER"||userRole==="IT_SUPPORT"||userRole==="MANAGER"||userRole==="TREASURY_ACCOUNTANT")?2:9 },
     // { title: "Commissions", icon: "fas fa-book", tab:userRole==='INSURER_ADMIN'?5:10 },
   ]
 
@@ -64,7 +64,7 @@ export default function Reports() {
     if (menu.title === "National Sales" && (userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN")) {
       return true;
     }
-    if (menu.title === "Agent Sales" && (userRole === "INSURER_ADMIN" || userRole === "ADMIN" || userRole === "SALES_AGENT" || userRole === "INSURER_ADMIN" || userRole === "IT_ADMIN" || userRole === "PRODUCT_MANAGER" || userRole === "IT_SUPPORT" || userRole === "MANAGER" || userRole === "TREASURY_ACCOUNTANT" )) {
+    if (menu.title === "Agent Sales" && (userRole === "ADMIN" || userRole === "SALES_AGENT")) {
       return true;
     }
     if (menu.title === "Policy" && (userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN")) {
@@ -82,7 +82,7 @@ export default function Reports() {
     if (menu.title === "Sales" && (userRole === "INSURER_ADMIN")) {
         return true;
     }
-    if (menu.title === "Daily Sales" && (userRole === "ADMIN" || userRole === "INSURER_ADMIN")) {
+    if (menu.title === "Daily Sales" && (userRole === "ADMIN" || userRole === "INSURER_ADMIN" || userRole === "INSURER_ADMIN" || userRole === "SALES_AGENT" || userRole === "IT_ADMIN" || userRole === "PRODUCT_MANAGER" || userRole === "IT_SUPPORT" || userRole === "MANAGER" || userRole === "TREASURY_ACCOUNTANT")) {
         return true;
     } 
     if (menu.title === "Commissions" && (userRole === "ADMIN" || userRole === "INSURER_ADMIN")) {
@@ -189,6 +189,22 @@ export default function Reports() {
                           </div>
                         }
                       </>:
+                      (userRole==="INSURER_ADMIN"||userRole==="PRODUCT_MANAGER"||userRole==="IT_SUPPORT"||userRole==="MANAGER"||userRole==="TREASURY_ACCOUNTANT")?
+                      <>
+                        {/* Tab 1 content */}
+                        {activeTab === 1 && 
+                          <div className="p-7 bg-white rounded-xs border border-gray-200 border-solid border-1">
+                            <DailySales/>
+                          </div>
+                        }
+                        {/* Tab 3 content */}
+                        {activeTab === 2 && 
+                          <div className="p-7 bg-white rounded-xs border border-gray-200 border-solid border-1">
+                            <Transaction/>
+                          </div>
+                        }
+                      </>
+                      :
                       <>
                         {/* Tab 1 content */}
                         {

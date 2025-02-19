@@ -69,8 +69,8 @@ export default function TopBar() {
     const renderSearchBar = () => (
         <AnimatePresence>
             <motion.div
-                initial={{ width: 128 }}
-                animate={{ width: isExpanded ? 256 : 128 }}
+                initial={{ width: 300 }}
+                animate={{ width: isExpanded ? 400 : 300 }}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 className="relative"
                 ref={inputRef}
@@ -82,7 +82,7 @@ export default function TopBar() {
                     onBlur={handleBlur}
                     onChange={handleInputChange}
                     value={inputValue}
-                    placeholder="Search..."
+                    placeholder="Search transaction by Reference ID"
                     animate={{
                         boxShadow: isFocused ? "0 0 0 2px rgba(59, 130, 246, 0.5)" : "none"
                     }}
@@ -107,7 +107,7 @@ export default function TopBar() {
                 <div className="mx-auto w-full px-6">
                     <div className="relative flex h-20 items-center justify-between">
                         <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
-                            <div className="hidden sm:ml-6 sm:block">
+                            <div className="hidden sm:ml-6 sm:block ">
                                 <div className="flex space-x-4">
                                     {renderSearchBar()}
                                 </div>

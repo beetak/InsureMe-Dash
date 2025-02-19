@@ -4,11 +4,11 @@ import CategoryModal from './CategoryModal';
 import CategoryViewModal from './CategoryViewModal';
 import DeleteConfirmationModal from '../deleteConfirmation/deleteConfirmationModal';
 import useAuth from '../../hooks/useAuth';
-import InsuranceApi from '../api/InsuranceApi';
+import InsuranceApi, { setupInterceptors } from '../api/InsuranceApi';
 
 export default function CategoriesTable() {
 
-  const {user} = useAuth()
+  const {user, setUser} = useAuth()
 
   const [catResponse, setCatResponse] = useState('')
   const [message, setMessage] = useState('')
@@ -20,9 +20,18 @@ export default function CategoriesTable() {
   const [modalData, setModalData] = useState(null)
   const [categories, setCategories] = useState([])
 
+  const [currentPage, setCurrentPage] = useState(1)
+  const [itemsPerPage, setItemsPerPage] = useState(5)
+  const [totalPages, setTotalPages] = useState(0)
+
   useEffect(() => {
+    setupInterceptors(() => user, setUser)
     fetchCategory()
-  }, []);
+  }, [user, setUser])
+
+  useEffect(() => {
+    setTotalPages(Math.ceil(categories.length / itemsPerPage))
+  }, [categories, itemsPerPage])
 
   const fetchCategory = async () => {
     setLoading(true)
@@ -109,9 +118,28 @@ export default function CategoriesTable() {
   }
 
   const renderTableRows = () => {
-    return categories?categories.map((item, index) => (
-      <tr key={index} className={`${index%2!==0&&" bg-gray-100"} p-3 text-sm text-gray-600 font-semibold`}>
-        <td className='font-bold text-blue-5 justify-center items-center w-7'><div className='w-full justify-center flex items-center'>{++index}</div></td>
+    if (!categories || categories.length === 0) {
+      return (
+        <tr>
+          <td colSpan={7} style={{ textAlign: "center" }}>
+            {catResponse || "No categories available."}
+          </td>
+        </tr>
+      )
+    }
+
+    const indexOfLastItem = currentPage * itemsPerPage
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage
+    const currentItems = categories.slice(indexOfFirstItem, indexOfLastItem)
+
+    return currentItems.map((item, index) => (
+      <tr
+        key={item.insuranceId}
+        className={`${index % 2 !== 0 ? "bg-gray-100" : ""} p-3 text-sm text-gray-600 font-semibold`}
+      >
+        <td className="font-bold text-blue-500 justify-center items-center w-7">
+          <div className="w-full justify-center flex items-center">{index + 1 + (currentPage - 1) * itemsPerPage}</div>
+        </td>
         <td>{item.categoryName}</td>
         <td>{formatDate(item.createdAt)}</td>
         <td className=''><div className='w-full justify-center flex items-center'> <span className={` font-semibold uppercase text-xs tracking-wider px-3 text-white ${item.isActive?" bg-green-600": " bg-red-600 "} rounded-full py-1`}>{item.isActive?"Active":"Inactive"}</span></div></td>
@@ -161,10 +189,7 @@ export default function CategoriesTable() {
           </div>  
         </td>
       </tr>
-    )):
-    <tr className=''>
-      <td colSpan={7} style={{ textAlign: 'center' }}>{catResponse}</td>
-    </tr>
+    ))
   };
 
   const getModal =(isOpen)=>{
@@ -172,6 +197,38 @@ export default function CategoriesTable() {
   }
   const getViewModal =(isOpen)=>{
     setViewOpen(isOpen)
+  }
+
+  const handleItemsPerPageChange = (e) => {
+    const value = e.target.value
+    setItemsPerPage(value === "All" ? propertyInsurance.length : Number.parseInt(value))
+    setCurrentPage(1)
+  }
+
+  const renderPagination = () => {
+    const pageNumbers = []
+    for (let i = 1; i <= totalPages; i++) {
+      pageNumbers.push(i)
+    }
+
+    return (
+      <div className="flex justify-center mt-4">
+        <nav>
+          <ul className="flex">
+            {pageNumbers.map((number) => (
+              <li key={number} className="mx-1">
+                <button
+                  onClick={() => setCurrentPage(number)}
+                  className={`px-3 py-1 rounded-full ${currentPage === number ? "bg-main-color text-white" : "bg-gray-200"}`}
+                >
+                  {number}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </div>
+    )
   }
 
   return (
@@ -188,15 +245,20 @@ export default function CategoriesTable() {
         }
         <h2 className="text-lg font-semibold">Insurance Type Data</h2>
         <div className='flex justify-between py-4'>
-          <div className="xl:col-span-3 flex items-center space-x-2">
-            <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900">
+          <div className="flex items-center rounded-full border overflow-hidden border-gray-500 text-xs h-8">
+            <label
+              htmlFor="itemsPerPage"
+              className="w-16 font-medium leading-6 px-2 py-1 bg-gray-500 justify-center flex text-white"
+            >
               Show
             </label>
             <div className="">
               <select
-                  id="systemAdOns"
-                  name="systemAdOns"
-                  className="border border-gray-300 bg-inherit rounded-xs px-3 py-1.5"
+                id="itemsPerPage"
+                name="itemsPerPage"
+                className="bg-inherit px-3 py-1 cursor-pointer"
+                onChange={handleItemsPerPageChange}
+                value={itemsPerPage}
               >
                 <option value="5">5</option>
                 <option value="10">10</option>
@@ -204,7 +266,10 @@ export default function CategoriesTable() {
                 <option value="All">All</option>
               </select>
             </div>
-            <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900">
+            <label
+              htmlFor="itemsPerPage"
+              className="w-16 font-medium leading-6 px-2 py-1 bg-gray-500 justify-center flex text-white"
+            >
               Entries
             </label>
           </div>
@@ -217,6 +282,7 @@ export default function CategoriesTable() {
             <tbody >{loading?loadingAnimation():renderTableRows()}</tbody>
           </table>
         </div>
+        {renderPagination()}
       </div>
     </>
   )

@@ -110,7 +110,7 @@ const CoverNotePrinter = (quoteData) => {
     // Add policy details
     addText(45, 150, `${quoteData.data[0].insurerName.charAt(0).toUpperCase() + quoteData.data[0].insurerName.slice(1)} Insurance`, 12, 'bold');
     addText(45, 160, `Cover Note #:\nTransaction Ref#:\nIssue Date:`, 10, 'normal');
-    addText(130, 160, `123456\n${quoteData.data[0].quotationId}\n${formattedDate}`, 10, 'normal');
+    addText(130, 160, `123456\n${quoteData.data[0].merchantRef}\n${formattedDate}`, 10, 'normal');
 
     const secondLineY = 190;
     doc.setDrawColor(0, 0, 0); 

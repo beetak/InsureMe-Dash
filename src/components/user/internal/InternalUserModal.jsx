@@ -12,6 +12,8 @@ export default function InternalUserModal({ setModal, data, refresh }) {
     },[])
 
     const [domainName, setDomainName] = useState("")
+    const [email, setEmail] = useState("")
+    const [phoneNumber, setPhoneNumber] = useState("")
     const [role, setRole] = useState("")
     const [regionId, setRegionId] = useState("")
     const [townId, setTownId] = useState("")
@@ -79,6 +81,7 @@ export default function InternalUserModal({ setModal, data, refresh }) {
     useEffect(() => {
         if (data) {
         setDomainName(data.domainName || "")
+        setEmail(data.email || "")
         setRole(data.role || "")
         setRegionId(data.regionId || "")
         setTownId(data.townId || "")
@@ -88,11 +91,6 @@ export default function InternalUserModal({ setModal, data, refresh }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        if (domainName === "" || role === "") {
-            setError([{ err: "empty", message: "Please provide all required fields" }])
-            return
-        }
-
         setLoading(true)
         try {
             const response = await InsuranceApi.put(``)
@@ -140,16 +138,32 @@ export default function InternalUserModal({ setModal, data, refresh }) {
                 ))}
                 <div className="flex items-center">
                     <label htmlFor="domainName" className="block text-sm font-medium leading-6 text-gray-900 w-1/4">
-                        Domain Name
+                        Username
                     </label>
                     <div className="mt-2 flex-1">
                         <input
                         type="text"
-                        id="domainName"
-                        value={domainName}
+                        id="email"
+                        value={email}
                         onChange={(e) => setDomainName(e.target.value)}
                         className="block w-full rounded-xs border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
                         placeholder={data.email}
+                        required
+                        />
+                    </div>
+                </div>
+                <div className="flex items-center">
+                    <label htmlFor="domainName" className="block text-sm font-medium leading-6 text-gray-900 w-1/4">
+                        Phone Number
+                    </label>
+                    <div className="mt-2 flex-1">
+                        <input
+                        type="text"
+                        id="phoneNumber"
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        className="block w-full rounded-xs border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
+                        placeholder={data.phoneNumber}
                         required
                         />
                     </div>

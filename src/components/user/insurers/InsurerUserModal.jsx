@@ -1,11 +1,17 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Modal from '../../modal/Modal';
 import { useDispatch, useSelector } from 'react-redux';
 import { getInsurers } from '../../../store/insurer-store';
+import useAuth from '../../../hooks/useAuth';
+import { setupInterceptors } from '../../api/InsuranceApi';
 
 export default function InsurerUserModal(props) {
 
-    const dispatch = useDispatch()
+    const { user, setUser } = useAuth()
+
+    useEffect(() => {
+        setupInterceptors(() => user, setUser)
+    },[])
 
     const [insurerName, setInsurerName] = useState("")
     const [firstName, setFirstName] = useState("")
@@ -23,37 +29,36 @@ export default function InsurerUserModal(props) {
 
     const insurers = useSelector(getInsurers)
 
+    useEffect(() => {
+        setFirstName(props.data.firstName)
+        setLastName(props.data.lastName)
+        setEmail(props.data.email)
+        setPhoneNumber(props.data.phoneNumber)
+    },[])
 
-    const handleUpdate = async (e) => {
+
+    const handleSubmit = async (e) => {
         e.preventDefault()
-        if(insurerName===""&&address===""&&officeNumber===""&&email===""){
-            const newError = { err: 'empty', message: 'Please provide all fields' };
-                setError(prevError => [...prevError, newError]);
-                setTimeout(() => {
-                    setError(prevError => prevError.filter(error => error !== newError));
-                }, 2000);
-        }
-        else {
-            setLoading(true)
-            dispatch(postInsurer({
-                insurerName,
-            }))
-            .then((response)=>{
-                if(response.payload&&response.payload.success){
-                    setSuccess(true)
-                }
-                else{
-                    setFailed(true)
-                }            
-            })
-            .finally(()=>{
-                setTimeout(()=>{
-                    setLoading(false)
-                    setFailed(false)
-                    setSuccess(false)
-                    setInsurerName('')
-                },5000)
-            })
+        setLoading(true)
+        try {
+            const response = await InsuranceApi.put(``)
+
+            if (response.success) {
+                setSuccess(true)
+                refresh()
+            } else {
+                setFailed(true)
+            }
+        } catch (err) {
+            setFailed(true)
+            setError([{ err: "submit", message: "Error submitting form. Please try again." }])
+            } finally {
+            setLoading(false)
+            setTimeout(() => {
+                setSuccess(false)
+                setFailed(false)
+                setError([])
+            }, 3000)
         }
     }
 
@@ -174,7 +179,7 @@ export default function InsurerUserModal(props) {
                 </div>
                 <div className='flex space-x-2 pt-10'>
                     <button
-                        onClick={handleUpdate}
+                        onClick={()=>handleSubmit()}
                         className={`border border-gray-300 rounded-sm px-4 py-2 bg-blue-500 text-gray-100 hover:text-gray-700 hover:bg-white w-40`}
                     >
                     Submit

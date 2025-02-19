@@ -220,8 +220,8 @@ export default function InsurerForm() {
                 {
                     loading && <PageLoading loading={loading} success={success} failed={failed}/>
                 }
-                <h2 className="text-lg font-semibold">Insurer Creation Form</h2>
-                <p className="text-xs mb-4">For vehicle Insurance processing</p>
+                <h2 className="text-lg font-semibold">Insurance Company Creation Form</h2>
+                <p className="text-xs mb-4">For company creation</p>
                 <div className='space-y-1'>
                     {
                         Object.keys(error).length>0&&

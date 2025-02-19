@@ -6,7 +6,6 @@ import PropertyInsurance from './PropertyInsurance';
 import useAuth from '../../hooks/useAuth';
 import InsuranceApi, { setupInterceptors } from '../../components/api/InsuranceApi';
 import DisplayLayout from '../../components/Layout/DisplayLayout';
-import LifeInsurance from './LifeInsurance';
 
 export default function Insurance() {
 

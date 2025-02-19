@@ -29,12 +29,20 @@ export default function PolicyTable() {
   const [policies, setPolicies] = useState("")
   const [categories, setCategories] = useState("")
   
-  const dispatch = useDispatch()
+  const [currentPage, setCurrentPage] = useState(1)
+  const [itemsPerPage, setItemsPerPage] = useState(5)
+  const [totalPages, setTotalPages] = useState(0)
 
-  useEffect(()=>{
+  useEffect(() => {
+    setupInterceptors(() => user, setUser)
     fetchCategory()
     fetchPolicy()
-  },[])
+  }, [user, setUser])
+
+  useEffect(() => {
+    setTotalPages(Math.ceil(policies.length / itemsPerPage))
+  }, [policies, itemsPerPage])
+
 
   const fetchCategory = async () => {
       setLoading(true)
@@ -160,11 +168,26 @@ export default function PolicyTable() {
     return formattedDate;
   }
 
-  console.log("my products ",policies)
   const renderTableRows = () => {
-    return policies ? (
+
+    if (!policies || policies.length === 0) {
+      return (
+        <tr>
+          <td colSpan={7} style={{ textAlign: "center" }}>
+            {catResponse || "No policies available."}
+          </td>
+        </tr>
+      )
+    }
+
+    const indexOfLastItem = currentPage * itemsPerPage
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage
+    const currentItems = policies.slice(indexOfFirstItem, indexOfLastItem)
+
+    return currentItems ? (
       <AnimatePresence>
-        {policies.map((item, index) => (
+        {
+          currentItems.map((item, index) => (
           <motion.tr
             key={item.policyTypeId}
             initial={{ opacity: 0, y: 20 }}
@@ -246,6 +269,38 @@ export default function PolicyTable() {
     setViewOpen(isOpen)
   }
 
+  const handleItemsPerPageChange = (e) => {
+    const value = e.target.value
+    setItemsPerPage(value === "All" ? policies.length : Number.parseInt(value))
+    setCurrentPage(1)
+  }
+
+  const renderPagination = () => {
+    const pageNumbers = []
+    for (let i = 1; i <= totalPages; i++) {
+      pageNumbers.push(i)
+    }
+
+    return (
+      <div className="flex justify-center mt-4">
+        <nav>
+          <ul className="flex">
+            {pageNumbers.map((number) => (
+              <li key={number} className="mx-1">
+                <button
+                  onClick={() => setCurrentPage(number)}
+                  className={`px-3 py-1 rounded-full ${currentPage === number ? "bg-main-color text-white" : "bg-gray-200"}`}
+                >
+                  {number}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </div>
+    )
+  }
+
   return (
     <>
       <div className="p-5 bg-white rounded-md border border-gray-200 border-solid border-1">
@@ -260,15 +315,20 @@ export default function PolicyTable() {
         }
         <h2 className="text-lg font-semibold">Insurance Policies By Category</h2>
         <div className='flex justify-between py-4'>
-          <div className="xl:col-span-3 flex items-center space-x-2">
-            <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900">
+          <div className="flex items-center rounded-full border overflow-hidden border-gray-500 text-xs h-8">
+            <label
+              htmlFor="itemsPerPage"
+              className="w-16 font-medium leading-6 px-2 py-1 bg-gray-500 justify-center flex text-white"
+            >
               Show
             </label>
             <div className="">
               <select
-                id="systemAdOns"
-                name="systemAdOns"
-                className="border border-gray-300 bg-inherit rounded-xs px-3 py-1.5"
+                id="itemsPerPage"
+                name="itemsPerPage"
+                className="bg-inherit px-3 py-1 cursor-pointer"
+                onChange={handleItemsPerPageChange}
+                value={itemsPerPage}
               >
                 <option value="5">5</option>
                 <option value="10">10</option>
@@ -276,7 +336,10 @@ export default function PolicyTable() {
                 <option value="All">All</option>
               </select>
             </div>
-            <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900">
+            <label
+              htmlFor="itemsPerPage"
+              className="w-16 font-medium leading-6 px-2 py-1 bg-gray-500 justify-center flex text-white"
+            >
               Entries
             </label>
           </div>
@@ -308,6 +371,7 @@ export default function PolicyTable() {
             <tbody >{loading?loadingAnimation():renderTableRows()}</tbody>
           </table>
         </div>
+        {renderPagination()}
       </div>
     </>
   )

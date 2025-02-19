@@ -12,14 +12,14 @@ export default function InsurerUsers() {
 
   const menus = [
     { title: "Create User", icon: "fas fa-pen-nib", tab:1 },
-    { title: "View Users", icon: "fas fa-book", tab:(userRole==="ADMIN"||userRole==="IT_ADMIN"||userRole==="IT_SUPPORT"||userRole==="IT_MANAGER")?2:1 },
+    { title: "View Users", icon: "fas fa-book", tab:(userRole==="ADMIN"||userRole==="INSURER_ADMIN"||userRole==="IT_ADMIN"||userRole==="IT_SUPPORT"||userRole==="IT_MANAGER")?2:1 },
   ]
   
   const filteredMenus = menus.filter((menu) => {
-    if (menu.title === "Create User" && (userRole === "ADMIN" || userRole === "IT_ADMIN"|| userRole === "IT_SUPPORT" || userRole === "IT_MANAGER")) {
+    if (menu.title === "Create User" && (userRole === "ADMIN"||userRole === "INSURER_ADMIN"||userRole === "IT_ADMIN"||userRole === "IT_SUPPORT"||userRole === "IT_MANAGER")) {
       return true;
     } 
-    if (menu.title === "View Users" && (userRole === "ADMIN" || userRole === "IT_ADMIN" || userRole === "PRODUCT_MANAGER" || userRole === "IT_SUPPORT" || userRole === "MANAGER" || userRole === "TREASURY_ACCOUNTANT")) {
+    if (menu.title === "View Users" && (userRole === "ADMIN"||userRole === "INSURER_ADMIN"||userRole === "IT_ADMIN"||userRole ==="PRODUCT_MANAGER"||userRole==="IT_SUPPORT"||userRole==="MANAGER"||userRole==="TREASURY_ACCOUNTANT")) {
       return true;
     }  
     return false;
@@ -60,7 +60,7 @@ export default function InsurerUsers() {
                 {/* Tab content */}
                 <div>
                   {
-                    (userRole==="ADMIN"||userRole==="IT_SUPPORT"||userRole==="IT_MANAGER")?<>
+                    (userRole==="ADMIN"||userRole==="INSURER_ADMIN"||userRole==="IT_SUPPORT"||userRole==="IT_MANAGER")?<>
                     {/* Tab 1 content */}
                     {
                       

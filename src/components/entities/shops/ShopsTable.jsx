@@ -11,10 +11,6 @@ export default function ShopsTable() {
 
     const { user, setUser } = useAuth()
 
-    useEffect(()=>{
-        setupInterceptors(() => user, setUser)
-    },[])
-
     const [shopResponse, setShopResponse] = useState('Refresh')
     const [loading, setLoading] = useState(false)
     const [isOpen, setIsOpen] = useState(false)
@@ -22,11 +18,21 @@ export default function ShopsTable() {
     const [isDelete, setIsDelete] = useState(false)
     const [viewOpen, setViewOpen] = useState(false)
     const [modalData, setModalData] = useState(null)
-    const [shops, setShops] = useState('')
-  
+    const [shops, setShops] = useState('')    
+
+    const [currentPage, setCurrentPage] = useState(1)
+    const [itemsPerPage, setItemsPerPage] = useState(5)
+    const [totalPages, setTotalPages] = useState(0)
+
     useEffect(()=>{
+        setupInterceptors(() => user, setUser)
         fetchShops()
-    },[])
+    },[user, setUser])
+
+    useEffect(() => {
+        setTotalPages(Math.ceil(shops.length / itemsPerPage))
+    }, [shops, itemsPerPage])
+
     const fetchShops = async () => {
         setLoading(true)
         try{
@@ -109,9 +115,28 @@ export default function ShopsTable() {
     }
 
     const renderTableRows = () => {
-        return shops?shops.map((item, index) => (
-            <tr key={index} className={`${index%2!==0&&" bg-gray-100"} p-3 text-sm text-gray-600 font-semibold`}>
-                <td className='font-bold text-blue-5 justify-center items-center w-7'><div className='w-full justify-center flex items-center'>{++index}</div></td>
+        if (!shops || shops.length === 0) {
+            return (
+              <tr>
+                <td colSpan={7} style={{ textAlign: "center" }}>
+                  {shopResponse || "No shops available."}
+                </td>
+              </tr>
+            )
+        }
+    
+        const indexOfLastItem = currentPage * itemsPerPage
+        const indexOfFirstItem = indexOfLastItem - itemsPerPage
+        const currentItems = shops.slice(indexOfFirstItem, indexOfLastItem)
+    
+        return currentItems.map((item, index) => (
+            <tr
+              key={index}
+              className={`${index % 2 !== 0 ? "bg-gray-100" : ""} p-3 text-sm text-gray-600 font-semibold`}
+            >
+                <td className="font-bold text-blue-500 justify-center items-center w-7">
+                    <div className="w-full justify-center flex items-center">{index + 1 + (currentPage - 1) * itemsPerPage}</div>
+                </td>
                 <td>{item.name}</td>
                 <td>{item.townName}</td>
                 <td>{item.regionName}</td>
@@ -158,10 +183,7 @@ export default function ShopsTable() {
                     </div>  
                 </td>
             </tr>
-        )):
-        <tr className=''>
-          <td colSpan={7} style={{ textAlign: 'center' }}>{shopResponse}</td>
-        </tr>
+        ))
     };
 
     const getModal =(isOpen)=>{
@@ -204,16 +226,6 @@ export default function ShopsTable() {
                         <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900">
                             Entries
                         </label>
-                    </div>
-                    <div className="flex items-center">
-                        <input
-                            type="text"
-                            name="adon"
-                            id="adon"
-                            autoComplete="family-name"
-                            placeholder='Search'
-                            className="rounded-xs border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
-                        />
                     </div>
                 </div>
                 <div className='overflow-auto rounded:xl shadow-md'>

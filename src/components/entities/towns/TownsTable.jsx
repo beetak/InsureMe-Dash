@@ -23,10 +23,19 @@ export default function TownsTable() {
     const [isDelete, setIsDelete] = useState(false)
     const [viewOpen, setViewOpen] = useState(false)
     const [towns, setTowns] = useState('')
-  
+    
+    const [currentPage, setCurrentPage] = useState(1)
+    const [itemsPerPage, setItemsPerPage] = useState(5)
+    const [totalPages, setTotalPages] = useState(0)
+
     useEffect(()=>{
+        setupInterceptors(() => user, setUser)
         fetchTowns()
-    },[])
+    },[user, setUser])
+
+    useEffect(() => {
+        setTotalPages(Math.ceil(towns.length / itemsPerPage))
+    }, [towns, itemsPerPage])
 
     const fetchTowns = async () => {
         setLoading(true)
@@ -110,9 +119,28 @@ export default function TownsTable() {
     
 
     const renderTableRows = () => {
-        return towns?towns.map((item, index) => (
-            <tr key={index} className={`${index%2!==0&&" bg-gray-100"} p-3 text-sm text-gray-600 font-semibold`}>
-                <td className='font-bold text-blue-5 justify-center items-center w-7'><div className='w-full justify-center flex items-center'>{++index}</div></td>
+        if (!towns || towns.length === 0) {
+            return (
+              <tr>
+                <td colSpan={7} style={{ textAlign: "center" }}>
+                  {townResponse || "No towns available."}
+                </td>
+              </tr>
+            )
+        }
+    
+        const indexOfLastItem = currentPage * itemsPerPage
+        const indexOfFirstItem = indexOfLastItem - itemsPerPage
+        const currentItems = towns.slice(indexOfFirstItem, indexOfLastItem)
+    
+        return currentItems.map((item, index) => (
+            <tr
+              key={index}
+              className={`${index % 2 !== 0 ? "bg-gray-100" : ""} p-3 text-sm text-gray-600 font-semibold`}
+            >
+                <td className="font-bold text-blue-500 justify-center items-center w-7">
+                    <div className="w-full justify-center flex items-center">{index + 1 + (currentPage - 1) * itemsPerPage}</div>
+                </td>
                 <td>{item.name}</td>
                 <td>{item.regionName}</td>
                 <td>{formatDate(item.dateCreated)}</td>
@@ -158,10 +186,7 @@ export default function TownsTable() {
                     </div>  
                 </td>
             </tr>
-        )):
-        <tr className=''>
-          <td colSpan={7} style={{ textAlign: 'center' }}>{townResponse}</td>
-        </tr>
+        ))
     };
 
     function formatDate(dateString) {
@@ -175,6 +200,38 @@ export default function TownsTable() {
     }
     const getViewModal =(isOpen)=>{
         setViewOpen(isOpen)
+    }
+
+    const handleItemsPerPageChange = (e) => {
+        const value = e.target.value
+        setItemsPerPage(value === "All" ? towns.length : Number.parseInt(value))
+        setCurrentPage(1)
+    }
+
+    const renderPagination = () => {
+        const pageNumbers = []
+        for (let i = 1; i <= totalPages; i++) {
+          pageNumbers.push(i)
+        }
+    
+        return (
+          <div className="flex justify-center mt-4">
+            <nav>
+              <ul className="flex">
+                {pageNumbers.map((number) => (
+                  <li key={number} className="mx-1">
+                    <button
+                      onClick={() => setCurrentPage(number)}
+                      className={`px-3 py-1 rounded-full ${currentPage === number ? "bg-main-color text-white" : "bg-gray-200"}`}
+                    >
+                      {number}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </div>
+        )
     }
     
     return (
@@ -191,15 +248,20 @@ export default function TownsTable() {
                 }
                 <h2 className="text-lg font-semibold">Town Data</h2>
                 <div className='flex justify-between py-4'>
-                    <div className="xl:col-span-3 flex items-center space-x-2">
-                        <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900">
+                    <div className="flex items-center rounded-full border overflow-hidden border-gray-500 text-xs h-8">
+                        <label
+                            htmlFor="itemsPerPage"
+                            className="w-16 font-medium leading-6 px-2 py-1 bg-gray-500 justify-center flex text-white"
+                        >
                             Show
                         </label>
                         <div className="">
                             <select
-                                id="systemAdOns"
-                                name="systemAdOns"
-                                className="border border-gray-300 bg-inherit rounded-xs px-3 py-1.5"
+                                id="itemsPerPage"
+                                name="itemsPerPage"
+                                className="bg-inherit px-3 py-1 cursor-pointer"
+                                onChange={handleItemsPerPageChange}
+                                value={itemsPerPage}
                             >
                                 <option value="5">5</option>
                                 <option value="10">10</option>
@@ -207,19 +269,12 @@ export default function TownsTable() {
                                 <option value="All">All</option>
                             </select>
                         </div>
-                        <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900">
-                            Entries
+                        <label
+                            htmlFor="itemsPerPage"
+                            className="w-16 font-medium leading-6 px-2 py-1 bg-gray-500 justify-center flex text-white"
+                        >
+                        Entries
                         </label>
-                    </div>
-                    <div className="flex items-center">
-                        <input
-                            type="text"
-                            name="adon"
-                            id="adon"
-                            autoComplete="family-name"
-                            placeholder='Search'
-                            className="rounded-xs border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
-                        />
                     </div>
                 </div>
                 <div className='overflow-auto rounded:xl shadow-md'>
@@ -230,6 +285,7 @@ export default function TownsTable() {
                         <tbody >{loading?loadingAnimation():renderTableRows()}</tbody>
                     </table>
                 </div>
+                {renderPagination()}
             </div>
         </>
     )

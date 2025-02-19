@@ -334,7 +334,7 @@ export default function InternalUserForm() {
                     }
                     <div className="sm:col-span-3 flex items-center">
                         <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900 w-1/4">
-                        Domain Name
+                            Username
                         </label>
                         <div className="mt-2 flex-1">
                             {
