@@ -92,7 +92,7 @@ export default function InsurerUsersTable() {
     setUsers([])
     setLoading(true)
     try {
-      const response = await InsuranceApi.get(`/insurer-users/insurer/${insurerId}/${role}`)
+      const response = await InsuranceApi.get(`/insurer-users/insurer/${insurerId}/role/${role}`)
       if (response.data.code === "OK" && response.data.data) {
         setUsers(response.data.data)
       }
