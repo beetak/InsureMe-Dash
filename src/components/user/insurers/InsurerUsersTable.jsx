@@ -94,6 +94,7 @@ export default function InsurerUsersTable() {
     try {
       const response = await InsuranceApi.get(`/insurer-users/insurer/${insurerId}/role/${role}`)
       if (response.data.code === "OK" && response.data.data) {
+        console.log(response)
         setUsers(response.data.data)
       }
     } catch (err) {
@@ -143,7 +144,6 @@ export default function InsurerUsersTable() {
     try{
       const response = await InsuranceApi.get('/insurers')
       if(response){
-        console.log(response)
         setInsurers(response.data.data)
       }
     }
@@ -215,19 +215,21 @@ export default function InsurerUsersTable() {
   }
 
   const renderTableRows = () => {
-    if (!users || users.length === 0) {
+    if (!users || (Array.isArray(users) && users.length === 0)) {
       return (
-        <tr>
-          <td colSpan={7} style={{ textAlign: "center" }}>
-            {userResponse || "No Users available."}
-          </td>
-        </tr>
-      )
-    }
-
-    const indexOfLastItem = currentPage * itemsPerPage
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage
-    const currentItems = users.slice(indexOfFirstItem, indexOfLastItem)
+          <tr>
+              <td colSpan={7} style={{ textAlign: "center" }}>
+                  {userResponse || "No Users available."}
+              </td>
+          </tr>
+      );
+  }
+  
+  const userArray = Array.isArray(users) ? users : [users];
+  
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = userArray.slice(indexOfFirstItem, indexOfLastItem);
 
     return currentItems.map((item, index) => (
       <tr key={index} className={`${index % 2 !== 0 && " bg-gray-100"} p-3 text-sm text-gray-600 font-semibold`}>
@@ -405,8 +407,10 @@ export default function InsurerUsersTable() {
                   setSelectedInsurer(e.target.value)
                   if (e.target.value === "") {
                     fetchUsers()
-                  } else {
+                  } else if(selectedRole === "") {
                     fetchInsurerUsers(e.target.value)
+                  } else {
+                    fetchInsurerUsersByRole(e.target.value, selectedRole)
                   }
                 }}
                 value={selectedInsurer}

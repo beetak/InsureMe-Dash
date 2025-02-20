@@ -267,26 +267,34 @@ export default function UserProfile() {
           </div>
           {(user.role === "ADMIN" || user.role === "SALES_AGENT") && (
             <div className="flex mt-8 space-x-3">
-              <p className="flex flex-col text-xs font-semibold">
-                Assigned Region
-                <span className="text-2xl text-main-color">
-                  {accountInfo.userRegions > 0 ? accountInfo.userRegions[0] : "Overall"}
-                </span>
-              </p>
-              <p className="flex flex-col text-xs font-semibold">
-                Assigned Town
-                <span className="text-2xl text-main-color">
-                  {accountInfo.userTowns > 0 ? accountInfo.userTowns[0] : "Overall"}
-                </span>
-              </p>
-              <p className="flex flex-col text-xs font-semibold">
-                Assigned Shop
-                <span className="text-2xl text-main-color">
-                  {accountInfo.userShops > 0 ? accountInfo.userShops[0] : "Overall"}
-                </span>
-              </p>
+                {accountInfo.userRegions && accountInfo.userRegions.length > 0 ? (
+                    <p className="flex flex-col text-xs font-semibold">
+                        Assigned Region
+                        <span className="text-2xl text-main-color">
+                            {accountInfo.userRegions[0]}
+                        </span>
+                    </p>
+                ) : accountInfo.userTowns && accountInfo.userTowns.length > 0 ? (
+                    <p className="flex flex-col text-xs font-semibold">
+                        Assigned Town
+                        <span className="text-2xl text-main-color">
+                            {accountInfo.userTowns[0]}
+                        </span>
+                    </p>
+                ) : accountInfo.userShops && accountInfo.userShops.length > 0 ? (
+                    <p className="flex flex-col text-xs font-semibold">
+                        Assigned Shop
+                        <span className="text-2xl text-main-color">
+                            {accountInfo.userShops[0]}
+                        </span>
+                    </p>
+                ) : (
+                    <p className="flex flex-col text-xs font-semibold">
+                        Overall Access
+                    </p>
+                )}
             </div>
-          )}
+        )}
         </div>
         <div className="bg-gradient-to-t from-main-color to-secondary-bg-secondary-color w-[1px]" />
         <div className="flex flex-1 flex-col mx-2 space-y-2">

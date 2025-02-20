@@ -2,10 +2,11 @@ import React, { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link, useNavigate } from 'react-router-dom'
 import useAuth from '../../../hooks/useAuth'
+import InsuranceApi, { setupInterceptors } from '../../api/InsuranceApi'
 
 export default function TopBar() {
 
-    const { setUser } = useAuth()
+    const { user, setUser } = useAuth()
 
     const [dropdown, setDropdown] = useState(false)
     const [tab, setTab] = useState('')
@@ -13,6 +14,19 @@ export default function TopBar() {
     const [inputValue, setInputValue] = useState('')
     const navigate = useNavigate()
     const inputRef = useRef(null)
+    const [userData, setUserData] = useState('')
+
+    useEffect(() => {
+        setupInterceptors(() => user, setUser)
+        getUser()
+    },[user, setUser])
+
+    const getUser = async () => {
+        const response = await InsuranceApi.get(`/users/userId/${user.userId}`)
+        if(response.data.code==="OK"){
+            setUserData(response.data.data)
+        }
+    }
 
     const onMouseEnter = (data) => {
         setTab(data)
@@ -111,6 +125,22 @@ export default function TopBar() {
                                 <div className="flex space-x-4">
                                     {renderSearchBar()}
                                 </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div className="flex items-center justify-center text-sm">
+                                {userData && userData.userRegions.length > 0 && (
+                                    <span>Region: {userData.userRegions[0]}</span>
+                                )}
+                                {userData && userData.userTowns.length > 0 && (
+                                    <span>Town: {userData.userTowns[0]}</span>
+                                )}
+                                {userData && userData.userShops.length > 0 && (
+                                    <span>Shop: {userData.userShops[0]}</span>
+                                )}
+                                {userData && userData.userShops.length < 1 && userData.userTowns.length < 1 &&  userData.userRegions.length < 1 && (
+                                    <span>National Access</span>
+                                )}
                             </div>
                         </div>
                         <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
