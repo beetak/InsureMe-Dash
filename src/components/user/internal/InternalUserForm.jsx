@@ -351,7 +351,7 @@ export default function InternalUserForm() {
                                 name="domainName"
                                 id="domainName"
                                 autoComplete="family-name"
-                                placeholder='Domain Name'
+                                placeholder='Username'
                                 value={domainName}
                                 onChange={(e)=>setDomainName(e.target.value)}
                                 className="block w-full rounded-xs border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"

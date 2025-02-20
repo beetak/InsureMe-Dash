@@ -33,11 +33,15 @@ export default function InsurerUsersTable() {
     setupInterceptors(() => user, setUser)
     fetchUsers()
     fetchInsurer()
-  }, [user, setUser]) // Added dependencies
+  }, [user, setUser])
 
   useEffect(() => {
-    setTotalPages(Math.ceil(users.length / itemsPerPage))
-  }, [users, itemsPerPage])
+    if (users) {
+      setTotalPages(Math.ceil(users.length / itemsPerPage));
+    } else {
+      setTotalPages(0); 
+    }
+  }, [users, itemsPerPage]);
 
   const fetchUsers = async () => {
     setLoading(true)
@@ -89,6 +93,31 @@ export default function InsurerUsersTable() {
     setLoading(true)
     try {
       const response = await InsuranceApi.get(`/insurer-users/insurer/${insurerId}/${role}`)
+      if (response.data.code === "OK" && response.data.data) {
+        setUsers(response.data.data)
+      }
+    } catch (err) {
+      if (err.response) {
+        if (err.response.status === 404) {
+          setUserResponse("No Insurers found");
+        } else {
+          setUserResponse("An error occurred: " + err.response.data.message);
+        }
+      } else if (err.request) {
+        setUserResponse("No response received from the server");
+      } else {
+        setUserResponse("Error: " + err.message);
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const fetchUsersByRole = async (role) => {
+    setUsers([])
+    setLoading(true)
+    try {
+      const response = await InsuranceApi.get(`/insurer-users/by-role?role=${role}`)
       if (response.data.code === "OK" && response.data.data) {
         setUsers(response.data.data)
       }
@@ -405,10 +434,14 @@ export default function InsurerUsersTable() {
                 className="bg-inherit px-3 py-1 cursor-pointer"
                 // onChange={(e) => setSelectedRole(e.target.value)}
                 onChange={(e) => {
-                  setSelectedInsurer(e.target.value)
+                  setSelectedRole(e.target.value)
                   if (e.target.value === "") {
                     fetchUsers()
-                  } else {
+                  } 
+                  else if(selectedInsurer === ""){
+                    fetchUsersByRole(e.target.value)
+                  }
+                  else {
                     fetchInsurerUsersByRole(selectedInsurer, e.target.value)
                   }
                 }}

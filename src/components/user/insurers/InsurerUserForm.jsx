@@ -108,7 +108,6 @@ export default function InsurerUserForm() {
                             lastName,
                             email,
                             phoneNumber,
-                            password: "string",
                             title,
                             role
                         }

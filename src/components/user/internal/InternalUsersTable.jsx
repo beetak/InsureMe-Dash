@@ -32,9 +32,13 @@ export default function InternalUsersTable() {
   },[user, setUser])
   
   useEffect(() => {
-      setTotalPages(Math.ceil(users.length / itemsPerPage))
-  }, [users, itemsPerPage])
-
+    if (users) {
+        setTotalPages(Math.ceil(users.length / itemsPerPage));
+    } else {
+        setTotalPages(0); // or any default value you prefer
+    }
+  }, [users, itemsPerPage]);
+  
   const fetchUsers = async () => {
     setLoading(true)
     try {
@@ -59,7 +63,7 @@ export default function InternalUsersTable() {
     setUsers([])
     setLoading(true)
     try {
-      const response = await InsuranceApi.get(`/users/${role}`)
+      const response = await InsuranceApi.get(`/users/by-role?role=${role}`)
       if (response && response.data) {
         setUsers(response.data.data)
       }
