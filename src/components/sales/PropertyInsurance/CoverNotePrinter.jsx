@@ -6,10 +6,11 @@ import { motion } from 'framer-motion';
 import { StepperContext } from '../../../context/StepperContext';
 import useAuth from '../../../hooks/useAuth';
 
-const CoverNotePrinter = (quoteD1ata) => {
+const CoverNotePrinter = (quoteData) => {
   const { user } = useAuth()
-  const { quoteData } = useContext(StepperContext);
+  const { userData, propertyData } = useContext(StepperContext);
   console.log("cnote data ",quoteData)
+  console.log("user ", propertyData)
 
   // Function to format phone number
   const formatPhoneNumber = (phoneNumber) => {
@@ -64,6 +65,16 @@ const CoverNotePrinter = (quoteD1ata) => {
     return days < 0 ? 0 : days;
   };
 
+  function formatPolicyName(policy) {
+    if(policy==="DOMESTIC_COMBINED_STANDARD_CONSTRUCTION")
+      return "Domestic Combined Standard Construction"
+    else if(policy==="DOMESTIC_COMBINED_NON_STANDARD_CONSTRUCTION")
+      return "Domestic Combined Non Standard Construction"
+    else{
+      return policy
+    }
+  }
+
   const printCoverNote = () => {
     const doc = new jsPDF('portrait', 'px', 'a4', 'false');
     const pageHeight = doc.internal.pageSize.height;
@@ -108,7 +119,7 @@ const CoverNotePrinter = (quoteD1ata) => {
     // Add policy details
     addText(45, 150, `${quoteData.data[0].insurerName.charAt(0).toUpperCase() + quoteData.data[0].insurerName.slice(1)} Insurance`, 12, 'bold');
     addText(45, 160, `Cover Note #:\nTransaction Ref#:\nIssue Date:`, 10, 'normal');
-    addText(130, 160, `123456\n${quoteData.data[0].quotationId}\n${formattedDate}`, 10, 'normal');
+    addText(130, 160, `${quoteData.data[0].quotationId}\n${quoteData.data[0].merchantRef}\n${formattedDate}`, 10, 'normal');
 
     const secondLineY = 190;
     doc.setDrawColor(0, 0, 0); 
@@ -116,32 +127,29 @@ const CoverNotePrinter = (quoteD1ata) => {
 
     // Add policy details
     addText(45, 200, 'Certificate of Travel Insurance', 12, 'bold');
-    addText(45, 210, `Insurer:\nAgent:\nTravel Plan:\nPayment Date\nPassport No.:`, 10, 'normal');
-    addText(130, 210, `${quoteData.data[0].insurerName.charAt(0).toUpperCase() + quoteData.data[0].insurerName.slice(1)}\n${user.firstname} ${user.surname}\n${quoteData.planName}\n${formattedDate}\n${quoteData.travelers[0].passportNumber.toUpperCase()}`, 10, 'normal');
+    addText(45, 210, `Insurer:\nAgent:\nPolicy Name:\nPayment Date`, 10, 'normal');
+    addText(130, 210, `${quoteData.data[0].insurerName.charAt(0).toUpperCase() + quoteData.data[0].insurerName.slice(1)}\n${user.firstname} ${user.surname}\n${formatPolicyName(quoteData.data[0].policy)}\n${formattedDate}}`, 10, 'normal');
+    // Add policy details
 
-    let yPosition = 290 
+    addText(45, 260, 'Policy Holder Details', 12, 'bold');
+    addText(45, 270, `Name:\nID Number:\nEmail:\nPhone Number`, 10, 'normal');
+    addText(130, 270, `${userData.fullName}\n${userData.idNumber}\n${userData.email}\n${userData.phoneNumber}`, 10, 'normal');   
 
-    quoteData.travelers.forEach((traveler, index) => {
-      addText(45, yPosition, `TRAVEL'S NAME:`, 7, "italic")
-      addText(100, yPosition, `${traveler.fullName}`, 10, "normal")
+    addText(45, 320, `Insured Details:`, 12, 'bold');
+    addText(45, 330, `Property Address:\nValue:`, 10, 'normal');
+    addText(130, 330, `${propertyData.homeAddress}\n${propertyData.value}`, 10, 'normal'); 
 
-      addText(180, yPosition, `PASSPORT NO:`, 7, "italic")
-      addText(230, yPosition, `${traveler.passportNumber}`, 10, "normal")
-
-      addText(300, yPosition, `AGE:`, 7, "italic")
-      addText(320, yPosition, `${traveler.age}`, 10, "normal")
-      yPosition += 25
-    })
-
-    addText(45, 265, `Insured Details:`, 12, 'bold');
-
-    const thirdLineY = 270;
+    const thirdLineY = 250;
     doc.setDrawColor(0, 0, 0);
     doc.line(45, thirdLineY, doc.internal.pageSize.width - 35, thirdLineY);
 
-    const fifthLineY = 510;
+    const fifthLineY = 310;
     doc.setDrawColor(0, 0, 0);
     doc.line(45, fifthLineY, doc.internal.pageSize.width - 35, fifthLineY);
+
+    const sixthLineY = 510;
+    doc.setDrawColor(0, 0, 0);
+    doc.line(45, sixthLineY, doc.internal.pageSize.width - 35, sixthLineY);
 
     // Cover Notes
     addText(45, 520, 'Notes', 12, 'bold');

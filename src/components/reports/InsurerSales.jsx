@@ -293,7 +293,7 @@ export default function InsurerSales() {
                                 className='w-[105px] outline-none rounded-3xl bg-gray-200 px-3 cursor-pointer'
                             />
                         </div>
-                        <div className="flex rounded-full p-1 px-2 border-r border-gray-400">
+                        {/* <div className="flex rounded-full p-1 px-2 border-r border-gray-400">
                             <select
                                 id="systemAdOns"
                                 name="systemAdOns"
@@ -303,7 +303,7 @@ export default function InsurerSales() {
                                 <option value="5">Successful Transactions</option>
                                 <option value="5">Failed Transactions</option>
                             </select>
-                        </div>
+                        </div> */}
                         <div className="flex p-1 px-2">
                             <select
                                 id="insurerId"

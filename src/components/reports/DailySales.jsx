@@ -196,7 +196,7 @@ export default function DailySales() {
                                         className='w-[105px] outline-none rounded-3xl bg-gray-200 px-1 cursor-pointer'
                                     />
                                 </div>
-                                <div className="flex p-1">
+                                {/* <div className="flex p-1">
                                     <select
                                         id="systemAdOns"
                                         name="systemAdOns"
@@ -206,7 +206,7 @@ export default function DailySales() {
                                         <option value="5" onClick={()=>setIsOpen(true)}>Successful</option>
                                         <option value="5" onClick={()=>setIsOpen(true)}>Failed</option>
                                     </select>
-                                </div>
+                                </div> */}
                             </div>
                             <div className='md:flex-col md:justify-center'>
                                 <button

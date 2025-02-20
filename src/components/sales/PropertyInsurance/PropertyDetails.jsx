@@ -86,12 +86,12 @@ export default function PropertyDetails({ onChange }) {
                             <div className="mt-2 flex-1">
                                 <input
                                     type="text"
-                                    name="buildingAddress"
-                                    id="buildingAddress"
+                                    name="homeAddress"
+                                    id="homeAddress"
                                     autoComplete="family-name"
                                     placeholder="Risk Address"
                                     onChange={handleChange}
-                                    value={propertyData["buildingAddress"] || ""}
+                                    value={propertyData["homeAddress"] || ""}
                                     className="block w-full rounded-xs border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
                                 />
                             </div>

@@ -203,7 +203,7 @@ export default function Property({ sales }) {
         >
           <div className="flex flex-col">
             <div className=" bg-main-color text-white border-b-2 border-main-color py-3 px-6">
-              <span className="font-semibold">Cover Travelers</span>
+              <span className="font-semibold">Cover Details</span>
             </div>
             <div className="px-6 py-4">
               <div className="space-y-4">

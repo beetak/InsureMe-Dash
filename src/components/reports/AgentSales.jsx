@@ -314,7 +314,7 @@ export default function AgentSales() {
                                 className='w-[105px] outline-none rounded-3xl bg-gray-200 px-3 cursor-pointer'
                             />
                         </div>
-                        <div className={`${user.role==="SALES_AGENT"?"":" border-gray-400"}flex rounded-full p-1 px-2 border-r`}>
+                        {/* <div className={`${user.role==="SALES_AGENT"?"":" border-gray-400"}flex rounded-full p-1 px-2 border-r`}>
                             <select
                                 id="transactionStatus"
                                 name="transactionStatus"
@@ -324,7 +324,7 @@ export default function AgentSales() {
                                 <option value="5">Successful Transactions</option>
                                 <option value="5">Failed Transactions</option>
                             </select>
-                        </div>
+                        </div> */}
                         <div className={`${user.role==="SALES_AGENT"?"hidden":""} flex p-1 px-2 relative`}>
                             <input
                                 type="text"

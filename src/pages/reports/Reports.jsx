@@ -31,9 +31,7 @@ export default function Reports() {
     const params = new URLSearchParams(location.search);
     const refId = params.get('referenceId');
     if (refId) {
-      setActiveTab((userRole === 'INSURER_ADMIN' || userRole === 'SALES_AGENT' || userRole === "IT_ADMIN" || userRole === "PRODUCT_MANAGER" || userRole === "IT_SUPPORT" || userRole === "MANAGER" || userRole === "TREASURY_ACCOUNTANT") ? 2 : 9);
-    } else {
-      setActiveTab(getFirstValidTab());
+      setActiveTab((userRole === 'INSURER_ADMIN' || userRole === "IT_ADMIN" || userRole === "PRODUCT_MANAGER" || userRole === "IT_SUPPORT" || userRole === "MANAGER" || userRole === "TREASURY_ACCOUNTANT") ? 2 :  userRole === 'SALES_AGENT' ? 3 :9);
     }
   }, [location]);
   
@@ -55,8 +53,8 @@ export default function Reports() {
     // { title: "Policy", icon: "fas fa-book", tab:6 },
     { title: "Insurer", icon: "fas fa-book", tab:7 },
     // { title: "Sales", icon: "fas fa-book", tab:userRole==='INSURER_ADMIN'?2:'' },
-    { title: "Daily Sales", icon: "fas fa-book", tab:(userRole==='INSURER_ADMIN'||userRole==="IT_ADMIN"||userRole==="PRODUCT_MANAGER"||userRole==="IT_SUPPORT"||userRole==="MANAGER"||userRole==="TREASURY_ACCOUNTANT")?1:8},
-    { title: "Transaction", icon: "fas fa-book", tab:(userRole==='INSURER_ADMIN'||userRole==='SALES_AGENT'||userRole==="IT_ADMIN"||userRole==="PRODUCT_MANAGER"||userRole==="IT_SUPPORT"||userRole==="MANAGER"||userRole==="TREASURY_ACCOUNTANT")?2:9 },
+    { title: "Daily Sales", icon: "fas fa-book", tab:(userRole==='INSURER_ADMIN'||userRole==="PRODUCT_MANAGER"||userRole==="IT_SUPPORT"||userRole==="MANAGER"||userRole==="TREASURY_ACCOUNTANT")?1:userRole==="SALES_AGENT"?2:8},
+    { title: "Transaction", icon: "fas fa-book", tab:(userRole==='INSURER_ADMIN'||userRole==="PRODUCT_MANAGER"||userRole==="IT_SUPPORT"||userRole==="MANAGER"||userRole==="TREASURY_ACCOUNTANT")?2:userRole==='SALES_AGENT'?3:9 },
     // { title: "Commissions", icon: "fas fa-book", tab:userRole==='INSURER_ADMIN'?5:10 },
   ]
 
@@ -127,21 +125,21 @@ export default function Reports() {
                       userRole === "ADMIN"?
                       <>
                         {/* Tab 1 content */}
-                        {
+                        {/* {
                           activeTab === 1 && 
                           <div className="p-7 bg-white rounded-xs border border-gray-200 border-solid border-1">
                             <NationalSales/>
                           </div>
-                        }
+                        } */}
                         {/* Tab 2 content */}
-                        {
+                        {/* {
                           activeTab === 2 && 
                           <div className="p-7 bg-white rounded-xs border border-gray-200 border-solid border-1">
                             <ShopSales/>
                           </div>
-                        }
+                        } */}
                         {/* Tab 3 content */}
-                        {activeTab === 3 && 
+                        {activeTab === 1 && 
                           <div className="p-7 bg-white rounded-xs border border-gray-200 border-solid border-1">
                             <AgentSales/>
                           </div>
@@ -217,18 +215,12 @@ export default function Reports() {
                         {
                           activeTab === 2 && 
                           <div className="p-7 bg-white rounded-xs border border-gray-200 border-solid border-1">
-                            <NationalSales/>
+                            <DailySales/>
                           </div>
                         }
                         {/* Tab 2 content */}
-                        {
-                          activeTab === 3 && 
-                          <div className="p-7 bg-white rounded-xs border border-gray-200 border-solid border-1">
-                            <ShopSales/>
-                          </div>
-                        }
                         {/* Tab 3 content */}
-                        {activeTab === 4 && 
+                        {activeTab === 3 && 
                           <div className="p-7 bg-white rounded-xs border border-gray-200 border-solid border-1">
                             <Transaction/>
                           </div>

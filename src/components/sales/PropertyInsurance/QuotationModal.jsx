@@ -130,11 +130,10 @@ export default function QuotationModal({ setModal }) {
                     coverType = 'HOUSEHOLD_ITEMS';
                 }
                 // Remove empty properties
-                const { buildingAddress, propertyAddress, propertyValue, ...restPropertyData } = propertyData;
+                const { propertyAddress, propertyValue, ...restPropertyData } = propertyData;
                 const modifiedPropertyData = {
                     ...restPropertyData,
                     coverType: coverType || 'undefined', // Default value if none applies
-                    ...(propertyAddress && { propertyAddress }), // Include if not empty
                     ...(propertyValue && { propertyValue }) // Include if not empty
                 };
                 const response = await InsuranceApi.post(`property-details`, modifiedPropertyData)
@@ -301,7 +300,7 @@ export default function QuotationModal({ setModal }) {
 
         if (propertyData.value) {
             transactionDescription.houseDetails = {
-                address: propertyData.buildingAddress||"undefined",
+                address: propertyData.homeAddress||"undefined",
                 value: propertyData.value,
                 buildingType: propertyData.buildingType,
                 constructionType: propertyData.constructionType,
@@ -537,7 +536,7 @@ export default function QuotationModal({ setModal }) {
                         <div className="flex flex-col">
                             <div className="flex flex-col border rounded-md p-2 w-[180px] min-h-56 bg-gray-200 bg-gradient-to-r from-[#000] to-[#0453ae] opacity-70 text-white">
                                 <h2 className="text-lg font-semibold mb-2">Property Details</h2>
-                                <p className='text-sm flex uppercase'><span className='w-16 font-semibold'>House Address:</span>{propertyData.buildingAddress||""}</p>
+                                <p className='text-sm flex uppercase'><span className='w-16 font-semibold'>House Address:</span>{propertyData.homeAddress||""}</p>
                                 <p className='text-sm flex uppercase'><span className='w-16 font-semibold'>House Value:</span>{propertyData.value}</p>
                                 {/* <p className='text-sm flex'><span className='w-16 font-semibold'>Age:</span>{propertyData.property[0].age}</p>
                                 <p className='text-sm flex'><span className='w-16 font-semibold'>Res:</span>{propertyData.residence}</p>
@@ -553,7 +552,7 @@ export default function QuotationModal({ setModal }) {
                                         exit="exit"
                                         transition={{ duration: 0.3, ease: 'easeInOut' }}
                                     >
-                                        <button 
+                                        {/* <button 
                                             className='py-1 px-3 rounded-full w-full border border-gray-300 bg-blue-400 text-white mt-4 hover:bg-blue-500 transition-colors duration-200'
                                             onClick={sendQuotation}
                                             disabled={isSending}
@@ -572,7 +571,7 @@ export default function QuotationModal({ setModal }) {
                                                     Send Quote
                                                 </>
                                             )}
-                                        </button>
+                                        </button> */}
                                         <QuotationPrinter data={quotations}/>
                                     </motion.div>
                                 )}
@@ -586,7 +585,7 @@ export default function QuotationModal({ setModal }) {
                                         transition={{ duration: 0.3, ease: 'easeInOut' }}
                                         className="space-y-2"
                                     >
-                                        <motion.div variants={buttonVariants}>
+                                        {/* <motion.div variants={buttonVariants}>
                                             <button 
                                                 className='py-1 px-3 rounded-full w-full border border-gray-300 bg-green-400 text-white mt-4 hover:bg-green-500 transition-colors duration-200'
                                                 onClick={sendNote}
@@ -594,7 +593,7 @@ export default function QuotationModal({ setModal }) {
                                             <i className='fa fa-paper-plane mr-2'/>
                                                 Send Cover Note
                                             </button>
-                                        </motion.div>
+                                        </motion.div> */}
                                         <CoverNotePrinter data={quotations}/>
                                     </motion.div>
                                 )}

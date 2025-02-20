@@ -157,7 +157,7 @@ export default function SideBar() {
                     </button>
                 </div>
                 <div className="h-full overflow-y-auto">
-                    <div className="logo flex items-center justify-center h-20">
+                    <div className="logo flex items-center h-20 ps-4">
                         {userRole === "INSURER_ADMIN" 
                             ? <img src={`${companyDetails?.insurerLogo}`} alt="Logo" className={`w-28 duration-500`} />
                             : <img src={`${isOpen ? "images/icon.png" : "images/insureme-umbrella.png"}`} alt="Logo" className={`w-28 duration-500`} />
@@ -175,7 +175,6 @@ export default function SideBar() {
                                  userRole === "PRODUCT_MANAGER" ? "Product Manager" :
                                  userRole === "MANAGER" ? "Finance Manager" : ""}
                             </p>
-                            <h2 className="text-md font-bold h-6">Shop <span className='text-main-color'>{firstname}</span></h2>
                         </div>
                     </div>
                     <ul className="space-y-2 mt-3">
