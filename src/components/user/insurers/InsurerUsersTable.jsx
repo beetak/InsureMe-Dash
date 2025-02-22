@@ -12,9 +12,11 @@ export default function InsurerUsersTable() {
   const { user, setUser } = useAuth()
 
   const [userResponse, setUserResponse] = useState("")
+  const [resetName, setResetName] = useState("")
   const [message, setMessage] = useState("")
   const [loading, setLoading] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
+  const [isReset, setIsReset] = useState(false)
   const [viewOpen, setViewOpen] = useState(false)
   const [modalData, setModalData] = useState(null)
   const [users, setUsers] = useState([])
@@ -174,6 +176,28 @@ export default function InsurerUsersTable() {
       fetchUsers()
     }
   }
+  
+  const handleReset = async (id) => {
+    setLoading(true)
+    setMessage("Reseting...")
+    setIsReset(true)
+    try {
+      const response = await InsuranceApi.put(`/users/reset/${id}`)
+      if (response && response.data.code === "OK") {
+        setMessage("Reset")
+      }
+    } catch (err) {
+      console.log(err)
+      setMessage("Error reseting user")
+    } finally {
+      setTimeout(() => {
+        setLoading(false)
+        setIsReset(false)
+        setMessage("")
+      }, 1000)
+      fetchUsers()
+    }
+  }
 
   const renderTableHeader = () => {
     const columns = [
@@ -238,7 +262,7 @@ export default function InsurerUsersTable() {
         </td>
         <td>{item.firstName}</td>
         <td>{item.lastName}</td>
-        <td>{item.email}</td>
+        <td className="max-w-32 pr-4 overflow-hidden">{item.email}</td>
         <td>{item.phoneNumber}</td>
         <td className="">
           <div className="w-full justify-center flex items-center">
@@ -278,6 +302,17 @@ export default function InsurerUsersTable() {
                 <button
                   onClick={() => {
                     setItemId(item.id)
+                    setIsReset(true)
+                  }}
+                  className="space-x-2 border-gray-300 items-center px-4 h-6 bg-white text-blue-500 hover:text-white hover:bg-blue-500"
+                >
+                  <i className="fas fa-pen text-xs" />
+                  <span className="text-xs">Reset Pass</span>
+                </button>
+                <button
+                  onClick={() => {
+                    setItemId(item.id)
+                    setResetName(item.firstName+" "+item.lastName)
                     setIsDelete(true)
                   }}
                   className={`space-x-2 border-gray-300 items-center rounded-r-full px-4 h-6 bg-gray-700 text-gray-100 hover:text-gray-700 hover:bg-white`}
@@ -352,6 +387,14 @@ export default function InsurerUsersTable() {
             deleteOpen={isDelete}
             onClose={() => setIsDelete(false)}
             onDelete={() => handleDelete(itemId)}
+          />
+        )}
+         {isReset && (
+          <ResetConfirmationModal
+            resetOpen={isReset}
+            userName={resetName}
+            onClose={() => setIsReset(false)}
+            onReset={() => handleReset(itemId)}
           />
         )}
         <h2 className="text-lg font-semibold">Insurer Users Table</h2>

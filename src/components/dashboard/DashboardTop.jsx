@@ -138,7 +138,7 @@ export default function DashboardTop() {
                                     view policies
                                 </button>
                             </div>
-                            <div className="w-[1px] bg-white h-16 m-0 bg-gradient-to-b from-[#656E70] to-[rgba(255,255,255,1)]"/>
+                            {/* <div className="w-[1px] bg-white h-16 m-0 bg-gradient-to-b from-[#656E70] to-[rgba(255,255,255,1)]"/>
                             <div className="flex flex-col p-4 space-y-4">
                                 <h1 className='text-white text-sm font-bold'>
                                     <span className='fas fa-comment-dollar mr-2'/>Quotes Generated
@@ -147,7 +147,7 @@ export default function DashboardTop() {
                                 <button className="rounded-full border border-white text-white py-1 px-4">
                                     view quotes
                                 </button>
-                            </div>                        
+                            </div>                         */}
                         </div>
                         <SalesCharts/>
                     </div>

@@ -125,7 +125,21 @@ export default function Property({ sales }) {
       doc.text("Page " + String(i) + " of " + String(pageCount), 210 - 20, 297 - 10, { align: "right" })
     }
 
-    doc.save("property_insurance_report.pdf")
+    // doc.save("property_insurance_report.pdf")
+    const pdfBlob = doc.output('blob');
+    // Create a URL for the Blob
+    const pdfUrl = URL.createObjectURL(pdfBlob);
+
+    // Open the PDF in a new window
+    const printWindow = window.open(pdfUrl);
+
+    // Wait for the PDF to load before calling print
+    printWindow.onload = () => {
+      printWindow.print();
+      printWindow.onafterprint = () => {
+        printWindow.close(); // Close the window after printing
+      };
+    };
     setPrintData(null)
   }
   
