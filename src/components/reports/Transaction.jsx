@@ -232,34 +232,7 @@ export default function Transaction() {
 
     return (
       <>
-        <div className="flex items-center rounded-full border overflow-hidden border-gray-500 text-xs h-8 mb-4 w-fit">
-          <label
-            htmlFor="itemsPerPage"
-            className="w-16 font-medium leading-6 px-2 py-1 bg-gray-500 justify-center flex text-white"
-          >
-            Show
-          </label>
-          <div className="">
-            <select
-              id="itemsPerPage"
-              name="itemsPerPage"
-              className="bg-inherit px-3 py-1 cursor-pointer"
-              onChange={handleItemsPerPageChange}
-              value={itemsPerPage}
-            >
-              <option value="5">5</option>
-              <option value="10">10</option>
-              <option value="15">15</option>
-              <option value="All">All</option>
-            </select>
-          </div>
-          <label
-            htmlFor="itemsPerPage"
-            className="w-16 font-medium leading-6 px-2 py-1 bg-gray-500 justify-center flex text-white"
-          >
-            Entries
-          </label>
-        </div>
+        
         <div className="bg-white rounded-xl shadow-md overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
@@ -314,9 +287,11 @@ export default function Transaction() {
                         <button
                           onClick={() => {
                             setReferenceId(transaction.referenceNumber)
+                            setSearchValue("")
+                            setTransactions(null)
                             handleSearch(transaction.referenceNumber)
                           }}
-                          className="text-blue-600 hover:text-blue-900 font-medium"
+                          className="space-x-2 items-center border-gray-300 rounded-full px-4 h-6 m bg-gray-700 text-gray-100 hover:text-gray-700 hover:bg-white"
                         >
                           View Details
                         </button>
@@ -371,6 +346,34 @@ export default function Transaction() {
               />
             </div>
           </div>
+          <div className={`${transactions?"flex":"hidden"}  items-center rounded-full border overflow-hidden border-gray-500 text-xs h-8 w-fit`}>
+            <label
+                htmlFor="itemsPerPage"
+                className="w-16 font-medium leading-6 px-2 py-1 bg-gray-500 justify-center flex text-white"
+            >
+                Show
+            </label>
+            <div className="">
+                <select
+                id="itemsPerPage"
+                name="itemsPerPage"
+                className="bg-inherit px-3 py-1 cursor-pointer"
+                onChange={handleItemsPerPageChange}
+                value={itemsPerPage}
+                >
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="All">All</option>
+                </select>
+            </div>
+            <label
+                htmlFor="itemsPerPage"
+                className="w-16 font-medium leading-6 px-2 py-1 bg-gray-500 justify-center flex text-white"
+            >
+                Entries
+            </label>
+            </div>
         </div>
         <div className="flex items-center space-x-2">
           <div className="w-full justify-center flex items-center">
