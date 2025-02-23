@@ -97,7 +97,7 @@ export default function DashboardTop() {
     return (
         <>
             <div className="flex w-full space-x-3">
-                <div className="flex flex-1 bg-white">
+                <div className="flex flex-1">
                     <div className="flex-col flex w-full">
                         <div className="flex justify-around bg-gradient-to-r from-[#656E70] to-[#3B82F6] w-full rounded-md h-40 items-center">
                             <div className="flex flex-col p-4 space-y-4">

@@ -7,6 +7,7 @@ import InsurerUserViewModal from "./InsurerUserViewModal"
 import InsuranceApi, { setupInterceptors } from "../../api/InsuranceApi"
 import useAuth from "../../../hooks/useAuth"
 import DeleteConfirmationModal from "../../deleteConfirmation/deleteConfirmationModal"
+import ResetConfirmationModal from "../../resetConfirmation/resetConfirmation"
 
 export default function InsurerUsersTable() {
   const { user, setUser } = useAuth()

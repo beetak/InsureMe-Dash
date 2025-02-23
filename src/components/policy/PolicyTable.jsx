@@ -168,12 +168,36 @@ export default function PolicyTable() {
     return formattedDate;
   }
 
-  const renderTableRows = () => {
+  const tableRowVariants = {
+    hidden: {
+      opacity: 0,
+      rotateX: -60,
+      transformOrigin: "top",
+    },
+    visible: (i) => ({
+      opacity: 1,
+      rotateX: 0,
+      transition: {
+        delay: i * 0.1, // Stagger each row
+        duration: 0.5,
+        ease: "easeOut",
+      },
+    }),
+    exit: {
+      opacity: 0,
+      rotateX: 60,
+      transition: {
+        duration: 0.3,
+        ease: "easeIn",
+      },
+    },
+  }
 
+  const renderTableRows = () => {
     if (!policies || policies.length === 0) {
       return (
         <tr>
-          <td colSpan={7} style={{ textAlign: "center" }}>
+          <td colSpan={7} className="text-center">
             {catResponse || "No policies available."}
           </td>
         </tr>
@@ -185,28 +209,31 @@ export default function PolicyTable() {
     const currentItems = policies.slice(indexOfFirstItem, indexOfLastItem)
 
     return currentItems ? (
-      <AnimatePresence>
-        {
-          currentItems.map((item, index) => (
+      <AnimatePresence mode="wait">
+        {currentItems.map((item, index) => (
           <motion.tr
             key={item.policyTypeId}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-            className={`${index % 2 !== 0 && " bg-gray-100"} p-3 text-sm text-gray-600 font-semibold`}
+            custom={index} // Pass index for staggered animation
+            variants={tableRowVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className={`${index % 2 !== 0 ? "bg-gray-100" : ""} p-3 text-sm text-gray-600 font-semibold`}
           >
-            <td className="font-bold text-blue-5 justify-center items-center w-7">
-              <div className="w-full justify-center flex items-center">{index + 1}</div>
+            <td className="font-bold text-blue-500 justify-center items-center w-7">
+              <div className="w-full justify-center flex items-center">
+                {index + 1 + (currentPage - 1) * itemsPerPage}
+              </div>
             </td>
             <td>{item.policyTypeName}</td>
             <td>{item.categoryName}</td>
             <td>{formatDate(item.createdAt)}</td>
-            <td className="">
+            <td>
               <div className="w-full justify-center flex items-center">
-                {" "}
                 <span
-                  className={` font-semibold uppercase text-xs tracking-wider px-3 text-white ${item.isActive ? " bg-green-600" : " bg-red-600 "} rounded-full py-1`}
+                  className={`font-semibold uppercase text-xs tracking-wider px-3 text-white ${
+                    item.isActive ? "bg-green-600" : "bg-red-600"
+                  } rounded-full py-1`}
                 >
                   {item.isActive ? "Active" : "Inactive"}
                 </span>
@@ -219,7 +246,9 @@ export default function PolicyTable() {
                     setModalData(item)
                     setViewOpen(true)
                   }}
-                  className={`${user.role === "INSURER_ADMIN" ? "rounded-full w-32" : "rounded-l-full"} space-x-2 items-center border-gray-300 rounded-l-full px-4 h-6 m bg-gray-700 text-gray-100 hover:text-gray-700 hover:bg-white`}
+                  className={`${
+                    user.role === "INSURER_ADMIN" ? "rounded-full w-32" : "rounded-l-full"
+                  } space-x-2 items-center border-gray-300 px-4 h-6 bg-gray-700 text-gray-100 hover:text-gray-700 hover:bg-white transition-colors duration-200`}
                 >
                   <i className="fas fa-eye text-xs" />
                   <span className="text-xs">View</span>
@@ -231,7 +260,7 @@ export default function PolicyTable() {
                         setModalData(item)
                         setIsOpen(true)
                       }}
-                      className={`space-x-2 border-gray-300 items-center px-4 h-6 bg-blue-500 text-gray-100 hover:text-blue-500 hover:bg-white`}
+                      className="space-x-2 border-gray-300 items-center px-4 h-6 bg-blue-500 text-gray-100 hover:text-blue-500 hover:bg-white transition-colors duration-200"
                     >
                       <i className="fas fa-pen text-xs" />
                       <span className="text-xs">Update</span>
@@ -241,7 +270,7 @@ export default function PolicyTable() {
                         setItemId(item.policyTypeId)
                         setIsDelete(true)
                       }}
-                      className={`space-x-2 border-gray-300 items-center rounded-r-full px-4 h-6 bg-gray-700 text-gray-100 hover:text-gray-700 hover:bg-white`}
+                      className="space-x-2 border-gray-300 items-center rounded-r-full px-4 h-6 bg-gray-700 text-gray-100 hover:text-gray-700 hover:bg-white transition-colors duration-200"
                     >
                       <i className="fas fa-trash text-xs" />
                       <span className="text-xs">Delete</span>
@@ -254,8 +283,8 @@ export default function PolicyTable() {
         ))}
       </AnimatePresence>
     ) : (
-      <tr className="">
-        <td colSpan={7} style={{ textAlign: "center" }}>
+      <tr>
+        <td colSpan={7} className="text-center">
           {policyResponse}
         </td>
       </tr>

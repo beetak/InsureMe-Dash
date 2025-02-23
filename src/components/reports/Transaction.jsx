@@ -197,7 +197,7 @@ export default function Transaction() {
                 <button
                   onClick={() => setCurrentPage(number)}
                   className={`px-3 py-1 rounded-full ${
-                    currentPage === number ? "bg-blue-500 text-white" : "bg-gray-200"
+                    currentPage === number ? "bg-main-color text-white" : "bg-gray-200"
                   }`}
                 >
                   {number}

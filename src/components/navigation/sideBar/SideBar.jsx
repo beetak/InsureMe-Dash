@@ -5,7 +5,7 @@ import { getDropdownStatus, getNavStatus, navActions } from '../../../store/nav-
 import useAuth from '../../../hooks/useAuth'
 import useTheme from '../../../hooks/useTheme'
 
-export default function SideBar() {
+export default function SideBar({ isOpen, setIsOpen }) {
 
     const {user} = useAuth()
     const { companyDetails } = useTheme()
@@ -14,13 +14,18 @@ export default function SideBar() {
     const userRole = user.role
     const firstname = user.firstname
 
-    const [isOpen, setIsOpen] = useState(true)
+    // const [isOpen, setIsOpen] = useState(true)
     const [selectedTab, setSelectedTab] = useState("")
     const [userData, setUserData] = useState('')
 
     const navState = useSelector(getNavStatus)
     const dropdownState = useSelector(getDropdownStatus)
     const dispatch = useDispatch()
+
+    const toggleSidebar = () => {
+        setIsOpen(!isOpen);
+        setMargin(isOpen ? "ml-16" : "ml-64");  // Set margin based on sidebar state
+    };
     
     const menus = [
         { title: "Dashboard", src: "/dashboard", icon: "fas fa-home", tab:"home" },
@@ -149,7 +154,7 @@ export default function SideBar() {
                         className="relative inline-flex h-[80px] items-center justify-center rounded-md p-2 text-gray-500 hover:text-gray-700 focus:outline-none" 
                         aria-controls="mobile-menu" 
                         aria-expanded="false"
-                        onClick={()=>setIsOpen(!isOpen)}
+                        onClick={() => setIsOpen(!isOpen)}
                     >
                         <span className="absolute -inset-0.5" />
                         <span className="sr-only">Open main menu</span>

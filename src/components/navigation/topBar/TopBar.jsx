@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import useAuth from '../../../hooks/useAuth'
 import InsuranceApi, { setupInterceptors } from '../../api/InsuranceApi'
 
-export default function TopBar() {
+export default function TopBar({isOpen}) {
 
     const { user, setUser } = useAuth()
 
@@ -117,7 +117,7 @@ export default function TopBar() {
     return (
         <>
             {/* desktop view */}
-            <nav className=" h-20 hidden lg:block lg:ml-64">
+            <nav className={`h-20 hidden lg:block transition-all duration-300 ease-in-out lg:${isOpen ? "ml-64" : " ml-16"}`}>
                 <div className="mx-auto w-full px-6">
                     <div className="relative flex h-20 items-center justify-between">
                         <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
