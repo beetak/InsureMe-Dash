@@ -178,12 +178,12 @@ export default function InsurerUsersTable() {
     }
   }
   
-  const handleReset = async (id) => {
+  const handleReset = async () => {
     setLoading(true)
-    setMessage("Reseting...")
+    setMessage("Resetting...")
     setIsReset(true)
     try {
-      const response = await InsuranceApi.put(`/users/reset/${id}`)
+      const response = await InsuranceApi.post(`/insurer-users/${itemId}/reset-password`)
       if (response && response.data.code === "OK") {
         setMessage("Reset")
       }

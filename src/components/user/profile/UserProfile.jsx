@@ -48,48 +48,50 @@ export default function UserProfile() {
     }
   };
 
-  const updateUser = () => {
+  const updateUser = async () => {
     setLoading(true);
     setMessage("Updating Password...");
     let modifiedUpdateInfo = { ...updateInfo }; // Create a copy of updateInfo
-  
-    if (
-      user.role === "INSURER_ADMIN" ||
-      user.role === "IT_ADMIN" ||
-      user.role === "PRODUCT_MANAGER" ||
-      user.role === "IT_SUPPORT" ||
-      user.role === "MANAGER" ||
-      user.role === "TREASURY_ACCOUNTANT"
-    ) {
-      // Remove confirmationPassword and add email
-      const { confirmationPassword, ...rest } = modifiedUpdateInfo;
-      modifiedUpdateInfo = { ...rest, email: accountInfo.email };
-    }
-  
-    try {
-      const response = (user.role === "INSURER_ADMIN" || user.role === "IT_ADMIN" || user.role === "PRODUCT_MANAGER" || user.role === "IT_SUPPORT" || user.role === "MANAGER" || user.role === "TREASURY_ACCOUNTANT")
-        ? InsuranceApi.put(`insurer-users/change-password`, modifiedUpdateInfo)
-        : InsuranceApi.patch(`/users/change-password`, modifiedUpdateInfo);
-  
-      // Check if response is valid and log it
-      console.log("Response:", response);
-  
-      if (response) 
-        setMessage("Password updated successfully");
-        fetchUser();
-    } catch (err) {
-      console.log("Error:", err); // Log the error if the API call fails
-      setMessage("Error updating password");
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  const updateUserImage = () => {
+    if (
+        user.role === "INSURER_ADMIN" ||
+        user.role === "IT_ADMIN" ||
+        user.role === "PRODUCT_MANAGER" ||
+        user.role === "IT_SUPPORT" ||
+        user.role === "MANAGER" ||
+        user.role === "TREASURY_ACCOUNTANT"
+    ) {
+        // Remove confirmationPassword and add email
+        const { confirmationPassword, ...rest } = modifiedUpdateInfo;
+        modifiedUpdateInfo = { ...rest, email: accountInfo.email };
+    }
+
+    try {
+        const response = (user.role === "INSURER_ADMIN" || user.role === "IT_ADMIN" || user.role === "PRODUCT_MANAGER" || user.role === "IT_SUPPORT" || user.role === "MANAGER" || user.role === "TREASURY_ACCOUNTANT")
+            ? await InsuranceApi.put(`insurer-users/change-password`, modifiedUpdateInfo)
+            : await InsuranceApi.patch(`/users/change-password`, modifiedUpdateInfo);
+
+        // Check if response is valid and log it
+        console.log("Response >>>:", response.data);
+
+        if (response.data) {
+            console.log("Response Data:", response.data); // Log response.data
+            setMessage("Password updated successfully");
+            fetchUser();
+        }
+    } catch (err) {
+        console.log("Error:", err); // Log the error if the API call fails
+        setMessage("Error updating password");
+    } finally {
+        setLoading(false);
+    }
+};
+
+  const updateUserImage = async () => {
     setLoading(true);
     setMessage("Updating Profile Picture...");
     try {
-      const response = InsuranceApi.patch(`/users/logo`, {
+      const response = await InsuranceApi.patch(`/users/logo`, {
         userLogo: image,
       });
       if (response) {

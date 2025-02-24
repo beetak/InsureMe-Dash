@@ -109,14 +109,14 @@ export default function InternalUsersTable() {
     }
   }
 
-  const handleReset = async (id) => {
+  const handleReset = async () => {
     setLoading(true)
-    setMessage("Reseting...")
+    setMessage("Resetting...")
     setIsReset(true)
     try {
-      const response = await InsuranceApi.put(`/users/reset/${id}`)
+      const response = await InsuranceApi.post(`/users/${itemId}/reset-password`)
       if (response && response.data.code === "OK") {
-        setMessage("Reset")
+        setMessage("Reset successful")
       }
     } catch (err) {
       console.log(err)
@@ -322,6 +322,7 @@ export default function InternalUsersTable() {
           <ResetConfirmationModal
             resetOpen={isReset}
             userName={resetName}
+            message={message}
             onClose={() => setIsReset(false)}
             onReset={() => handleReset(itemId)}
           />

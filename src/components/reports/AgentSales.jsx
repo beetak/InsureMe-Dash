@@ -286,7 +286,7 @@ export default function AgentSales() {
         doc.text(textX, footerY, text, { align: "center" })
     
         doc.save("agent_sales_report.pdf")
-      }
+    }
     
     return (
         <>

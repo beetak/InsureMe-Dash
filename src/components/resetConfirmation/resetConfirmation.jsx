@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 
-const ResetConfirmationModal = ({ resetOpen, userName, onClose, onReset }) => {
-  const [reseting, setReseting] = useState(false)
+const ResetConfirmationModal = ({ resetOpen, userName, onClose, onReset, message }) => {
+  const [resetting, setResetting] = useState(false)
   const handleReset = () => {
-      setReseting(true);
+      setResetting(true);
       onReset();
   };
 
@@ -17,12 +17,14 @@ const ResetConfirmationModal = ({ resetOpen, userName, onClose, onReset }) => {
             <div className="flex justify-end space-x-2">
               <button
                 className={`px-8 py-2 bg-red-500 hover:bg-red-600 text-white rounded ${
-                  reseting ? 'opacity-50 cursor-not-allowed' : ''
+                  resetting ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
                 onClick={handleReset}
-                disabled={reseting}
+                disabled={resetting}
               >
-                {reseting ? 'Resetting...' : 'Yes'}
+                {resetting&&message!=="reset successful" ? 'Resetting...' :
+                  resetting&&message==="reset successful" ? 'Reset Successful' :
+                 'Yes'}
               </button>
               
               <button

@@ -10,8 +10,6 @@ import CategoryModal from "../category/CategoryModal"
 import CategoryViewModal from "../category/CategoryViewModal"
 import useAuth from "../../hooks/useAuth"
 import InsuranceApi, { setupInterceptors } from "../api/InsuranceApi"
-const img = "images/icon.png"
-const telone = "images/telone-logo.png"
 
 export default function ShopSales() {
   const [catResponse, setCatResponse] = useState("")
@@ -233,148 +231,68 @@ export default function ShopSales() {
   const [item, setItem] = useState(null)
 
   const generatePDF = () => {
-    const doc = new jsPDF("portrait", "px", "a4", "false")
-    const pageHeight = doc.internal.pageSize.height
-    const footerY = pageHeight - 40
-    const pageWidth = doc.internal.pageSize.width
-    const text = "107 Kwame Nkrumah Avenue, Harare, Zimbabwe\nP.O Box CY 331, Causeway, Harare, Zimbabwe\n24 Hour Call Center - +263 0242 700950"
-    const textWidth = doc.getTextWidth(text)
-    const centerX = (pageWidth - textWidth) / 2
-    const textX = centerX - textWidth / -2
-  
-    // Add logos
-    doc.addImage(telone, "PNG", 45, 40, 72, 28)
-    doc.addImage(img, "PNG", 340, 40, 72, 28)
-  
+    const doc = new jsPDF();
+
     // Add title
-    doc.setFont("Times New Roman", "bold")
-    doc.setFontSize(16)
-    doc.setTextColor(15, 145, 209)
-    doc.text(410, 95, "Shop Sales Report", { align: "right" })
-  
-    // Add horizontal line
-    doc.setLineWidth(0.5)
-    doc.line(45, 110, 410, 110)
-  
-    // Add date
-    const current = new Date()
-    const formattedDate = current.toLocaleDateString("en-GB", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    })
-    doc.setFont("Times New Roman", "bold")
-    doc.setFontSize(12)
-    doc.setTextColor(15, 145, 209)
-    doc.text(45, 125, formattedDate)
-  
-    // Add report details
-    doc.setFont("Times New Roman", "medium")
-    doc.setTextColor(0, 0, 0)
-    doc.setFontSize(9)
-    // doc.text(45, 140, `Region: ${getLocationInfo()}`)
-    doc.text(45, 155, `Date Range: ${startDate.toLocaleDateString()} - ${endDate.toLocaleDateString()}`)
-  
-    // Calculate totals
-    const totals = Object.values(sales.data).reduce(
-      (acc, item) => {
-        acc.ZWG += Number.parseFloat(item.ZWG) || 0
-        acc.USD_TAX += Number.parseFloat(item.USD_TAX) || 0
-        acc.ZWG_TAX += Number.parseFloat(item.ZWG_TAX) || 0
-        return acc
-      },
-      { ZWG: 0, USD_TAX: 0, ZWG_TAX: 0 },
-    )
-  
-    // Prepare table headers and data
-    const headers = [
-      ["#", "Policy Name", "Revenue Collections", "", "Tax Collections", ""],
-      ["", "", "USD", "ZWG", "USD Tax", "ZWG Tax"],
-    ]
-  
-    const tableRows = [
-      ...Object.entries(sales.data).map(([policyName, policyData], index) => [
-        index + 1,
-        policyName,
-        policyData.USD_TAX?.toFixed(2) || "0.00",
-        policyData.ZWG?.toFixed(2) || "0.00",
-        policyData.USD_TAX?.toFixed(2) || "0.00",
-        policyData.ZWG_TAX?.toFixed(2) || "0.00",
-      ]),
-      // Add totals row
-      [
-        "",
-        "Total",
-        totals.USD_TAX.toFixed(2),
-        totals.ZWG.toFixed(2),
-        totals.USD_TAX.toFixed(2),
-        totals.ZWG_TAX.toFixed(2),
-      ],
-    ]
-  
+    doc.setFontSize(16);
+    doc.text("Shop Sales Report", 14, 15);
+
+    // Prepare table data
+    const tableColumn = [
+        ["#", "Policy Name", "Revenue Collections", "", "Tax Collections", ""],
+        ["", "", "USD", "ZWG", "USD Tax", "ZWG Tax"],
+    ];
+
+    const tableRows = Object.entries(sales.data).map(([policyName, policyData], index) => {
+        const usdTax = policyData.USD_TAX ? policyData.USD_TAX.toFixed(2) : '0.00';
+        const zwg = policyData.ZWG ? policyData.ZWG.toFixed(2) : '0.00';
+        const usdTaxValue = policyData.USD_TAX ? policyData.USD_TAX.toFixed(2) : '0.00';
+        const zwgTax = policyData.ZWG_TAX ? policyData.ZWG_TAX.toFixed(2) : '0.00';
+
+        return [
+            index + 1,
+            policyName,
+            usdTax,
+            zwg,
+            usdTaxValue,
+            zwgTax,
+        ];
+    });
+
     // Generate table
     doc.autoTable({
-      startY: 170,
-      head: headers,
-      body: tableRows,
-      headStyles: {
-        fillColor: [31, 41, 55],
-        textColor: [255, 255, 255],
-        halign: "start",
-        fontStyle: "bold",
-        fontSize: 7,
-        cellPadding: 3,
-        lineWidth: 0.5,
-        lineHeight: 0.5,
-        lineColor: [31, 41, 55],
-        borderRadius: 5,
-      },
-      margin: { left: 45, right: 35 },
-      bodyStyles: {
-        fillColor: [255, 255, 255],
-        textColor: [0, 0, 0],
-        fontSize: 7,
-        halign: "left",
-        cellPadding: 3,
-      },
-      columnStyles: {
-        0: { cellWidth: 20, halign: "center" },
-        1: { cellWidth: 145 },
-        2: { cellWidth: 50, halign: "right" },
-        3: { cellWidth: 50, halign: "right" },
-        4: { cellWidth: 50, halign: "right" },
-        5: { cellWidth: 50, halign: "right" },
-      },
-      theme: "grid",
-      styles: {
-        tableWidth: "auto",
-        overflow: "linebreak",
-        cellPadding: 4,
-        fontSize: 9,
-        lineWidth: 0.5,
-        lineColor: [220, 220, 220],
-      },
-      didDrawCell: (data) => {
-        // Style the totals row
-        if (data.section === "body" && data.row.index === Object.keys(sales).length) {
-          doc.setFont("Times New Roman", "bold")
-          doc.setFillColor(240, 240, 240)
-        }
-      },
-    })
-  
-    // Add footer line and text
-    doc.setLineWidth(0.5)
-    doc.line(45, footerY - 10, 410, footerY - 10)
-  
-    doc.setFontSize(9)
-    doc.setTextColor(112, 112, 112)
-    doc.setFont("Times New Roman", "regular")
-    doc.text(textX, footerY, text, { align: "center" })
-  
+        head: tableColumn,
+        body: tableRows,
+        startY: 35,
+        theme: "grid",
+        headStyles: {
+            fillColor: [100, 100, 100],
+            textColor: [255, 255, 255],
+            fontSize: 8,
+            halign: "center",
+        },
+        bodyStyles: {
+            fontSize: 8,
+            halign: "center",
+        },
+        columnStyles: {
+            0: { cellWidth: 20 },
+            1: { cellWidth: 40 },
+            2: { cellWidth: 30 },
+            3: { cellWidth: 30 },
+            4: { cellWidth: 30 },
+            5: { cellWidth: 30 },
+        },
+        didDrawPage: (data) => {
+            // Add footer
+            doc.setFontSize(8);
+            doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, doc.internal.pageSize.height - 10);
+        },
+    });
+
     // Save the PDF
-    doc.save("shop_sales_report.pdf")
-  }
+    doc.save("shop-sales-report.pdf");
+    };
 
   return (
     <>
