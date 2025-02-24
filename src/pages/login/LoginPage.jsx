@@ -175,7 +175,7 @@ export default function LoginPage() {
                 value={domain}
                 onChange={(e) => setDomain(e.target.value)}
                 placeholder="Username or Email"
-                className="w-full bg-transparent border-b-2 border-white/20 px-4 py-2 text-white placeholder-white/50 focus:outline-none focus:border-white transition-all duration-300"
+                className="w-full bg-transparent border-b-2 border-white/20 px-4 py-2 text-white placeholder-white/90 focus:outline-none focus:border-white transition-all duration-300"
               />
             </div>
             <div className="relative">
@@ -185,7 +185,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
-                className="w-full bg-transparent border-b-2 border-white/20 px-4 py-2 text-white placeholder-white/50 focus:outline-none focus:border-white transition-all duration-300"
+                className="w-full bg-transparent border-b-2 border-white/20 px-4 py-2 text-white placeholder-white/90 focus:outline-none focus:border-white transition-all duration-300"
               />
               <button
                 type="button"

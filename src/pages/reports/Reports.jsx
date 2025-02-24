@@ -46,10 +46,10 @@ export default function Reports() {
 
   const menus = [
     // { title: "National Sales", icon: "fas fa-pen-nib", tab:1 },
-    { title: "Shop Sales", icon: "fas fa-book", tab:2 },
     // { title: "Commission", icon: "fas fa-book", tab:4 },
     { title: "Agent Sales", icon: "fas fa-book", tab:(userRole==='ADMIN' || userRole==='SALES_AGENT')?1:3 },
     // { title: "Tax", icon: "fas fa-book", tab:5 },
+    { title: "Shop Sales", icon: "fas fa-book", tab:5 },
     // { title: "Policy", icon: "fas fa-book", tab:6 },
     { title: "Insurer", icon: "fas fa-book", tab:7 },
     // { title: "Sales", icon: "fas fa-book", tab:userRole==='INSURER_ADMIN'?2:'' },
@@ -133,7 +133,7 @@ export default function Reports() {
                         } */}
                         {/* Tab 2 content */}
                         {
-                          activeTab === 2 && 
+                          activeTab === 5 && 
                           <div className="p-7 bg-white rounded-xs border border-gray-200 border-solid border-1">
                             <ShopSales/>
                           </div>
@@ -151,7 +151,7 @@ export default function Reports() {
                           </div>
                         }
                         {/* Tab 5 content */}
-                        {activeTab === 5 && 
+                        {activeTab === 9 && 
                           <div className="p-7 bg-white rounded-xs border border-gray-200 border-solid border-1">
                             <SalesTable/>
                           </div>

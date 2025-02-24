@@ -48,7 +48,7 @@ export default function UserProfile() {
     }
   };
 
-  const updateUser = async () => {
+  const updateUser = () => {
     setLoading(true);
     setMessage("Updating Password...");
     let modifiedUpdateInfo = { ...updateInfo }; // Create a copy of updateInfo
@@ -67,18 +67,16 @@ export default function UserProfile() {
     }
   
     try {
-      const response = await (user.role === "INSURER_ADMIN" || user.role === "IT_ADMIN" || user.role === "PRODUCT_MANAGER" || user.role === "IT_SUPPORT" || user.role === "MANAGER" || user.role === "TREASURY_ACCOUNTANT")
+      const response = (user.role === "INSURER_ADMIN" || user.role === "IT_ADMIN" || user.role === "PRODUCT_MANAGER" || user.role === "IT_SUPPORT" || user.role === "MANAGER" || user.role === "TREASURY_ACCOUNTANT")
         ? InsuranceApi.put(`insurer-users/change-password`, modifiedUpdateInfo)
         : InsuranceApi.patch(`/users/change-password`, modifiedUpdateInfo);
   
       // Check if response is valid and log it
       console.log("Response:", response);
   
-      if (response && (response.data.data.message === "User found" || response.data.data.message === "Password changed successfully")) {
-        setAccountInfo(response.data.data);
+      if (response) 
         setMessage("Password updated successfully");
         fetchUser();
-      }
     } catch (err) {
       console.log("Error:", err); // Log the error if the API call fails
       setMessage("Error updating password");
@@ -87,16 +85,15 @@ export default function UserProfile() {
     }
   };
 
-  const updateUserImage = async () => {
+  const updateUserImage = () => {
     setLoading(true);
     setMessage("Updating Profile Picture...");
     try {
-      const response = await InsuranceApi.patch(`/users/logo`, {
+      const response = InsuranceApi.patch(`/users/logo`, {
         userLogo: image,
       });
-      if (response && response.data.message === "User found") {
+      if (response) {
         console.log(response);
-        setAccountInfo(response.data);
         setMessage("Profile picture updated successfully");
       }
     } catch (err) {
@@ -104,6 +101,7 @@ export default function UserProfile() {
       setMessage("Error updating image");
     } finally {
       setLoading(false);
+      fetchUser();
     }
   };
 

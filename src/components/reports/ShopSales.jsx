@@ -5,13 +5,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ScaleLoader } from 'react-spinners';
 import CategoryModal from '../category/CategoryModal';
 import CategoryViewModal from '../category/CategoryViewModal';
-import { fetchAsyncRegions, fetchShopsByTownId, fetchTownsByRegionId, getRegions, getShops, getTowns } from '../../store/entity-store';
+import { fetchAsyncRegions } from '../../store/entity-store';
 import { fetchUserByShopId, getUsers } from '../../store/user-store';
 import { fetchAsyncCategory, getCategories } from '../../store/category-store';
-import { getInsurers } from '../../store/insurer-store';
 import { fetchSalesByDateRange } from '../../store/payments-store';
 import useAuth from '../../hooks/useAuth';
-import { setupInterceptors } from '../api/InsuranceApi';
+import InsuranceApi, { setupInterceptors } from '../api/InsuranceApi';
 
 export default function ShopSales() {
 
@@ -97,86 +96,38 @@ export default function ShopSales() {
         }
     }
 
-    const dispatch = useDispatch()
-    
-    const categories = useSelector(getCategories)
-
-    const handleSearch = () => {
+    const handleSearch = async() => {
         setLoading(true)
-        setMessage("Processing...")
-        const formattedStartDate = new Date(startDate).toISOString().slice(0, 10);
-        const formattedEndDate = new Date(endDate).toISOString().slice(0, 10);
-        dispatch(fetchSalesByDateRange({
-            startDate: formattedStartDate,
-            endDate: formattedEndDate
-        }))
-        .then((response)=>{
-            if(response.payload&&response.payload.success){
-                console.log("search result ", response.payload.data)
-                setMessage("")
-                setSales(response.payload.data.data)
+        setMessage("Loading, Please wait a moment");
+        const formattedStartDate = new Date(transactionDate).toISOString().slice(0, 10);
+        const formattedEndDate = new Date(transactionDate).toISOString().slice(0, 10);
+        try{
+            const response = await InsuranceApi.get(`/product-payments/by-date?startDate=${formattedStartDate}&endDate=${formattedEndDate}`)
+            console.log("post results: ", response)
+            if(response.data.code==="OK"&&response.data.data.length>0){
+                const aggregatedSales = aggregateSales(response.data.data);
+                setSales(aggregatedSales);
+                setLoading(true)
+            }
+            else if(response.data.code==="NOT_FOUND"){
+                setMessage("No sales record found")
             }
             else{
-                setLoading(true)
-            }            
-        })
-        .finally(()=>{
-            setLoading(false)
-            setMessage("")
-        })
-    }
-
-    const fetchCategoryData = () => {
-        setLoading(true)
-        setMessage("Processing...")
-        dispatch(fetchAsyncCategory())
-        .then((res)=>{
-        console.log("search response ", res)
-        setLoading(false)
-        if(!res.payload.success){
-            setCatResponse("Error fetching resource, Please check your network connection")
+                setLoading(false)
+                setMessage("Error Fetching Resource")
+            }
         }
-        else if(res.payload.success&&!res.payload.data){
-            setCatResponse("No Categories found")
-        }
-        })
-        .finally(()=>{
+        catch(err){
             setLoading(false)
-            setMessage("")
-        })
+            setMessage("Error Fetching Resource")
+        }
+        finally{
+            setTimeout(()=>{
+                setLoading(false)
+            },1000)
+        }
     }
 
-    const fetchAgents = (id) => {
-        // setLoading(true)
-        // setMessage("Processing...")
-        dispatch(fetchUserByShopId(id))
-        .then((res)=>{
-            console.log("search response ", res)
-            // setLoading(false)
-            if(!res.payload.success){
-                setCatResponse("Error fetching resource, Please check your network connection")
-            }
-            else if(res.payload.success&&!res.payload.data){
-                setCatResponse("No Categories found")
-            }
-        })
-        .finally(()=>{
-            // setLoading(false)
-            // setMessage("")
-        })
-    }
-
-    useEffect(()=>{
-        fetchCategoryData()
-        dispatch(fetchAsyncRegions())
-        .then((res)=>{
-            if(res.payload.success){
-                console.log("found", res.payload.data)
-                setRegions(res.payload.data)
-            }
-        })
-    },[dispatch])
-        
     const renderTableHeader = () => {
         const columns = [
           { key: 'item', label: '#', width: "1" },
@@ -234,7 +185,7 @@ export default function ShopSales() {
     }
 
     const renderTableRows = () => {
-        return categories?categories.map((item, index) => (
+        return sales?sales.map((item, index) => (
         <tr key={index} className={`${index%2!==0&&" bg-gray-100"} p-3 text-sm text-gray-600 font-semibold`}>
             <td className='font-bold text-blue-5 justify-center items-center w-7'><div className='w-full justify-center flex items-center'>{++index}</div></td>
             <td>{item.categoryName}</td>
