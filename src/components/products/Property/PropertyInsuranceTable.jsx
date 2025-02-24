@@ -45,7 +45,7 @@ export default function PropertyInsuranceTable() {
       const response = await InsuranceApi.get(url)
       if (response.data.code === "OK" && response.data.data.length > 0) {
         setPropertyInsurance(response.data.data)
-      } else if (response.data.code === "NOT_FOUND") {
+      } else if (response.data.code === "NOT_FOUND" || (response.data.code === "OK" && response.data.data.length < 1)) {
         setProdResponse("No property plans found")
       } else if (response.data.code !== "OK") {
         setProdResponse("Error fetching resource, Please check your network connection")

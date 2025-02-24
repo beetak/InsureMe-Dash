@@ -163,7 +163,7 @@ export default function SideBar({ isOpen, setIsOpen }) {
                 </div>
                 <div className="h-full overflow-y-auto">
                     <div className="logo flex items-center h-20 ps-4">
-                        {userRole === "INSURER_ADMIN" 
+                        {(userRole === "INSURER_ADMIN" || userRole === "MANAGER" || userRole === "PRODUCT_MANAGER" || userRole === "IT_SUPPORT") && companyDetails?.insurerLogo
                             ? <img src={`${companyDetails?.insurerLogo}`} alt="Logo" className={`w-28 duration-500`} />
                             : <img src={`${isOpen ? "images/icon.png" : "images/insureme-umbrella.png"}`} alt="Logo" className={`w-28 duration-500`} />
                         }

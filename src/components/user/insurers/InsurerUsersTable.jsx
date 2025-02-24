@@ -486,6 +486,9 @@ export default function InsurerUsersTable() {
                   if (e.target.value === "") {
                     fetchUsers()
                   } 
+                  else if(user.companyId !== "") {
+                    fetchInsurerUsersByRole(user.companyId, e.target.value)
+                  }
                   else if(selectedInsurer === ""){
                     fetchUsersByRole(e.target.value)
                   }

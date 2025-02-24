@@ -7,6 +7,7 @@ import InsuranceApi, { setupInterceptors } from "../../api/InsuranceApi"
 import TravelInsuranceModal from "./TravelInsuranceModal"
 import TravelInsuranceViewModal from "./TravelInsuranceViewModal"
 import useAuth from "../../../hooks/useAuth"
+import { motion, AnimatePresence } from "framer-motion"
 
 export default function TravelInsuranceTable() {
   const { user, setUser } = useAuth()
@@ -129,6 +130,32 @@ export default function TravelInsuranceTable() {
     )
   }
 
+  // Add animation variants
+  const tableRowVariants = {
+    hidden: {
+      opacity: 0,
+      rotateX: -60,
+      transformOrigin: "top",
+    },
+    visible: (i) => ({
+      opacity: 1,
+      rotateX: 0,
+      transition: {
+        delay: i * 0.1,
+        duration: 0.5,
+        ease: "easeOut",
+      },
+    }),
+    exit: {
+      opacity: 0,
+      rotateX: 60,
+      transition: {
+        duration: 0.3,
+        ease: "easeIn",
+      },
+    },
+  }
+
   const renderTableRows = () => {
     if (!travelInsurance.data || travelInsurance.data.length === 0) {
       return (
@@ -144,66 +171,85 @@ export default function TravelInsuranceTable() {
     const indexOfFirstItem = indexOfLastItem - itemsPerPage
     const currentItems = travelInsurance.data.slice(indexOfFirstItem, indexOfLastItem)
 
-    return currentItems.map((item, index) => (
-      <tr key={index} className={`${index % 2 !== 0 && "bg-gray-100"} p-3 text-sm text-gray-600 font-semibold`}>
-        <td className="font-bold text-blue-500 justify-center items-center w-7">
-          <div className="w-full justify-center flex items-center">{index + 1 + (currentPage - 1) * itemsPerPage}</div>
-        </td>
-        <td>{item.planName}</td>
-        <td>{item.amount}</td>
-        <td>{item.insurerName}</td>
-        <td>{item.periodRange}</td>
-        <td>{item.continent}</td>
-        <td>
-          <div className="w-full justify-center flex items-center">
-            <span
-              className={`font-semibold uppercase text-xs tracking-wider px-3 text-white ${item.isActive ? "bg-green-600" : "bg-red-600"} rounded-full py-1`}
-            >
-              {item.isActive ? "Active" : "Inactive"}
-            </span>
-          </div>
-        </td>
-        <td className="py-1 space-x-0 justify-center">
-          <div className="w-full justify-center flex items-center">
-            <button
-              onClick={() => {
-                setModalData(item)
-                setViewOpen(true)
-              }}
-              className={`${(user.role==="TREASURY_ACCOUNTANT"||user.role==="MANAGER"||user.role==="PRODUCT_MANAGER")? " rounded-full w-32":" rounded-l-full"} space-x-2 items-center border-gray-300 px-4 h-6 m bg-gray-700 text-gray-100 hover:text-gray-700 hover:bg-white`}
-            >
-              <i className="fas fa-eye text-xs" />
-              <span className="text-xs">View</span>
-            </button>
-            {
-              (user.role !== "TREASURY_ACCOUNTANT" && user.role !== "MANAGER" && user.role !== "PRODUCT_MANAGER") &&
-              <>
+    return (
+      <AnimatePresence mode="wait">
+        {currentItems.map((item, index) => (
+          <motion.tr
+            key={item.insuranceId || index}
+            custom={index}
+            variants={tableRowVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className={`${index % 2 !== 0 ? "bg-gray-100" : ""} p-3 text-sm text-gray-600 font-semibold`}
+          >
+            <td className="font-bold text-blue-500 justify-center items-center w-7">
+              <div className="w-full justify-center flex items-center">
+                {index + 1 + (currentPage - 1) * itemsPerPage}
+              </div>
+            </td>
+            <td>{item.planName}</td>
+            <td>{item.amount}</td>
+            <td>{item.insurerName}</td>
+            <td>{item.periodRange}</td>
+            <td>{item.continent}</td>
+            <td>
+              <div className="w-full justify-center flex items-center">
+                <span
+                  className={`font-semibold uppercase text-xs tracking-wider px-3 text-white ${
+                    item.isActive ? "bg-green-600" : "bg-red-600"
+                  } rounded-full py-1`}
+                >
+                  {item.isActive ? "Active" : "Inactive"}
+                </span>
+              </div>
+            </td>
+            <td className="py-1 space-x-0 justify-center">
+              <div className="w-full justify-center flex items-center">
                 <button
                   onClick={() => {
                     setModalData(item)
-                    setIsOpen(true)
+                    setViewOpen(true)
                   }}
-                  className={`space-x-2 border-gray-300 items-center px-4 h-6 bg-blue-500 text-gray-100 hover:text-blue-500 hover:bg-white`}
+                  className={`${
+                    user.role === "TREASURY_ACCOUNTANT" || user.role === "MANAGER" || user.role === "PRODUCT_MANAGER"
+                      ? "rounded-full w-32"
+                      : "rounded-l-full"
+                  } space-x-2 items-center border-gray-300 px-4 h-6 bg-gray-700 text-gray-100 hover:text-gray-700 hover:bg-white transition-colors duration-200`}
                 >
-                  <i className="fas fa-pen text-xs" />
-                  <span className="text-xs">Update</span>
+                  <i className="fas fa-eye text-xs" />
+                  <span className="text-xs">View</span>
                 </button>
-                <button
-                  onClick={() => {
-                    setItemId(item.insuranceId)
-                    setIsDelete(true)
-                  }}
-                  className={`space-x-2 border-gray-300 items-center rounded-r-full px-4 h-6 bg-gray-700 text-gray-100 hover:text-gray-700 hover:bg-white`}
-                >
-                  <i className="fas fa-trash text-xs" />
-                  <span className="text-xs">Delete</span>
-                </button>
-              </>
-            }
-          </div>
-        </td>
-      </tr>
-    ))
+                {user.role !== "TREASURY_ACCOUNTANT" && user.role !== "MANAGER" && user.role !== "PRODUCT_MANAGER" && (
+                  <>
+                    <button
+                      onClick={() => {
+                        setModalData(item)
+                        setIsOpen(true)
+                      }}
+                      className="space-x-2 border-gray-300 items-center px-4 h-6 bg-blue-500 text-gray-100 hover:text-blue-500 hover:bg-white transition-colors duration-200"
+                    >
+                      <i className="fas fa-pen text-xs" />
+                      <span className="text-xs">Update</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        setItemId(item.insuranceId)
+                        setIsDelete(true)
+                      }}
+                      className="space-x-2 border-gray-300 items-center rounded-r-full px-4 h-6 bg-gray-700 text-gray-100 hover:text-gray-700 hover:bg-white transition-colors duration-200"
+                    >
+                      <i className="fas fa-trash text-xs" />
+                      <span className="text-xs">Delete</span>
+                    </button>
+                  </>
+                )}
+              </div>
+            </td>
+          </motion.tr>
+        ))}
+      </AnimatePresence>
+    )
   }
 
   const getModal = (isOpen) => {

@@ -1,8 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchAsyncCategory, getCategories } from '../../store/category-store';
-import { fetchAsyncProduct } from '../../store/product-store';
-import { fetchAsyncInsurer, getInsurers } from '../../store/insurer-store';
 import { ScaleLoader } from 'react-spinners';
 import InsuranceApi from '../api/InsuranceApi';
 

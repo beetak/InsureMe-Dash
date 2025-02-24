@@ -16,7 +16,7 @@ export default function Dashboard() {
           ( userRole === "ADMIN" || userRole === "SUPER_ADMINISTRATOR" ) && <AdminDashboard/>
         }
         {
-          ( userRole === "INSURER_ADMIN" || userRole === "MANAGER" ) && <InsurerDashboard/>
+          ( userRole === "INSURER_ADMIN" || userRole === "MANAGER" || userRole === "PRODUCT_MANAGER" || userRole === "IT_SUPPORT") && <InsurerDashboard/>
         }
       </DisplayLayout>
     </>

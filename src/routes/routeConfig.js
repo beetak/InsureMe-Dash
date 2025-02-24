@@ -30,26 +30,26 @@ export const routes = [
   { path: "unauthorized", element: Forbidden, roles: [] },
 
   // Protected Routes for All Users
-  { path: "insurance", element: Insurance, roles: ["SUPER_ADMINISTRATOR", "SALES_AGENT", "ADMIN", "INSURER_ADMIN", "MANAGER"] },
+  { path: "insurance", element: Insurance, roles: ["SUPER_ADMINISTRATOR", "SALES_AGENT", "ADMIN", "INSURER_ADMIN", "MANAGER", "PRODUCT_MANAGER", "IT_SUPPORT"] },
   {
     path: "insurance-type",
     element: InsuranceCategory,
-    roles: ["SUPER_ADMINISTRATOR", "SALES_AGENT", "ADMIN", "INSURER_ADMIN"],
+    roles: ["SUPER_ADMINISTRATOR", "SALES_AGENT", "ADMIN", "INSURER_ADMIN", "MANAGER", "PRODUCT_MANAGER", "IT_SUPPORT"],
   },
   {
     path: "profile",
     element: AccountManagement,
-    roles: ["SUPER_ADMINISTRATOR", "SALES_AGENT", "ADMIN", "INSURER_ADMIN", "MANAGER"],
+    roles: ["SUPER_ADMINISTRATOR", "SALES_AGENT", "ADMIN", "INSURER_ADMIN", "MANAGER", "MANAGER", "PRODUCT_MANAGER", "IT_SUPPORT"],
   },
-  { path: "reports", element: Reports, roles: ["SUPER_ADMINISTRATOR", "SALES_AGENT", "ADMIN", "INSURER_ADMIN", "MANAGER"] },
-  { path: "policy", element: Policy, roles: ["SUPER_ADMINISTRATOR", "SALES_AGENT", "ADMIN", "INSURER_ADMIN"] },
+  { path: "reports", element: Reports, roles: ["SUPER_ADMINISTRATOR", "SALES_AGENT", "ADMIN", "INSURER_ADMIN", "MANAGER", "PRODUCT_MANAGER", "IT_SUPPORT"] },
+  { path: "policy", element: Policy, roles: ["SUPER_ADMINISTRATOR", "SALES_AGENT", "ADMIN", "INSURER_ADMIN", "MANAGER", "PRODUCT_MANAGER", "IT_SUPPORT"] },
 
   // Protected Routes for Super Admin, Insurer Admin, and System Admin
-  { path: "insurer-users", element: InsurerUsers, roles: ["SUPER_ADMINISTRATOR", "ADMIN", "INSURER_ADMIN", "MANAGER"] },
-  { path: "dashboard", element: Dashboard, roles: ["SUPER_ADMINISTRATOR", "ADMIN", "INSURER_ADMIN", "MANAGER"] },
-  { path: "products", element: Products, roles: ["SUPER_ADMINISTRATOR", "ADMIN", "INSURER_ADMIN", "MANAGER"] },
-  { path: "claims", element: Claims, roles: ["SUPER_ADMINISTRATOR", "ADMIN", "INSURER_ADMIN"] },
-  { path: "notes", element: Covernotes, roles: ["SUPER_ADMINISTRATOR", "ADMIN", "INSURER_ADMIN"] },
+  { path: "insurer-users", element: InsurerUsers, roles: ["SUPER_ADMINISTRATOR", "ADMIN", "INSURER_ADMIN", "MANAGER", "PRODUCT_MANAGER", "IT_SUPPORT"] },
+  { path: "dashboard", element: Dashboard, roles: ["SUPER_ADMINISTRATOR", "ADMIN", "INSURER_ADMIN", "MANAGER", "PRODUCT_MANAGER", "IT_SUPPORT"] },
+  { path: "products", element: Products, roles: ["SUPER_ADMINISTRATOR", "ADMIN", "INSURER_ADMIN", "MANAGER", "PRODUCT_MANAGER", "IT_SUPPORT"] },
+  { path: "claims", element: Claims, roles: ["SUPER_ADMINISTRATOR", "ADMIN", "INSURER_ADMIN", "MANAGER", "PRODUCT_MANAGER", "IT_SUPPORT"] },
+  { path: "notes", element: Covernotes, roles: ["SUPER_ADMINISTRATOR", "ADMIN", "INSURER_ADMIN", "MANAGER", "PRODUCT_MANAGER", "IT_SUPPORT"] },
 
   // Protected Routes for Super Admin and System Admin
   { path: "organisational-entities", element: OrganisationalEntities, roles: ["SUPER_ADMINISTRATOR", "ADMIN"] },
@@ -59,7 +59,7 @@ export const routes = [
   { path: "towns", element: TownsPage, roles: ["SUPER_ADMINISTRATOR", "ADMIN"] },
   { path: "shops", element: ShopsPage, roles: ["SUPER_ADMINISTRATOR", "ADMIN"] },
   { path: "roles", element: RolesPage, roles: ["SUPER_ADMINISTRATOR", "ADMIN"] },
-  { path: "insurers", element: Insurers, roles: ["SUPER_ADMINISTRATOR", "ADMIN", "MANAGER"] },
+  { path: "insurers", element: Insurers, roles: ["SUPER_ADMINISTRATOR", "ADMIN"] },
 
   // Protected Routes for Sales Agent
   { path: "sales", element: Sales, roles: ["SALES_AGENT"] },

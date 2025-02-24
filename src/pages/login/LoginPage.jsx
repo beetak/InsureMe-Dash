@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { useDispatch } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import { decodeToken } from "./tokenUtils"
 import useAuth from "../../hooks/useAuth"
@@ -98,6 +97,7 @@ export default function LoginPage() {
         if (response?.data.code === "OK") {
           const accessToken = response.data.data
           const decodedToken = decodeToken(accessToken)
+          console.log(decodedToken)
 
           if (decodedToken.active) {
             const { role, userId, firstName, lastName, companyId, companyName } = decodedToken
@@ -117,7 +117,9 @@ export default function LoginPage() {
             const routes = {
               INSURER_ADMIN: "/dashboard",
               MANAGER: "/dashboard",
-              SALES_AGENT: "/sales",
+              IT_SUPPORT: "/dashboard",
+              PRODUCT_MANAGER: "/dashboard",
+              TREASURY_ACCOUNTANT: "/dashboard",
             }
             navigate(routes[role] || "/login")
           }
@@ -163,7 +165,7 @@ export default function LoginPage() {
           className="w-full max-w-md rounded-lg backdrop-blur-md bg-white/10 p-8 shadow-xl border-white border-2"
           style={{ boxShadow: "0 4px 10px rgba(255, 255, 255, 0.5)" }}
         >
-          <img src="images/icon.png" alt="Logo" className="w-20 mx-auto mb-6" />
+          <img src="images/icon.png" alt="Logo" className="w-32 mx-auto mb-6 bg-white py-2 px-4 rounded-full" />
           <h2 className="mb-6 text-center text-xl font-bold text-white">LOGIN</h2>
           <form onSubmit={handleLogin} className="space-y-6">
             <div className="relative">
