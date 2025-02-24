@@ -92,10 +92,6 @@ export default function PropertyInsuranceForm() {
         }
     };
 
-
-    const [rows, setRows] = useState([]);
-    const [count, setCount] = useState(1)
-
     return (
         <>
             <WatermarkedFormContainer>

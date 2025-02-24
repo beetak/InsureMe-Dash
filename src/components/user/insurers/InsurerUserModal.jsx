@@ -3,7 +3,7 @@ import Modal from '../../modal/Modal';
 import { useDispatch, useSelector } from 'react-redux';
 import { getInsurers } from '../../../store/insurer-store';
 import useAuth from '../../../hooks/useAuth';
-import { setupInterceptors } from '../../api/InsuranceApi';
+import InsuranceApi, { setupInterceptors } from '../../api/InsuranceApi';
 
 export default function InsurerUserModal(props) {
 
@@ -41,8 +41,7 @@ export default function InsurerUserModal(props) {
         e.preventDefault()
         setLoading(true)
         try {
-            const response = await InsuranceApi.put(``)
-
+            const response = await InsuranceApi.put(`/insurer-users/${props.id}`)
             if (response.success) {
                 setSuccess(true)
                 refresh()

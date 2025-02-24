@@ -136,7 +136,7 @@ export default function Insurance() {
                         activeTab !== "Motor Vehicle Insurance" &&
                         activeTab !== "Health Insurance" &&
                         activeTab !== "Funeral Cover" &&
-                        activeTab !== "Life Insurance") && 
+                        activeTab !== "Life Insurance") &&
                         <div className="p-7 flex justify-center bg-white rounded-xs border border-gray-200 border-solid border-1">
                           Coming Soon
                         </div>

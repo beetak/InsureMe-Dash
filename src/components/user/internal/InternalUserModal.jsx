@@ -93,7 +93,7 @@ export default function InternalUserModal({ setModal, data, refresh }) {
         e.preventDefault()
         setLoading(true)
         try {
-            const response = await InsuranceApi.put(``)
+            const response = await InsuranceApi.put(`users/${data.id}`)
 
             if (response.success) {
                 setSuccess(true)

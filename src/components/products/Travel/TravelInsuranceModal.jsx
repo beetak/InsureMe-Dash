@@ -1,122 +1,82 @@
 import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
-import { CircleLoader, ClockLoader, HashLoader, PacmanLoader, PulseLoader, RingLoader, SyncLoader } from 'react-spinners';
-import BeatLoader from "react-spinners/BeatLoader";
-import { getCategories } from '../../../store/category-store';
-import { fetchAsyncVehicleClasses, getVehicleClasses, updateVehicleInsurance } from '../../../store/vehicle-store';
-import { fetchAsyncInsurer, getInsurers } from '../../../store/insurer-store';
-import { fetchAsyncPolicy, getPolicies } from '../../../store/policy-store';
+import { HashLoader } from 'react-spinners';
 import Modal from '../../modal/Modal';
+import useAuth from '../../../hooks/useAuth';
+import InsuranceApi, { setupInterceptors } from '../../api/InsuranceApi';
 
-const userRole = localStorage.getItem('role')
-const companyId = localStorage.getItem('companyId')
 
-export default function TravelInsuranceModal(props) {
+export default function TravelInsuranceModal({ data, refresh, setModal }) {
 
-    const dispatch = useDispatch()
+    const { user, setUser } = useAuth()
+    const [insurers, setInsurers] = useState("")
 
     useEffect(()=>{
-        dispatch(fetchAsyncInsurer())
-        .then((response)=>{
-            
-        })
-        dispatch(fetchAsyncPolicy())
-        .then((response)=>{
-
-        })
-        dispatch(fetchAsyncVehicleClasses())
-        .then((response)=>{
-
-        })
+        fetchInsurer()
+        setupInterceptors(() => user, setUser);
     },[])
 
-    const [productName, setInsuranceName] = useState("");
-    const [policyState, setPolicyState] = useState(props.data.policyTypeName);
-    const [description, setDescription] = useState("");
-    const [insurancePrice, setInsurancePrice] = useState("");
-    const [insurerId, setInsurerId] = useState("");
-    const [policyTypeId, setPolicyTypeId] = useState(0);
-    const [vehicleClassId, setVehicleClassId] = useState(0);
-    const [isActive, setIsActive] = useState(0);
+    const fetchInsurer = async () => {
+        try{
+            const response = await InsuranceApi.get(`/insurers`)
+            if(response){
+                setInsurers(response.data.data)
+            }
+        }
+        catch(err){
+            console.log(error)
+        }
+    }
+
+    const [planName, setPlanName] = useState("");
+    const [periodRange, setPeriodRange] = useState("");
+    const [amount, setAmount] = useState("");
+    const [continent, setContinent] = useState(0);
+    const [currency, setCurrency] = useState(0);
+    const [active, setActive] = useState(0);
     const [loading, setLoading] = useState(false)
     const [success, setSuccess] = useState(false)
     const [failed, setFailed] = useState(false)
-    const [isOpen, setIsOpen] = useState(false)
-    const [close, setClose] = useState(false)
-
-    const categories = useSelector(getCategories)
-    const policies = useSelector(getPolicies)
-    const insurers = useSelector(getInsurers)
-    const classes = useSelector(getVehicleClasses)
-
-    const [rows, setRows] = useState([]);
-    const [count, setCount] = useState(1)
-    
-    const decrement = (index) => {
-        setRows((prevRows) => {
-          const updatedRows = [...prevRows];
-          updatedRows.splice(index, 1);
-          return updatedRows;
-        });
-        setCount((prevCount) => prevCount - 1);
-      };
-
-    const increment = () => {
-        setCount(prevCount=>prevCount+1)
-    }
-
-    const handleInputChange = (e, index) => {
-        const updatedRows = [...rows];
-        updatedRows[index] = e.target.value;
-        setRows(updatedRows);
-        console.log("rows ", rows)
-    };
+    const isOpen = false
+    const close = false
 
     const handleSubmit = async (e) => {
         e.preventDefault()        
         setLoading(true)
-        if(companyId!==""){
-            setInsurerId(companyId)
-        }
-        dispatch(updateVehicleInsurance({
-            id: props.data.insuranceId,
-            data:{
-                policyTypeId,
-                insurerId,
-                insuranceTerm: 1,
-                vehicleClassId,
-                description,
-                insurancePrice,
-                isActive
-            }
-        }))
-        .then((response)=>{
-            console.log("Post response: ", response)
-            if(response.payload&&response.payload.success){
+        try{
+            const response = await InsuranceApi.put(`//${data.categoryId}`,{
+                planName,
+                periodRange,
+                amount,
+                currency,
+                continent,
+                active
+            })
+            if(response.data&&response.data.httpStatus==="OK"){
                 setSuccess(true)
             }
             else{
                 setFailed(true)
-            }            
-        })
-        .finally(()=>{
+            }
+        }
+        finally{
             setTimeout(()=>{
                 setLoading(false)
                 setFailed(false)
                 setSuccess(false)
-                props.setModal(close)
+                refresh()
+                setModal(close)
             },1000)
-        })
+        }
     }
 
     const getModal =(isOpen)=>{
-        props.setModal(isOpen)
+        setModal(isOpen)
     }
 
     return (
         <Modal setModal={getModal}>
-            <h2 className="text-lg font-semibold">Insurance Creation Form</h2>
-            <p className="text-xs mb-4">For vehicle Insurance processing</p>
+            <h2 className="text-lg font-semibold">Insurance Modification Form</h2>
+            <p className="text-xs mb-4">For travel insurance editing</p>
             <div className='space-y-1'>
                 <div className={`flex flex-col flex-1 justify-center py-3 ${!loading&&' hidden'}`}>
                     <HashLoader
@@ -135,61 +95,93 @@ export default function TravelInsuranceModal(props) {
                 </div>
                 <div className="sm:col-span-3 flex items-center">
                     <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900 w-1/6">
-                        Policy Type
+                        Policy Name
                     </label>
                     <div className="mt-2 flex-1">
                         <select
-                            id="insuranceType"
-                            name="insuranceType"
+                            name="planName"
+                            id="planName"
+                            placeholder={data.planName}
                             className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
+                            onChange={(e)=>setPlanName(e.target.value)}
                         >
-                            <option value="Option 0">Select Policy Type</option>
-                            {
-                                policies?policies.map((policy, index)=>(
-                                    <option key={index} onClick={(e)=>setPolicyTypeId(policy.policyTypeId)}>{policy.policyTypeName}</option>
-                                )):<option value="Option 0">No data found</option>
-                            }
+                            <option value="">Plan Name</option>
+                            <option value="NORMAL">Normal</option>
+                            <option value="STUDENT">Student</option>
+                            <option value="CORPORATE">Corporate</option>
                         </select>
                     </div>
                 </div>
                 <div className="sm:col-span-3 flex items-center">
                     <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900 w-1/6">
-                        Vehicle Class
-                    </label>
-                    <div className="mt-2 flex-1">
-                        <select
-                            id="vehicleClass"
-                            name="vehicleClass"
-                            className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
-                        >
-                            <option value="Option 0">Select Vehicle Class</option>
-                            {
-                                classes?classes.map((item, index)=>(
-                                    <option key={index} onClick={(e)=>setVehicleClassId(item.vehicleClassId)}>{item.class_name}</option>
-                                )):<option value="Option 0">No data found</option>
-                            }
-                        </select>
-                    </div>
-                </div>
-                <div className="sm:col-span-3 flex items-center">
-                    <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900 w-1/6">
-                        Description
+                        Max Days Limit
                     </label>
                     <div className="mt-2 flex-1">
                         <input
                             type="text"
-                            name="description"
-                            id="description"
+                            name="periodRange"
+                            id="periodRange"
                             autoComplete="family-name"
-                            placeholder={props.data.description}
-                            value={description}
-                            onChange={(e)=>setDescription(e.target.value)}
-                            className="block w-full rounded-xs border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
+                            placeholder={data.periodRange}
+                            onChange={(e)=>setPeriodRange(e.target.value)}
+                            className="block w-full rounded-xs bg-transparent border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-black focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
                         />
                     </div>
                 </div>
+                <div className="sm:col-span-3 flex items-center">
+                    <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900 w-1/6">
+                        Amount
+                    </label>
+                    <div className="mt-2 flex-1">
+                        <input
+                            type="text"
+                            name="amount"
+                            id="amount"
+                            autoComplete="family-name"
+                            placeholder={data.amount}
+                            onChange={(e)=>setAmount(e.target.value)}
+                            className="block w-full rounded-xs bg-transparent border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-black focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
+                        />
+                    </div>
+                </div>
+                <div className="sm:col-span-3 flex items-center">
+                    <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900 w-1/6">
+                        Continent
+                    </label>
+                    <div className="mt-2 flex-1">
+                        <select
+                            id="continent"
+                            name="continent"
+                            placeholder={data.continent}
+                            className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
+                            onChange={(e)=>setContinent(e.target.value)}
+                        >
+                            <option value="">Continent</option>
+                            <option value="AFRICA">Africa</option>
+                            <option value="EUROPE">Europe</option>
+                        </select>
+                    </div>
+                </div>
+                <div className="sm:col-span-3 flex items-center">
+                    <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900 w-1/6">
+                        Currency
+                    </label>
+                    <div className="mt-2 flex-1">
+                        <select
+                            id="currency"
+                            name="currency"
+                            placeholder={data.currency}
+                            onChange={(e)=>setCurrency(e.target.value)}
+                            className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
+                        >
+                            <option value="0">Currency</option>
+                            <option value="USD">USD</option>
+                            <option value="ZWG">ZWG</option>
+                        </select>
+                    </div>
+                </div>
                 {
-                    userRole === "ADMIN" && 
+                    user.role === "ADMIN" && 
                     <div className="sm:col-span-3 flex items-center">
                         <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900 w-1/6">
                             Insurance Company
@@ -198,69 +190,39 @@ export default function TravelInsuranceModal(props) {
                             <select
                                 id="insurerId"
                                 name="insurerId"
-                                className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
+                                onChange={(e) => setInsurerId(Number(e.target.value))}
+                                className="block w-full rounded-xs border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
                             >
-                                <option value="Option 0">Insurance Company</option>
-                                {
-                                    insurers?insurers.map((insurer, index)=>(
-                                        <option key={index} onClick={(e)=>setInsurerId(insurer.insurerId)}>{insurer.insurerName}</option>
-                                    )):<option value="Option 0">No data found</option>
-                                }
+                                <option value={0}>Select Insurer</option>
+                                {insurers && insurers.length > 0 ? (
+                                    insurers.map((insurer) => (
+                                        <option key={insurer.insurerId} value={insurer.insurerId}>
+                                        {insurer.insurerName}
+                                        </option>
+                                    ))
+                                ) : (
+                                <option value={0}>No data found</option>
+                                )}
                             </select>
                         </div>
                     </div>
                 }
-                <div className="sm:col-span-3 flex items-center">
-                    <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900 w-1/6">
-                        Price
-                    </label>
-                    <div className="mt-2 flex-1">
-                        <input
-                            type="text"
-                            name="insurancePrice"
-                            id="insurancePrice"
-                            autoComplete="family-name"
-                            placeholder={props.data.insurancePrice}
-                            value={insurancePrice}
-                            onChange={(e)=>setInsurancePrice(e.target.value)}
-                            className="block w-full rounded-xs border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
-                        />
-                    </div>
-                </div>
-                {/* {[...Array(count)].map((_, index) => (
-                    <div key={index} className="sm:col-span-3 flex items-center">
-                    <label htmlFor={`add-on-${index}`} className="block text-sm font-medium leading-6 text-gray-900 w-1/6">
-                        Add On {++index}
-                    </label>
-                    <div className="mt-2 flex flex-1">
-                        <input
-                            type="text"
-                            name={`add-on-${--index}`}
-                            id={`add-on-${index}`}
-                            autoComplete="family-name"
-                            placeholder={`${index===0?"Add On":"Optional Add On"}`}
-                            className="block w-full rounded-xs border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
-                            value={rows[index]}
-                            onChange={(e) => handleInputChange(e, index)}
-                        />
-                    </div>
-                    {index === count - 1 ? 
-                        (<span onClick={increment} className="fas fa-plus px-3" />):(<span onClick={() => decrement(index)} className="fas fa-minus px-3" />)}
-                    </div>
-                ))} */}
+                
                 <div className="sm:col-span-3 flex items-center">
                     <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900 w-1/6">
                         Active State
                     </label>
                     <div className="mt-2 flex-1">
                         <select
-                            id="systemAdOns"
-                            name="systemAdOns"
+                            id="active"
+                            name="active"
+                            placeholder={data.active?"Active":"Inactive"}
+                            onChange={(e)=>setActive(e.target.value)}
                             className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
                         >
-                            <option value="">{props.data.isActive?"Active":"Inactive"}</option>
-                            <option onClick={()=>setIsActive(true)}>Active</option>
-                            <option onClick={()=>setIsActive(false)}>Inactive</option>
+                            <option value="">{data.active?"Active":"Inactive"}</option>
+                            <option value={true}>Active</option>
+                            <option value={false}>Inactive</option>
                         </select>
                     </div>
                 </div>

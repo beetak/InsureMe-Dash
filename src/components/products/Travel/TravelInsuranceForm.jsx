@@ -64,6 +64,11 @@ export default function TravelInsuranceForm() {
             console.error("Plan Name is required.");
             return; // Exit the function if validation fails
         }
+
+        if (!policyData.currency || policyData.currency.trim() === "") {
+            console.error("Currency is required.");
+            return; // Exit the function if validation fails
+        }
     
         if (!policyData.periodRange || policyData.periodRange <= 0) {
             console.error("Max Days Limit must be a valid number greater than 0.");
@@ -233,6 +238,33 @@ export default function TravelInsuranceForm() {
                                 <option value="Option 0">Continent</option>
                                 <option value="AFRICA">Africa</option>
                                 <option value="EUROPE">Europe</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div className="sm:col-span-3 flex items-center">
+                        <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900 w-1/6">
+                            Currency
+                        </label>
+                        <div className="mt-2 flex-1">
+                            {
+                                Object.keys(error).length>0&&
+                                error.map((error, index) => {
+                                    if (error.err === "currency") {
+                                        return <h6 key={index} className='text-red-500 mb-1'>{error.message}</h6>;
+                                    }
+                                    return null;
+                                })
+                            }
+                            <select
+                                id="currency"
+                                name="currency"
+                                className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
+                                onChange={handleChange}
+                                value={policyData["currency"]||""}
+                            >
+                                <option value="0">Currency</option>
+                                <option value="USD">USD</option>
+                                <option value="ZWG">ZWG</option>
                             </select>
                         </div>
                     </div>

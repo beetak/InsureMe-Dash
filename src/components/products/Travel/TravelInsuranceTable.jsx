@@ -1,5 +1,3 @@
-"use client"
-
 import { useEffect, useState } from "react"
 import { ScaleLoader } from "react-spinners"
 import DeleteConfirmationModal from "../../deleteConfirmation/deleteConfirmationModal"
@@ -71,11 +69,12 @@ export default function TravelInsuranceTable() {
 
   const getInsurerProducts = async (insurerId) => {
     setTravelInsurance([])
+    setLoading(true)
     const response = await InsuranceApi.get(`/travel-special-plan/insurer/${insurerId}`)
     console.log("thex",response)
     if (response.data.code === "OK" && response.data.data.length > 0) {
       setTravelInsurance(response.data)
-    } else if (response.data.code === "OK" && response.data.data.length < 1) {
+    } else if (response.data.code === "NOT_FOUND") {
       setProdResponse("No travel insurance found")
     } else if (response.data.code !== "OK") {
       setProdResponse("Error fetching resource, Please check your network connection")
@@ -197,10 +196,10 @@ export default function TravelInsuranceTable() {
               <div className="w-full justify-center flex items-center">
                 <span
                   className={`font-semibold uppercase text-xs tracking-wider px-3 text-white ${
-                    item.isActive ? "bg-green-600" : "bg-red-600"
+                    item.active ? "bg-green-600" : "bg-red-600"
                   } rounded-full py-1`}
                 >
-                  {item.isActive ? "Active" : "Inactive"}
+                  {item.active ? "Active" : "Inactive"}
                 </span>
               </div>
             </td>

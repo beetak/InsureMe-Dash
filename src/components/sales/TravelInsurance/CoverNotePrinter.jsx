@@ -4,8 +4,6 @@ import 'jspdf-autotable';
 import logo from '/images/icon.png'; // Ensure this path is correct
 import { motion } from 'framer-motion';
 import { StepperContext } from '../../../context/StepperContext';
-import vehicleClasses from './../../vehicleClass.json'
-import insuranceTypes from '../../insuranceTypes.json'
 import useAuth from '../../../hooks/useAuth';
 
 const CoverNotePrinter = (quoteData) => {

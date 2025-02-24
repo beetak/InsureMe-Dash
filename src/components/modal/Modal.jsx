@@ -1,8 +1,4 @@
-import React, { useState } from 'react'
-import { useSelector } from 'react-redux';
-import { CircleLoader, ClockLoader, PacmanLoader, PulseLoader, RingLoader, SyncLoader } from 'react-spinners';
-import BeatLoader from "react-spinners/BeatLoader";
-import { getCategories } from '../../store/category-store';
+import React from 'react'
 
 export default function Modal(props) {
 
