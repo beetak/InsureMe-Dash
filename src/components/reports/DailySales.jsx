@@ -28,6 +28,7 @@ export default function DailySales() {
 
     const handleSearch = async() => {
         setLoading(true)
+        setSales("")
         setMessage("Loading, Please wait a moment");
         const formattedStartDate = new Date(transactionDate).toISOString().slice(0, 10);
         const formattedEndDate = new Date(transactionDate).toISOString().slice(0, 10);

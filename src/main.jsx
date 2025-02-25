@@ -12,16 +12,16 @@ import { PrintProvider } from './context/PrinterProvider.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <AuthProvider>
-      <Provider store={store}>
-        <PrintProvider>
-          <ColorProvider>
-            <Router>
-              <App />
-            </Router>
-          </ColorProvider>
-        </PrintProvider>
-      </Provider>
-    </AuthProvider>
+    <Router>
+      <AuthProvider>
+        <Provider store={store}>
+          <PrintProvider>
+            <ColorProvider>
+                <App />
+            </ColorProvider>
+          </PrintProvider>
+        </Provider>
+      </AuthProvider>
+    </Router>
   </React.StrictMode>
 )

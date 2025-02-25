@@ -25,8 +25,12 @@ export default function QuotationModal({ setModal }) {
     const [pollingMerchantRef, setPollingMerchantRef] = useState(null)
 
     const { vehicleData, policyData, setPolicyData, userData, subscriptionMethod } = useContext(StepperContext)
-    const { user, setUser } = useAuth()
+    const { user, setUser, userDetails } = useAuth()
     const { accessToken, userId } = user
+
+    useEffect(() => {
+        setupInterceptors(() => user, setUser)
+    },[user, setUser])
 
     const sendQuotation = async () => {
         setIsSending(true)
@@ -576,6 +580,7 @@ export default function QuotationModal({ setModal }) {
             salesAgentId: user.userId,
             insurerId: quotation.insurerId,
             iceCashId: quotation.iceCashId,
+            shopId: userDetails.userShops[0].shopId,
             productDescription: `${getInsuranceType(quotation.Policy.InsuranceType)}`,
             transactionDescription: JSON.stringify(transactionDescription),
             referenceNumber: quotation.merchantRef,
@@ -583,6 +588,7 @@ export default function QuotationModal({ setModal }) {
             paymentStatus: "PENDING",
             paymentMethod: method,
             amount: quotation.amount,
+            email: userData.email,
             currency: policyData.currency
         }
         try {
@@ -868,7 +874,7 @@ export default function QuotationModal({ setModal }) {
                                         exit="exit"
                                         transition={{ duration: 0.3, ease: 'easeInOut' }}
                                     >
-                                        <button 
+                                        {/* <button 
                                             className='py-1 px-3 rounded-full w-full border border-gray-300 bg-blue-400 text-white mt-4 hover:bg-blue-500 transition-colors duration-200'
                                             onClick={sendQuotation}
                                             disabled={isSending}
@@ -887,7 +893,7 @@ export default function QuotationModal({ setModal }) {
                                                     Send Quote
                                                 </>
                                             )}
-                                        </button>
+                                        </button> */}
                                         <QuotationPrinter data={quotations}/>
                                     </motion.div>
                                 )}
@@ -901,7 +907,7 @@ export default function QuotationModal({ setModal }) {
                                         transition={{ duration: 0.3, ease: 'easeInOut' }}
                                         className="space-y-2"
                                     >
-                                        <motion.div variants={buttonVariants}>
+                                        {/* <motion.div variants={buttonVariants}>
                                             <button 
                                                 className='py-1 px-3 rounded-full w-full border border-gray-300 bg-green-400 text-white mt-4 hover:bg-green-500 transition-colors duration-200'
                                                 onClick={sendNote}
@@ -909,7 +915,7 @@ export default function QuotationModal({ setModal }) {
                                             <i className='fa fa-paper-plane mr-2'/>
                                                 Send Cover Note
                                             </button>
-                                        </motion.div>
+                                        </motion.div> */}
                                         <CoverNotePrinter data={quotations}/>
                                     </motion.div>
                                 )}

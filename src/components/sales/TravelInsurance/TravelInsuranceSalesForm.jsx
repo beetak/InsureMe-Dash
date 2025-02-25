@@ -1,12 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchAsyncPolicy, getPolicies } from '../../../store/policy-store';
-import { getVehicleInformation } from '../../../store/payments-store';
 import Stepper from '../Stepper';
 import { StepperContext } from '../../../context/StepperContext';
 import StepperControl from '../StepperControl';
 import TravelDetails from './TravelDetails';
-import { postTravelInfo, postTravellerInfo } from '../../../store/travel-store';
 import AccountDetails from './AccountDetails';
 import QuotationModal from './QuotationModal';
 
@@ -16,12 +12,6 @@ export default function TravelInsuranceSales() {
     const [userData, setUserData] = useState([])
     const [travelData, setTravelData] = useState([])
     const [isOpen, setIsOpen] = useState(false)
-
-    const dispatch = useDispatch();
-
-    useEffect(() => {
-        dispatch(fetchAsyncPolicy());
-    }, []);
 
     const steps = [
         "Client's Details",

@@ -267,25 +267,25 @@ export default function UserProfile() {
           </div>
           {(user.role === "ADMIN" || user.role === "SALES_AGENT") && (
             <div className="flex mt-8 space-x-3">
-                {accountInfo.userRegions && accountInfo.userRegions.length > 0 ? (
+                {accountInfo.userShops && accountInfo.userShops.length > 0 ? (
                     <p className="flex flex-col text-xs font-semibold">
                         Assigned Region
                         <span className="text-2xl text-main-color">
-                            {accountInfo.userRegions[0]}
+                            {accountInfo.userShops[0].regionName}
                         </span>
                     </p>
-                ) : accountInfo.userTowns && accountInfo.userTowns.length > 0 ? (
+                ) : accountInfo.userShops && accountInfo.userShops.length > 0 ? (
                     <p className="flex flex-col text-xs font-semibold">
                         Assigned Town
                         <span className="text-2xl text-main-color">
-                            {accountInfo.userTowns[0]}
+                            {accountInfo.userShops[0].townName}
                         </span>
                     </p>
                 ) : accountInfo.userShops && accountInfo.userShops.length > 0 ? (
                     <p className="flex flex-col text-xs font-semibold">
                         Assigned Shop
                         <span className="text-2xl text-main-color">
-                            {accountInfo.userShops[0]}
+                            {accountInfo.userShops[0].shopName}
                         </span>
                     </p>
                 ) : (

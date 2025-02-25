@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchAsyncPolicy, getPolicies } from '../../../store/policy-store';
 import PropertyDetails from './PropertyDetails';
 import StepperControl from '../StepperControl';
 import Stepper from '../Stepper';
@@ -14,12 +12,6 @@ export default function PropertyInsuranceSales() {
     const [userData, setUserData] = useState([])
     const [propertyData, setPropertyData] = useState([])
     const [isOpen, setIsOpen] = useState(false)
-
-    const dispatch = useDispatch();
-
-    useEffect(() => {
-        dispatch(fetchAsyncPolicy());
-    }, []);
 
     const steps = [
         "Client's Details",

@@ -22,14 +22,13 @@ export default function QuotationModal({ setModal }) {
     const [ processingPayment, setProcessingPayment] = useState(false)
     const [ isSending, setIsSending ] = useState(false)
     const [ pollingMerchantRef, setPollingMerchantRef ] = useState(null)
-    const [ paymentToken, setPaymentToken ] = useState({})
 
     const { propertyData, userData } = useContext(StepperContext)
-    const { user, setUser } = useAuth()
+    const { user, setUser, userDetails } = useAuth()
 
-    useEffect(()=>{
-        setupInterceptors(() => user, setUser);
-      },[])
+    useEffect(() => {
+        setupInterceptors(() => user, setUser)
+    },[user, setUser])
 
     const sendQuotation = async ()=>{
         setIsSending(true)
@@ -322,13 +321,15 @@ export default function QuotationModal({ setModal }) {
             salesAgentId: user.userId,
             insurerId: quotation.insurerId,
             iceCashId: quotation.iceCashId,
-            productDescription: `l`,
+            shopId: userDetails.userShops[0].shopId,
+            productDescription: `property insurance`,
             transactionDescription: JSON.stringify(transactionDescription),
             referenceNumber: quotation.merchantRef,
             mobileNumber: userData.phoneNumber,
             paymentStatus: "ACCEPTED",
             paymentMethod: method,
             amount: quotation.calculatedPrice,
+            email: userData.email,
             currency: propertyData.currency
         }
         try {

@@ -12,7 +12,6 @@ export const ColorProvider = ({ children }) => {
   const [companyDetails, setCompanyDetails] = useState(null);
 
   useEffect(() => {
-    // Set CSS variables whenever colors change
     document.documentElement.style.setProperty('--main-color', colors.mainColor);
     document.documentElement.style.setProperty('--secondary-color', colors.secondaryColor);
     document.documentElement.style.setProperty('--main-color-rgb', colors.mainColorRgb);
@@ -21,7 +20,6 @@ export const ColorProvider = ({ children }) => {
 
   const updateColors = async (user) => {
     if (!user || !user.companyId) {
-        console.error('User or companyId not available');
         return;
     }
 
@@ -54,7 +52,7 @@ export const ColorProvider = ({ children }) => {
   };
 
   return (
-    <ColorContext.Provider value={{ colors, updateColors, companyDetails }}>
+    <ColorContext.Provider value={{ colors, updateColors, companyDetails, setCompanyDetails }}>
       {children}
     </ColorContext.Provider>
   );

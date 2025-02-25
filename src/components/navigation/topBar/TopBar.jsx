@@ -2,11 +2,14 @@ import React, { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link, useNavigate } from 'react-router-dom'
 import useAuth from '../../../hooks/useAuth'
+import useTheme from '../../../hooks/useTheme'
 import InsuranceApi, { setupInterceptors } from '../../api/InsuranceApi'
 
 export default function TopBar({isOpen}) {
 
     const { user, setUser } = useAuth()
+    const { setCompanyDetails } = useTheme()
+    const { logout } = useAuth()
 
     const [dropdown, setDropdown] = useState(false)
     const [tab, setTab] = useState('')
@@ -61,11 +64,6 @@ export default function TopBar({isOpen}) {
     }
 
     const isExpanded = isFocused || inputValue.length > 0
-
-    const logout = () => {
-        setUser(null)
-        navigate('/login')
-    }
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -129,16 +127,16 @@ export default function TopBar({isOpen}) {
                         </div>
                         <div>
                             <div className="flex items-center justify-center text-sm">
-                                {userData && userData.userRegions.length > 0 && (
-                                    <span>Region: {userData.userRegions[0]}</span>
-                                )}
-                                {userData && userData.userTowns.length > 0 && (
-                                    <span>Town: {userData.userTowns[0]}</span>
+                                {userData && userData.userShops.length > 0 && (
+                                    <span>Region: {userData.userShops[0].regionName}</span>
                                 )}
                                 {userData && userData.userShops.length > 0 && (
-                                    <span>Shop: {userData.userShops[0]}</span>
+                                    <span>Town: {userData.userShops[0].townName}</span>
                                 )}
-                                {userData && userData.userShops.length < 1 && userData.userTowns.length < 1 &&  userData.userRegions.length < 1 && (
+                                {userData && userData.userShops.length > 0 && (
+                                    <span>Shop: {userData.userShops[0].shopName}</span>
+                                )}
+                                {userData && userData.userShops.length < 1 && userData.userShops.length < 1 &&  userData.userShops.length < 1 && (
                                     <span>National Access</span>
                                 )}
                             </div>
@@ -177,7 +175,7 @@ export default function TopBar({isOpen}) {
                                                 role="menuitem"
                                                 tabIndex={-1}
                                                 id="user-menu-item-2"
-                                                onClick={() => logout()}
+                                                onClick={()=>logout()}
                                             >Sign out</a>
                                         </div>
                                     </div>

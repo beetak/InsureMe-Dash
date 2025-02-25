@@ -25,12 +25,12 @@ export default function QuotationModal({ setModal }) {
     const [ pollingMerchantRef, setPollingMerchantRef ] = useState(null)
     const [ paymentToken, setPaymentToken ] = useState({})
 
-    const { travelData, userData } = useContext(StepperContext)
-    const { user, setUser } = useAuth()
+    const { travelData, userData} = useContext(StepperContext)
+    const { user, setUser , userDetails} = useAuth()
 
-    useEffect(()=>{
-        setupInterceptors(() => user, setUser);
-      },[])
+    useEffect(() => {
+        setupInterceptors(() => user, setUser)
+    },[user, setUser])
 
     const sendQuotation = async ()=>{
         setIsSending(true)
@@ -291,13 +291,15 @@ export default function QuotationModal({ setModal }) {
             salesAgentId: user.userId,
             insurerId: quotation.insurerId,
             iceCashId: quotation.iceCashId,
-            productDescription: `l`,
+            shopId: userDetails.userShops[0].shopId,
+            productDescription: `travel insurance`,
             transactionDescription: JSON.stringify(transactionDescription),
             referenceNumber: quotation.merchantRef,
             mobileNumber: travelData.phoneNumber,
             paymentStatus: "ACCEPTED",
             paymentMethod: method,
             amount: quotation.amount,
+            email: travelData.email,
             currency: travelData.currency
         }
         try {
@@ -523,7 +525,7 @@ export default function QuotationModal({ setModal }) {
                                         exit="exit"
                                         transition={{ duration: 0.3, ease: 'easeInOut' }}
                                     >
-                                        <button 
+                                        {/* <button 
                                             className='py-1 px-3 rounded-full w-full border border-gray-300 bg-blue-400 text-white mt-4 hover:bg-blue-500 transition-colors duration-200'
                                             onClick={sendQuotation}
                                             disabled={isSending}
@@ -542,7 +544,7 @@ export default function QuotationModal({ setModal }) {
                                                     Send Quote
                                                 </>
                                             )}
-                                        </button>
+                                        </button> */}
                                         <QuotationPrinter data={quotations}/>
                                     </motion.div>
                                 )}
@@ -556,7 +558,7 @@ export default function QuotationModal({ setModal }) {
                                         transition={{ duration: 0.3, ease: 'easeInOut' }}
                                         className="space-y-2"
                                     >
-                                        <motion.div variants={buttonVariants}>
+                                        {/* <motion.div variants={buttonVariants}>
                                             <button 
                                                 className='py-1 px-3 rounded-full w-full border border-gray-300 bg-green-400 text-white mt-4 hover:bg-green-500 transition-colors duration-200'
                                                 onClick={sendNote}
@@ -564,7 +566,7 @@ export default function QuotationModal({ setModal }) {
                                             <i className='fa fa-paper-plane mr-2'/>
                                                 Send Cover Note
                                             </button>
-                                        </motion.div>
+                                        </motion.div> */}
                                         <CoverNotePrinter data={quotations}/>
                                     </motion.div>
                                 )}

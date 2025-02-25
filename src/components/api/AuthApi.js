@@ -1,49 +1,66 @@
-import axios from 'axios';
+import axios from "axios"
 
 const axiosInstance = axios.create({
-  baseURL: 'https://insureme.co.zw:8082/api/v1',
-  // baseURL: 'https://localhost:8082/api/v1',
-});
+  baseURL: "https://insureme.co.zw:8082/api/v1",
+})
 
+// Request interceptor
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('access_token');
+    const token = localStorage.getItem("access_token")
     if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
+      config.headers["Authorization"] = `Bearer ${token}`
     }
-    return config;
+    return config
   },
-  (error) => Promise.reject(error)
-);
+  (error) => Promise.reject(error),
+)
 
+// Response interceptor
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const originalRequest = error.config;
+    const originalRequest = error.config
 
-    if (error.response.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
+    // Only try to refresh if we get a 401 and haven't tried refreshing yet
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true
 
       try {
-        const refreshToken = localStorage.getItem('refresh_token');
-        const response = await axios.post('/auth/refresh-token', { refreshToken });
-        const { access_token } = response.data;
+        const refreshToken = localStorage.getItem("refresh_token")
+        if (!refreshToken) {
+          throw new Error("No refresh token available")
+        }
 
-        localStorage.setItem('access_token', access_token);
+        // Make sure we use the full URL for refresh token request
+        const response = await axios.post("https://insureme.co.zw:8082/api/v1/auth/refresh-token", { refreshToken })
 
-        axiosInstance.defaults.headers['Authorization'] = `Bearer ${access_token}`;
-        originalRequest.headers['Authorization'] = `Bearer ${access_token}`;
+        if (response.data?.data?.access_token) {
+          const newAccessToken = response.data.data.access_token
 
-        return axiosInstance(originalRequest);
+          // Update tokens
+          localStorage.setItem("access_token", newAccessToken)
+
+          // Update axios headers
+          axiosInstance.defaults.headers["Authorization"] = `Bearer ${newAccessToken}`
+          originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`
+
+          // Retry the original request
+          return axiosInstance(originalRequest)
+        } else {
+          throw new Error("Invalid refresh token response")
+        }
       } catch (refreshError) {
-        localStorage.removeItem('refresh_token');
-        window.location.href = '/login';
-        return Promise.reject(refreshError);
+        console.error("Token refresh failed:", refreshError)
+        // Only clear tokens if refresh actually failed
+        // Don't redirect automatically - let the AuthProvider handle it
+        return Promise.reject(refreshError)
       }
     }
 
-    return Promise.reject(error);
-  }
-);
+    return Promise.reject(error)
+  },
+)
 
-export default axiosInstance;
+export default axiosInstance
+

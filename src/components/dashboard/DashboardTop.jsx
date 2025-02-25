@@ -115,7 +115,7 @@ export default function DashboardTop() {
                             <div className="w-[1px] bg-white h-16 m-0 bg-gradient-to-b from-[#656E70] to-[rgba(255,255,255,1)]"/>
                             <div className="flex flex-col p-4 space-y-4">
                                 <h1 className='text-white text-sm font-bold'>
-                                    <span className='fas fa-user-plus mr-2'/>New Users
+                                    <span className='fas fa-user-plus mr-2'/>New Customers
                                 </h1>
                                 <h1 className='text-4xl font-bold text-white'>{newClients||0}</h1>
                                 <button 
