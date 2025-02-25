@@ -230,8 +230,6 @@ export default function ShopSales() {
     setViewOpen(isOpen)
   }
 
-  const [item, setItem] = useState(null)
-
   const generatePDF = () => {
     const doc = new jsPDF("portrait", "px", "a4", "false")
     const pageHeight = doc.internal.pageSize.height
@@ -250,7 +248,7 @@ export default function ShopSales() {
     doc.setFont("Times New Roman", "bold")
     doc.setFontSize(16)
     doc.setTextColor(15, 145, 209)
-    doc.text(410, 95, "Shop Sales Report", { align: "right" })
+    doc.text(410, 95, `National Sales Report`, { align: "right" })
   
     // Add horizontal line
     doc.setLineWidth(0.5)
@@ -262,7 +260,9 @@ export default function ShopSales() {
       day: "numeric",
       month: "long",
       year: "numeric",
+      timeZone: "UTC"
     })
+
     doc.setFont("Times New Roman", "bold")
     doc.setFontSize(12)
     doc.setTextColor(15, 145, 209)
@@ -273,7 +273,8 @@ export default function ShopSales() {
     doc.setTextColor(0, 0, 0)
     doc.setFontSize(9)
     // doc.text(45, 140, `Region: ${getLocationInfo()}`)
-    doc.text(45, 155, `Date Range: ${startDate.toLocaleDateString()} - ${endDate.toLocaleDateString()}`)
+    doc.text(45, 155, `Start Date: ${startDate.toLocaleDateString()}`)
+    doc.text(45, 165, `End Date: ${endDate.toLocaleDateString()}`)
   
     // Calculate totals
     const totals = Object.values(sales.data).reduce(
@@ -314,7 +315,7 @@ export default function ShopSales() {
   
     // Generate table
     doc.autoTable({
-      startY: 170,
+      startY: 180,
       head: headers,
       body: tableRows,
       headStyles: {
@@ -381,7 +382,7 @@ export default function ShopSales() {
       <div className="p-5 bg-white rounded-md border border-gray-200 border-solid border-1">
         {isOpen && <CategoryModal setModal={getModal} data={modalData} />}
         {viewOpen && <CategoryViewModal setModal={getViewModal} data={modalData} />}
-        <h2 className="text-lg font-semibold">Shop Sales Report</h2>
+        <h2 className="text-lg font-semibold">National Sales Report</h2>
         <div className="flex-col py-4 space-y-2">
           <div className="grid grid-cols-3 items-center justify-between rounded-full border border-gray-400 gap-2">
             <div className="flex rounded-full p-1 px-2 border-r border-gray-400 shadow-[0_0_10px_0_rgba(0,0,0,0.8)">
@@ -395,7 +396,7 @@ export default function ShopSales() {
                 }}
                 className=" bg-inherit rounded-xs cursor-pointer min-w-48"
               >
-                <option value={0}>Select Parent Region</option>
+                <option value={0}>Select Region</option>
                 {regions ? (
                   regions.map((region) => (
                     <option key={region.id} value={region.id}>
@@ -420,7 +421,7 @@ export default function ShopSales() {
                 }}
                 className=" bg-inherit rounded-xs cursor-pointer"
               >
-                <option value={0}>Select User Town</option>
+                <option value={0}>Select Town</option>
                 {towns ? (
                   towns.map((town) => (
                     <option key={town.id} value={town.id}>
@@ -442,7 +443,7 @@ export default function ShopSales() {
                 }}
                 className=" bg-inherit rounded-xs cursor-pointer"
               >
-                <option value={0}>Select User Shop</option>
+                <option value={0}>Select Shop</option>
                 {shops ? (
                   shops.map((shop) => (
                     <option key={shop.id} value={shop.id}>
