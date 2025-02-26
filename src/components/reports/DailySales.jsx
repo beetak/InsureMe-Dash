@@ -17,8 +17,7 @@ export default function DailySales() {
         setupInterceptors(()=> user, setUser)
     },[])
 
-    const [catResponse, setCatResponse] = useState('')
-    const [message, setMessage] = useState('')
+    const [message, setMessage] = useState('Enter report date and click search')
     const [loading, setLoading] = useState(false)
     const [isOpen, setIsOpen] = useState(false)
     const [viewOpen, setViewOpen] = useState(false)
@@ -34,13 +33,14 @@ export default function DailySales() {
         const formattedEndDate = new Date(transactionDate).toISOString().slice(0, 10);
         try{
             const response = await InsuranceApi.get(`/product-payments/by-date?startDate=${formattedStartDate}&endDate=${formattedEndDate}`)
-            console.log("post results: ", response)
-            if(response.data.code==="OK"&&response.data.data.length>0){
-                const aggregatedSales = aggregateSales(response.data.data);
-                setSales(aggregatedSales);
-                setLoading(true)
+            
+            if(response.data.code==="OK"){
+                setMessage(response.data.message);
+                setSales(response.data)
+                setLoading(false)
             }
             else if(response.data.code==="NOT_FOUND"){
+                setLoading(false)
                 setMessage("No sales record found")
             }
             else{
@@ -50,34 +50,39 @@ export default function DailySales() {
         }
         catch(err){
             setLoading(false)
-            setMessage("Error Fetching Resource")
+            setMessage(err.response.data.message)
         }
         finally{
-            setTimeout(()=>{
-                setLoading(false)
-            },1000)
+            setLoading(false)
         }
     }
         
     const renderTableHeader = () => {
         const columns = [
-          { key: 'item', label: '#', width: "1" },
-          { key: 'policy', label: 'Policy Name' },
-          { key: 'category', label: 'Category' },
+          { key: "item", label: "#", width: "1" },
+          { key: "broker", label: "Broker Name" },
           {
-            key: 'revenue',
-            label: 'Revenue Collections',
+            key: "revenue",
+            label: "Revenue Collections",
             subHeaders: [
-              { key: 'usd', label: 'USD' },
-              { key: 'ZWG', label: 'ZWG' },
+              { key: "usd", label: "USD" },
+              { key: "zwg", label: "ZWG" },
             ],
           },
-        ];
-      
+          {
+            key: "tax",
+            label: "Tax Collections",
+            subHeaders: [
+              { key: "usd_tax", label: "USD Tax" },
+              { key: "zwg_tax", label: "ZWG Tax" },
+            ],
+          },
+        ]
+    
         return columns.map((column) => (
           <th
             key={column.key}
-            className={`text-sm font-bold tracking-wide text-left ${column.width ? "p-3 w-" + column.width : "py-3"} ${column.key === 'revenue' && "text-center"} ${column.key === 'action' && "text-center"}`}
+            className={`text-sm font-bold tracking-wide text-left ${column.width ? "p-3 w-" + column.width : "py-3"} ${(column.key === "revenue" || column.key === "tax") && "text-center"}`}
           >
             <span className="mr-2">{column.label}</span>
             {column.subHeaders && (
@@ -90,8 +95,8 @@ export default function DailySales() {
               </div>
             )}
           </th>
-        ));
-    };
+        ))
+    }
 
     const loadingAnimation = () => {
         return <div className='flex justify-center'>
@@ -109,41 +114,38 @@ export default function DailySales() {
         </div>
     }
 
-    function formatDate(dateString) {
-        const options = { day: '2-digit', month: 'long', year: 'numeric' };
-        const formattedDate = new Date(dateString).toLocaleDateString('en-US', options);
-        return formattedDate;
-    }
-
     const renderTableRows = () => {
-        return sales?sales.map((item, index) => (
-        <tr key={index} className={`${index%2!==0&&" bg-gray-100"} p-3 text-sm text-gray-600 font-semibold`}>
-            <td className='font-bold text-blue-5 justify-center items-center w-7'><div className='w-full justify-center flex items-center'>{++index}</div></td>
-            <td>{item.policyName}</td>
-            <td>{item.categoryName}</td>
-            {/* <td>{formatDate(item.createdAt)}</td> */}
-            <div className="flex w-full justify-around">
+        if (!sales || !sales.data || !sales.data.TRAVEL) {
+          return (
+            <tr>
+              <td colSpan={5} className="text-center py-4">
+                {message || "No data available"}
+              </td>
+            </tr>
+          )
+        }
+    
+        return Object.entries(sales.data).map(([policyName, policyData], index) => (
+            <tr key={policyName} className={`p-3 text-sm text-gray-600 font-semibold ${index % 2 === 1 ? "bg-gray-50" : ""}`}>
+                <td className="font-bold text-blue-5 justify-center items-center w-7">
+                    <div className="w-full justify-center flex items-center">{index + 1}</div>
+                </td>
+                <td>{policyName}</td>
                 <td>
-                    {/* {item.totalUsdAmount.toLocaleString('en-US', {
-                        style: 'currency',
-                        currency: 'USD',
-                    })} */}
-                    300
+                  <div className="flex w-full justify-around">
+                    <div>{policyData.USD ? policyData.USD.toFixed(2) : "0.00"}</div>
+                    <div>{policyData.ZWG ? policyData.ZWG.toFixed(2) : "0.00"}</div>
+                  </div>
                 </td>
                 <td>
-                    {/* {item.totalZWGAmount.toLocaleString('en-US', {
-                        style: 'currency',
-                        currency: 'USD',
-                    })} */}
-                    400
+                  <div className="flex w-full justify-around">
+                    <div>{policyData.USD_TAX ? policyData.USD_TAX.toFixed(2) : "0.00"}</div>
+                    <div>{policyData.ZWG_TAX ? policyData.ZWG_TAX.toFixed(2) : "0.00"}</div>
+                  </div>
                 </td>
-            </div>
-        </tr>
-        )):
-        <tr className=''>
-        <td colSpan={7} style={{ textAlign: 'center' }}>{catResponse}</td>
-        </tr>
-    };
+            </tr>
+        ))
+    }
 
     const getModal =(isOpen)=>{
         setIsOpen(isOpen)
@@ -152,6 +154,8 @@ export default function DailySales() {
     const getViewModal =(isOpen)=>{
         setViewOpen(isOpen)
     }
+
+    console.log("  sales", sales)
 
     return (
         <>
@@ -235,38 +239,32 @@ export default function DailySales() {
                         </div>
                     </div>
                 </div>
-                {
-                    loading ? 
-                    (
-                        loadingAnimation()
-                    ) : 
-                    (
-                        <>
-                            {
-                                sales?                    
-                                <div className='overflow-auto rounded:xl shadow-md'>
-                                    <table className='w-full'>
-                                            <thead className='bg-gray-100 border-b-2 border-gray-300'>
-                                                <tr >{renderTableHeader()}</tr>
-                                            </thead>
-                                            <tbody >{loading?loadingAnimation():renderTableRows()}</tbody>
-                                    </table>
+                {loading ? (
+                    loadingAnimation()
+                    ) : (
+                    <>
+                        {sales ? (
+                        <div className="overflow-auto rounded:xl shadow-md">
+                            <table className="w-full">
+                            <thead className="bg-gray-100 border-b-2 border-gray-300">
+                                <tr>{renderTableHeader()}</tr>
+                            </thead>
+                            <tbody>{loading ? loadingAnimation() : renderTableRows()}</tbody>
+                            </table>
+                        </div>
+                        ) : (
+                        <div className="bg-white rounded-xl shadow-md overflow-hidden">
+                            <div className="flex flex-col">
+                            <div className=" bg-gray-700 text-white border-b-2 border-gray-700 py-3 px-6">
+                                <div className="flex justify-center items-center bg-gray-700 text-white">
+                                <span className="font-semibold">{message}</span>
                                 </div>
-                                :
-                                <div className="bg-white rounded-xl shadow-md overflow-hidden">
-                                    <div className="flex flex-col">
-                                        <div className=" bg-gray-700 text-white border-b-2 border-gray-700 py-3 px-6">
-                                            <div className="flex justify-center items-center bg-gray-700 text-white">
-                                                <span className="font-semibold">Enter report date and click search</span>
-                                            </div>
-                                        </div>
-                                        
-                                    </div>
-                                </div>
-                            }
-                        </>
-                    ) 
-                }              
+                            </div>
+                            </div>
+                        </div>
+                        )}
+                    </>
+                )}          
             </div>
         </>
     )

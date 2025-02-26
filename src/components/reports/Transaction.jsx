@@ -18,7 +18,7 @@ export default function Transaction() {
 
   const [loading, setLoading] = useState(false)
   const [searchValue, setSearchValue] = useState("")
-  const [message, setMessage] = useState("Enter reference ID and click search")
+  const [message, setMessage] = useState("Enter reference ID or Email and click Search")
   const [sales, setSales] = useState(null)
   const [transactions, setTransactions] = useState(null)
   const [referenceId, setReferenceId] = useState("")
@@ -70,7 +70,7 @@ export default function Transaction() {
           }
 
           setSales(response.data.data[0])
-          setMessage("") // Clear message on success
+          setMessage("")
         } else {
           setSales(null)
           setMessage("No sales record found")
@@ -80,9 +80,13 @@ export default function Transaction() {
         setMessage("Error Fetching Resource")
       }
     } catch (err) {
-      console.error("Error fetching resource:", err)
-      setSales(null)
-      setMessage("Error Fetching Resource")
+      setLoading(false);
+      console.log("Error fetching resource: ", err);
+      if (err.response && err.response.status === 404) {
+          setMessage(err.response.data.message);
+      } else {
+          setMessage("Error Fetching Resource");
+      }
     } finally {
       setLoading(false)
     }
@@ -94,7 +98,12 @@ export default function Transaction() {
     setSales(null)
 
     try {
-      const response = await InsuranceApi.get(`/product-payments/by-phone-or-email?phoneNumber=${searchValue}`)
+      const isEmail = /\S+@\S+\.\S+/.test(searchValue); // Basic email validation regex
+      const endpoint = isEmail 
+          ? `/product-payments/by-phone-or-email?email=${searchValue}` 
+          : `/product-payments/by-phone-or-email?phoneNumber=${searchValue}`;
+
+      const response = await InsuranceApi.get(endpoint);
 
       if (response.data.code === "OK") {
         // Set transactions directly from the response data
@@ -110,9 +119,14 @@ export default function Transaction() {
         setMessage("Error Fetching Resource")
       }
     } catch (err) {
-      console.error("Error fetching resource:", err)
+      setLoading(false);
+      console.log("Error fetching resource: ", err);
+      if (err.response && err.response.status === 404) {
+          setMessage(err.response.data.message);
+      } else {
+          setMessage("Error Fetching Resource");
+      }
       setTransactions(null)
-      setMessage("Error Fetching Resource")
     } finally {
       setLoading(false)
     }

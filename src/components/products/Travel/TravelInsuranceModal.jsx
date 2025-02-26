@@ -10,9 +10,31 @@ export default function TravelInsuranceModal({ data, refresh, setModal }) {
     const { user, setUser } = useAuth()
     const [insurers, setInsurers] = useState("")
 
+    const [planName, setPlanName] = useState("");
+    const [periodRange, setPeriodRange] = useState("");
+    const [amount, setAmount] = useState("");
+    const [continent, setContinent] = useState(0);
+    const [currency, setCurrency] = useState(0);
+    const [active, setActive] = useState(true);
+    const [loading, setLoading] = useState(false)
+    const [success, setSuccess] = useState(false)
+    const [failed, setFailed] = useState(false)
+    const [insurerId, setInsurerId] = useState(0)    
+
+    const isOpen = false
+    const close = false
+
     useEffect(()=>{
         fetchInsurer()
         setupInterceptors(() => user, setUser);
+        setPlanName(data.planName)
+        setPeriodRange(data.periodRange)
+        setAmount(data.amount)
+        setContinent(data.continent)
+        setCurrency(data.currency)
+        setActive(data.active)
+        setInsurerId(data.insurerId)
+
     },[])
 
     const fetchInsurer = async () => {
@@ -27,23 +49,12 @@ export default function TravelInsuranceModal({ data, refresh, setModal }) {
         }
     }
 
-    const [planName, setPlanName] = useState("");
-    const [periodRange, setPeriodRange] = useState("");
-    const [amount, setAmount] = useState("");
-    const [continent, setContinent] = useState(0);
-    const [currency, setCurrency] = useState(0);
-    const [active, setActive] = useState(0);
-    const [loading, setLoading] = useState(false)
-    const [success, setSuccess] = useState(false)
-    const [failed, setFailed] = useState(false)
-    const isOpen = false
-    const close = false
-
     const handleSubmit = async (e) => {
         e.preventDefault()        
         setLoading(true)
         try{
-            const response = await InsuranceApi.put(`//${data.categoryId}`,{
+            const response = await InsuranceApi.put(`/travel-special-plan/${data.id}`,{
+                insurerId,
                 planName,
                 periodRange,
                 amount,
@@ -51,7 +62,8 @@ export default function TravelInsuranceModal({ data, refresh, setModal }) {
                 continent,
                 active
             })
-            if(response.data&&response.data.httpStatus==="OK"){
+            console.log(response)
+            if(response.data&&response.data.code==="OK"){
                 setSuccess(true)
             }
             else{

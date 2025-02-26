@@ -15,7 +15,7 @@ const telone = "images/telone-logo.png"
 
 export default function ShopSales() {
   const [catResponse, setCatResponse] = useState("")
-  const [message, setMessage] = useState("")
+  const [message, setMessage] = useState("Enter date range and click search")
   const [loading, setLoading] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
   const [viewOpen, setViewOpen] = useState(false)
@@ -90,6 +90,7 @@ export default function ShopSales() {
   const handleSearch = async () => {
     setLoading(true)
     setMessage("Loading, Please wait a moment")
+    setSales(null)
     const formattedStartDate = new Date(startDate).toISOString().slice(0, 10)
     const formattedEndDate = new Date(endDate).toISOString().slice(0, 10)
 
@@ -119,7 +120,7 @@ export default function ShopSales() {
         setLoading(false);
         console.log("Error fetching resource: ", err);
         if (err.response && err.response.status === 404) {
-            setMessage("Resource not found (404)");
+            setMessage(err.response.data.message);
         } else {
             setMessage("Error Fetching Resource");
         }
@@ -207,16 +208,16 @@ export default function ShopSales() {
             </td>
             <td>{policyName}</td>
             <td>
-                <div className="flex w-full justify-around">
-                <td>{policyData.USD_TAX.toFixed(2)}</td>
-                <td>{policyData.ZWG.toFixed(2)}</td>
-                </div>
+              <div className="flex w-full justify-around">
+                <div>{policyData.USD ? policyData.USD.toFixed(2) : "0.00"}</div>
+                <div>{policyData.ZWG ? policyData.ZWG.toFixed(2) : "0.00"}</div>
+              </div>
             </td>
             <td>
-                <div className="flex w-full justify-around">
-                    <td>{policyData.USD_TAX.toFixed(2)}</td>
-                    <td>{policyData.ZWG_TAX.toFixed(2)}</td>
-                </div>
+              <div className="flex w-full justify-around">
+                <div>{policyData.USD_TAX ? policyData.USD_TAX.toFixed(2) : "0.00"}</div>
+                <div>{policyData.ZWG_TAX ? policyData.ZWG_TAX.toFixed(2) : "0.00"}</div>
+              </div>
             </td>
         </tr>
       ))
@@ -537,7 +538,7 @@ export default function ShopSales() {
                 <div className="flex flex-col">
                   <div className=" bg-gray-700 text-white border-b-2 border-gray-700 py-3 px-6">
                     <div className="flex justify-center items-center bg-gray-700 text-white">
-                      <span className="font-semibold">Enter date range and click search</span>
+                      <span className="font-semibold">{message}</span>
                     </div>
                   </div>
                 </div>

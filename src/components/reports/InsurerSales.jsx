@@ -252,10 +252,10 @@ export default function InsurerSales() {
                 <td>
                     <div className="flex w-full justify-around">
                         <div className="flex-1 text-xs font-semibold text-right pr-5">
-                            {item.amounts.ZWG?item.amounts.ZWG:""}
+                            {item.amounts.ZWG?item.amounts.ZWG.toFixed(2):""}
                         </div>
                         <div className="flex-1 text-xs font-semibold text-right pr-5">
-                            {item.amounts.USD?item.amounts.USD:""}
+                            {item.amounts.USD?item.amounts.USD.toFixed(2):""}
                         </div>
                     </div>
                 </td>

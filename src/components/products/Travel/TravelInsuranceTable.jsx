@@ -84,9 +84,27 @@ export default function TravelInsuranceTable() {
     setLoading(false)
   }
 
-  const handleDelete = (insuranceId) => {
+  const handleDelete = async (id) => {
     setLoading(true)
     setMessage("Deleting...")
+    setIsDelete(true)
+    try{
+      const response = await InsuranceApi.delete(`/travel-special-plan/${id}`)
+      if(response&&response.data.code==="OK"){
+        setMessage("Deleted")
+      }
+    }
+    catch(err){
+        console.log(err)
+    }
+    finally{
+      setTimeout(()=>{
+        setLoading(false)
+        setIsDelete(false)
+        setMessage('')
+      },1000)
+      getTravelProducts()
+    }
   }
 
   const renderTableHeader = () => {
@@ -293,7 +311,7 @@ export default function TravelInsuranceTable() {
   return (
     <>
       <div className="p-5 bg-white rounded-md border border-gray-200 border-solid border-1">
-        {isOpen && <TravelInsuranceModal setModal={getModal} data={modalData} />}
+        {isOpen && <TravelInsuranceModal setModal={getModal} data={modalData}  refresh={getTravelProducts}/>}
         {viewOpen && <TravelInsuranceViewModal setModal={getViewModal} data={modalData} />}
         {isDelete && (
           <DeleteConfirmationModal

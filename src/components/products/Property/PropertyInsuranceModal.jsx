@@ -12,10 +12,12 @@ export default function PropertyInsuranceModal({ data, refresh, setModal }) {
     useEffect(()=>{
         fetchInsurer()
         setupInterceptors(() => user, setUser);
-        setPolicy(data.policyType)
-        setDescription(data.description)
+        setPolicy(data.policy)
         setPolicyType(data.policyType)
         setActive(data.active)
+        setRate(data.rate)
+        setDescription(data.description)
+        setInsurerId(data.id)
     },[])
 
     const fetchInsurer = async () => {
@@ -32,12 +34,16 @@ export default function PropertyInsuranceModal({ data, refresh, setModal }) {
 
     const [description, setDescription] = useState("");
     const [policy, setPolicy] = useState("");
-    const [active, setActive] = useState("");
     const [policyType, setPolicyType] = useState("");
     const [loading, setLoading] = useState(false)
     const [success, setSuccess] = useState(false)
     const [failed, setFailed] = useState(false)
     const [close, setClose] = useState(false)
+    const [rate, setRate] = useState("")
+    const [insurerId, setInsurerId] = useState(0)
+    const [active, setActive] = useState(false)
+
+
 
      
 
@@ -45,11 +51,12 @@ export default function PropertyInsuranceModal({ data, refresh, setModal }) {
         e.preventDefault()        
         setLoading(true)
         try{
-            const response = await InsuranceApi.put(`//${data.categoryId}`,{
-                categoryName,
+            const response = await InsuranceApi.put(`/property-details/${data.id}`,{
+                insurerId,
+                policy,
+                policyType,
                 description,
-                iconUrl,
-                isActive
+                rate
             })
             if(response.data&&response.data.httpStatus==="OK"){
                 setSuccess(true)
@@ -203,10 +210,11 @@ export default function PropertyInsuranceModal({ data, refresh, setModal }) {
                                 id="systemAdOns"
                                 name="systemAdOns"
                                 className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
+                                onChange={(e) => setActive(e.target.value)}
                             >
                                 <option value="">{data.active?"Active":"Inactive"}</option>
-                                <option onClick={()=>setIsActive(true)}>Active</option>
-                                <option onClick={()=>setIsActive(false)}>Inactive</option>
+                                <option value={true}>Active</option>
+                                <option value={false}>Inactive</option>
                             </select>
                         </div>
                     </div>

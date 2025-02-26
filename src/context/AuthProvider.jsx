@@ -88,9 +88,9 @@ export function AuthProvider({ children }) {
       return false
     }
 
-    // localStorage.removeItem("access_token")
-    // localStorage.removeItem("refresh_token")
-    // localStorage.removeItem("userNum")
+    localStorage.removeItem("access_token")
+    localStorage.removeItem("refresh_token")
+    localStorage.removeItem("userNum")
     setUser(null)
     setUserDetails(null)
 
