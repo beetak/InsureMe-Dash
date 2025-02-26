@@ -115,6 +115,7 @@ export default function QuotationModal({ setModal }) {
         const fetchQuotes = async () => {
             setLoading(true)
             setQuotations([])
+            setStatusMessage("")
 
 
             const results = []
@@ -155,21 +156,20 @@ export default function QuotationModal({ setModal }) {
                       });
                       results.push(...modifiedResults);
                     }
+                    setStatusMessage("Quotations fetched successfully")
                 }
-            } catch (error) {
-                console.error("Error fetching quote:", error)
-                return null
+                else{
+                    setStatusMessage(response.data.message)
+                }
             }
-            if(results.length>0)
-                setStatusMessage("Quotes loaded successfully.")
-            else
-                setStatusMessage("Error fetching quotations.")
-            setQuotations(results)
-            setLoading(false)
-            if(results.length>0)
-                setStatusMessage("Quotes loaded successfully.")
-            else
-                setStatusMessage("Error fetching quotations.")
+            catch (error) {
+                    console.error("Error fetching quote:", error)
+                    setStatusMessage("Failed to fetch quotes")
+                    return null
+            }   
+            finally{
+                setLoading(false)
+            }
             setQuotations(results)
             setLoading(false)
         }

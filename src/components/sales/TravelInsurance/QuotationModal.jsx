@@ -121,6 +121,7 @@ export default function QuotationModal({ setModal }) {
             try {
                 const { currency, phoneNumber, email, ...newTravelData} = travelData;
                 const response = await InsuranceApi.post(`/travel-customers`, newTravelData)
+                console.log("travel response: ", response)
                 if (response.status === 201 && response.data.code === "CREATED") {
                     if (response.data.data) {
                       const quoteResult = response.data.data.travelCustomer;
@@ -139,21 +140,19 @@ export default function QuotationModal({ setModal }) {
                       });
                       results.push(...modifiedResults);
                     }
+                    setStatusMessage("Quotations fetched successfully")
+                }
+                else{
+                    setStatusMessage(response.data.message)
                 }
             } catch (error) {
                 console.error("Error fetching quote:", error)
+                setStatusMessage("Failed to fetch quotes")
                 return null
             }
-            if(results.length>0)
-                setStatusMessage("Quotes loaded successfully.")
-            else
-                setStatusMessage("Error fetching quotations.")
-            setQuotations(results)
-            setLoading(false)
-            if(results.length>0)
-                setStatusMessage("Quotes loaded successfully.")
-            else
-                setStatusMessage("Error fetching quotations.")
+            finally{
+                setLoading(false)
+            }
             setQuotations(results)
             setLoading(false)
         }
@@ -476,6 +475,21 @@ export default function QuotationModal({ setModal }) {
         )
     }, [paymentStates, handlePaymentOption, handleMobileChange, mobilePayment, cashPayment, processingPayment, paymentStatus]) // Update 5
 
+    function calculatedAge(dob) {
+        const birthDate = new Date(dob);
+        const today = new Date();
+        
+        let age = today.getFullYear() - birthDate.getFullYear() -1;
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        
+        // Adjust age if the birthday hasn't occurred yet this year
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        
+        return age;
+    }
+
     return (
         <div className='flex flex-col flex-1 h-screen justify-center bg-gray-200 bg-opacity-50 items-center fixed inset-0 z-50'
         >
@@ -511,7 +525,7 @@ export default function QuotationModal({ setModal }) {
                                 <h2 className="text-lg font-semibold mb-2">Vehicle Details</h2>
                                 <p className='text-sm flex uppercase'><span className='w-16 font-semibold'>Name:</span>{travelData.travelers[0].fullName}</p>
                                 <p className='text-sm flex uppercase'><span className='w-16 font-semibold'>Pass N.:</span>{travelData.travelers[0].passportNumber}</p>
-                                <p className='text-sm flex'><span className='w-16 font-semibold'>Age:</span>{travelData.travelers[0].dob}</p>
+                                <p className='text-sm flex'><span className='w-16 font-semibold'>Age:</span>{calculatedAge(travelData.travelers[0].dob)}</p>
                                 <p className='text-sm flex'><span className='w-16 font-semibold'>Res:</span>{travelData.residence}</p>
                                 <p className='text-sm flex'><span className='w-16 font-semibold'>Dest:</span>{travelData.destination}</p>
                             </div>
@@ -585,8 +599,26 @@ export default function QuotationModal({ setModal }) {
                 )}
                 {!loading && (!travelData || quotations.length === 0) && (
                     <div className="flex w-full flex-col border border-gray-300 rounded-2xl justify-center items-center py-3 mt-2">
-                        <i className='fa fa-triangle-exclamation text-[54px]' />
-                        Oops, something went wrong
+                        {
+                            statusMessage ?(
+                                <>
+                                    <svg
+                                        width="100"
+                                        height="100"
+                                        viewBox="0 0 100 100"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                        <circle cx="50" cy="50" r="40" fill="none" stroke="#FF0000" stroke-width="5" />
+                                        <line x1="30" y1="30" x2="70" y2="70" stroke="#FF0000" stroke-width="5" />
+                                        <line x1="30" y1="70" x2="70" y2="30" stroke="#FF0000" stroke-width="5" />
+                                    </svg>
+                                    {statusMessage}
+                                </>
+                            ):(<>
+                                <i className='fa fa-triangle-exclamation text-[54px]' />
+                                Oops, something went wrong
+                            </>)
+                        }
                     </div>
                 )}
                 {statusMessage && (

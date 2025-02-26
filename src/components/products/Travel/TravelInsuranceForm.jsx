@@ -235,9 +235,14 @@ export default function TravelInsuranceForm() {
                                 onChange={handleChange}
                                 value={policyData["continent"]||""}
                             >
-                                <option value="Option 0">Continent</option>
+                                <option value="">Continent</option>
                                 <option value="AFRICA">Africa</option>
                                 <option value="EUROPE">Europe</option>
+                                <option value="NORTH_AMERICA">North America</option>
+                                <option value="SOUTH_AMERICA">South America</option>
+                                <option value="OCEANIA">Oceania</option>
+                                <option value="ASIA">Asia</option>
+                                <option value="ANTARCTICA">Antarctica</option>
                             </select>
                         </div>
                     </div>

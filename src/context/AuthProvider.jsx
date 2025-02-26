@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, useEffect, useCallback, useNavigate } from "react"
 import axiosInstance from "../components/api/AuthApi"
 import { decodeToken } from "../pages/login/tokenUtils"
+import { useColors } from "./ColorProvider"
 
 const AuthContext = createContext(null)
 
@@ -10,6 +11,7 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [userDetails, setUserDetails] = useState(null)
   const [loading, setLoading] = useState(true)
+  const colorContext = useColors()
 
   const fetchUserDetails = useCallback(async (userId, role) => {
     try {
@@ -91,6 +93,13 @@ export function AuthProvider({ children }) {
     // localStorage.removeItem("userNum")
     setUser(null)
     setUserDetails(null)
+
+     // Clear color context data
+    if (colorContext) {
+      console.log("Clearing color context data", colorContext.companyDetails)
+      colorContext.setCompanyDetails(null)
+      colorContext.updateColors(null)
+    }
     delete axiosInstance.defaults.headers["Authorization"]
     console.log("Logout completed")
     return true

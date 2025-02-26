@@ -154,7 +154,7 @@
       { "name": "United Kingdom", "flag": "🇬🇧" },
       { "name": "Vatican City", "flag": "🇻🇦" }
     ],
-    "NORTH AMERICA": [
+    "NORTH_AMERICA": [
       { "name": "Antigua and Barbuda", "flag": "🇦🇬" },
       { "name": "Bahamas", "flag": "🇧🇸" },
       { "name": "Barbados", "flag": "🇧🇧" },
@@ -195,7 +195,7 @@
       { "name": "Tuvalu", "flag": "🇹🇻" },
       { "name": "Vanuatu", "flag": "🇻🇺" }
     ],
-    "SOUTH AMERICA": [
+    "SOUTH_AMERICA": [
       { "name": "Argentina", "flag": "🇦🇷" },
       { "name": "Bolivia", "flag": "🇧🇴" },
       { "name": "Brazil", "flag": "🇧🇷" },

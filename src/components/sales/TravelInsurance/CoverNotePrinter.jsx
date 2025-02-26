@@ -39,6 +39,21 @@ const CoverNotePrinter = (quoteData) => {
     });
   };
 
+  function calculatedAge(dob) {
+    const birthDate = new Date(dob);
+    const today = new Date();
+    
+    let age = today.getFullYear() - birthDate.getFullYear() -1;
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    
+    // Adjust age if the birthday hasn't occurred yet this year
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+    }
+    
+    return age;
+}
+
   const calculateDaysBetweenDates = (startDate, endDate) => {
     // Validate the format of the input dates
     const dateFormat = /^\d{4}-\d{2}-\d{2}$/;
@@ -129,7 +144,7 @@ const CoverNotePrinter = (quoteData) => {
       addText(230, yPosition, `${traveler.passportNumber}`, 10, "normal")
 
       addText(300, yPosition, `AGE:`, 7, "italic")
-      addText(320, yPosition, `${traveler.age}`, 10, "normal")
+      addText(320, yPosition, `${calculatedAge(traveler.age)}`, 10, "normal")
       yPosition += 25
     })
 
