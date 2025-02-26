@@ -425,7 +425,7 @@ export default function Transaction() {
                         <span className="font-semibold">Transaction Reference Number</span>
                       </div>
                       <div className="flex flex-col items-end">
-                        <span className="font-semibold">{formatCurrency(sales.amount)}</span>
+                        <span className="font-semibold">{formatCurrency(sales.amount) || sales.currency}</span>
                         <span className="font-semibold">{sales.referenceNumber}</span>
                       </div>
                     </div>

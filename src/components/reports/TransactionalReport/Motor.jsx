@@ -1,4 +1,4 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
 import { motion } from 'framer-motion'
 
 export default function Motor({sales}) {
@@ -31,28 +31,28 @@ export default function Motor({sales}) {
                                 <div className="space-y-4">
                                     <div className="flex-col w-full py-1 px-6 text-sm">
                                         <p className="text-sm">
-                                            <span className="inline-block w-44">Vehicle Registration: </span>{sales.transactionDescription.vehicle.VRN}
+                                            <span className="inline-block w-44">Vehicle Registration: </span>{sales?.transactionDescription?.vehicle.VRN}
                                         </p>
                                         <p className="text-sm">
-                                            <span className="inline-block w-44">Vehicle: </span>{sales.transactionDescription.vehicle.make} {sales.transactionDescription.vehicle.model}
+                                            <span className="inline-block w-44">Vehicle: </span>{sales?.transactionDescription?.vehicle.make} {sales?.transactionDescription?.vehicle.model}
                                         </p>
                                         <p className="text-sm">
-                                            <span className="inline-block w-44">Year Of Manufacture: </span>{sales.transactionDescription.vehicle.year}
+                                            <span className="inline-block w-44">Year Of Manufacture: </span>{sales?.transactionDescription?.vehicle.year}
                                         </p>
                                         <p className="text-sm">
                                             <span className="inline-block w-44">Usage: </span>Transport
                                         </p>
                                         <p className="text-sm">
-                                            <span className="inline-block w-44">Policy: </span>{sales.transactionDescription.policy.insuranceType} - ${sales.transactionDescription.policy.premiumAmount}
+                                            <span className="inline-block w-44">Policy: </span>{sales?.transactionDescription?.policy.insuranceType} - ${sales?.transactionDescription?.policy.premiumAmount}
                                         </p>
                                         <p className="text-sm">
-                                            <span className="inline-block w-44">Broker Name: </span>{sales.transactionDescription.policy.insuranceCompany}
+                                            <span className="inline-block w-44">Broker Name: </span>{sales?.transactionDescription?.policy.insuranceCompany}
                                         </p>
                                         <p className="text-sm">
-                                            <span className="inline-block w-44">Start Date: </span>{formatDate(sales.transactionDescription.policy.startDate)}
+                                            <span className="inline-block w-44">Start Date: </span>{formatDate(sales?.transactionDescription?.policy.startDate)}
                                         </p>
                                         <p className="text-sm">
-                                            <span className="inline-block w-44">End Date: </span>{formatDate(sales.transactionDescription.policy.endDate)}
+                                            <span className="inline-block w-44">End Date: </span>{formatDate(sales?.transactionDescription?.policy.endDate)}
                                         </p>
                                     </div>
                                 </div>
