@@ -52,7 +52,7 @@ const CoverNotePrinter = (quoteData) => {
     }
     
     return age;
-}
+  }
 
   const calculateDaysBetweenDates = (startDate, endDate) => {
     // Validate the format of the input dates

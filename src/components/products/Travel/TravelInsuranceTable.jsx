@@ -251,7 +251,7 @@ export default function TravelInsuranceTable() {
                     </button>
                     <button
                       onClick={() => {
-                        setItemId(item.insuranceId)
+                        setItemId(item.id)
                         setIsDelete(true)
                       }}
                       className="space-x-2 border-gray-300 items-center rounded-r-full px-4 h-6 bg-gray-700 text-gray-100 hover:text-gray-700 hover:bg-white transition-colors duration-200"

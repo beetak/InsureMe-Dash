@@ -88,10 +88,27 @@ export default function PropertyInsuranceTable() {
     }
   }
 
-  const handleDelete = (insuranceId) => {
+  const handleDelete = async (id) => {
     setLoading(true)
     setMessage("Deleting...")
     setIsDelete(true)
+    try{
+      const response = await InsuranceApi.delete(`/insurer-property-rates/${id}`)
+      if(response&&response.data.code==="OK"){
+        setMessage("Deleted")
+      }
+    }
+    catch(err){
+        console.log(err)
+    }
+    finally{
+      setTimeout(()=>{
+        setLoading(false)
+        setIsDelete(false)
+        setMessage('')
+      },1000)
+      getPropertyProducts()
+    }
   }
 
   const renderTableHeader = () => {
@@ -182,7 +199,7 @@ export default function PropertyInsuranceTable() {
                 </button>
                 <button
                   onClick={() => {
-                    setItemId(item.insuranceId)
+                    setItemId(item.id)
                     setIsDelete(true)
                   }}
                   className={`space-x-2 border-gray-300 items-center rounded-r-full px-4 h-6 bg-gray-700 text-gray-100 hover:text-gray-700 hover:bg-white`}
