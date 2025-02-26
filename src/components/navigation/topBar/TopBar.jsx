@@ -126,18 +126,20 @@ export default function TopBar({isOpen}) {
                             </div>
                         </div>
                         <div>
-                            <div className="flex items-center justify-center text-sm">
+                            <div className="flex items-center justify-center text-sm space-x-4">
                                 {userData && userData.userShops.length > 0 && (
-                                    <span>Region: {userData.userShops[0].regionName}</span>
+                                    <span className='bg-main-color text-white py-1 px-4 rounded-full'>Region: {userData.userShops[0].regionName}</span>
                                 )}
+                                <div className={`${(userData && userData.userShops.length < 1)&&"hidden"} flex bg-main-color w-2 h-2 rounded-full`}></div>
                                 {userData && userData.userShops.length > 0 && (
-                                    <span>Town: {userData.userShops[0].townName}</span>
+                                    <span className='bg-main-color text-white py-1 px-4 rounded-full'>Town: {userData.userShops[0].townName}</span>
                                 )}
+                                <div className={`${(userData && userData.userShops.length < 1)&&"hidden"} flex bg-main-color w-2 h-2 rounded-full`}></div>
                                 {userData && userData.userShops.length > 0 && (
-                                    <span>Shop: {userData.userShops[0].shopName}</span>
+                                    <span className='bg-main-color text-white py-1 px-4 rounded-full'>Shop: {userData.userShops[0].shopName}</span>
                                 )}
                                 {userData && userData.userShops.length < 1 && userData.userShops.length < 1 &&  userData.userShops.length < 1 && (
-                                    <span>National Access</span>
+                                    <span className='bg-main-color text-white py-1 px-4 rounded-full'>National Access</span>
                                 )}
                             </div>
                         </div>

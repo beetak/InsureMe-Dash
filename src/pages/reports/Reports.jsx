@@ -151,7 +151,7 @@ export default function Reports() {
                           </div>
                         }
                         {/* Tab 5 content */}
-                        {activeTab === 9 && 
+                        {activeTab === 11 && 
                           <div className="p-7 bg-white rounded-xs border border-gray-200 border-solid border-1">
                             <SalesTable/>
                           </div>

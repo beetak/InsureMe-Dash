@@ -61,7 +61,7 @@ export function AuthProvider({ children }) {
       try {
         const response = await axiosInstance.post("/auth/refresh-token")
         console.log("Token verification response:", response.data)
-        return response.data.user
+        return response.data
       } catch (error) {
         console.log("Server token verification failed:", error.message)
         // Try decoding token as fallback
@@ -118,9 +118,10 @@ export function AuthProvider({ children }) {
         if (userData) {
           setUser(userData)
           // Fetch user details if we have user data
-          if (userData.userId && userData.role) {
-            await fetchUserDetails(userData.userId, userData.role)
-          }
+          // if (userData.userId && userData.role) {
+            // await fetchUserDetails(userData.userId, userData.role)
+            await fetchUserDetails(1007, "ADMIN")
+          // }
         } else {
           console.log("Token verification failed, checking token expiration")
           // Only logout if token is actually expired
