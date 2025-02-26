@@ -83,22 +83,22 @@ const QuotationPrinter = ({ data }) => {
 
     // Policy details
     addText(50, 140, 'Policy Details', 12, 'bold')
-    addText(50, 150, `Travel Plan:\nIssue Date:`, 10, 'normal')
-    addText(130, 150, `${getInsuranceType(data[0].planName)}\n${formattedDate} ${curTime}}`, 10, 'normal')
+    addText(50, 150, `Travel Plan:\nIssue Date:\nCurrency`, 10, 'normal')
+    addText(130, 150, `${data[0].planName }\n${formattedDate} ${curTime}\n${data[0].currency}`, 10, 'normal')
 
     // Insured details
     addText(50, 180, 'Insured Details', 12, 'bold')
     addText(50, 190, `Name:\nAddress:\nPhone:\nEmail:`, 10, 'normal')
-    addText(130, 190, `${travelData.fullname}\n123 Harare\n${formatPhoneNumber(travelData.phoneNumber)}\n${travelData.email}`, 10, 'normal')
+    addText(130, 190, `${travelData.travelers[0].fullName}\n123 Harare\n${formatPhoneNumber(travelData.phoneNumber)}\n${travelData.email}`, 10, 'normal')
 
     // Vehicle details
-    addText(50, 230, 'Vehicle Details', 12, 'bold')
-    addText(50, 240, `Make:\nModel:\nYear:\nRegistration:`, 10, 'normal')
-    addText(130, 240, `${travelData.make}\n${travelData.model}\n${travelData.YearManufacture}\n${travelData.VRN}`, 10, 'normal')
+    // addText(50, 230, 'Vehicle Details', 12, 'bold')
+    // addText(50, 240, `Make:\nModel:\nYear:\nRegistration:`, 10, 'normal')
+    // addText(130, 240, `${travelData.make}\n${travelData.model}\n${travelData.YearManufacture}\n${travelData.VRN}`, 10, 'normal')
 
     // Notes
-    addText(45, 280, 'Notes', 12, 'bold')
-    addText(45, 290, `Vehicle Registration Number: ${travelData.VRN} is hereby insured against loss subject to the usual conditions of the \nFTP Cover until 31 December 2024 unless Notice of cancellation has been given`, 10, 'normal')
+    // addText(45, 280, 'Notes', 12, 'bold')
+    // addText(45, 290, `Vehicle Registration Number: ${travelData.VRN} is hereby insured against loss subject to the usual conditions of the \nFTP Cover until 31 December 2024 unless Notice of cancellation has been given`, 10, 'normal')
 
     // Coverage data
     let lastY = 300
@@ -121,14 +121,15 @@ const QuotationPrinter = ({ data }) => {
       const textX = 120  // Adjusted for better alignment with logo
       const lineHeight = 10
       addText(textX, borderY + 10, `${coverage.insurerName}`, 10, 'bold')
-      addText(textX, borderY + 10 + lineHeight, `Cover Period: \n${coverage.Policy.DurationMonths} months`, 10, 'normal')
+      addText(textX, borderY + 10 + lineHeight, `Travel Plan: \n${coverage.planName}`, 10, 'normal')
     
       // Add financial details
-      const columnWidth = 70
+      const columnWidth = 60
       const financialDetailsY = borderY + 10 + lineHeight
-      addText(textX + columnWidth, financialDetailsY, `Stamp Duty:\n$${formattedStampDuty(coverage.Policy.StampDuty)}`, 10, 'normal')
-      addText(textX + columnWidth * 2, financialDetailsY, `Govt Levy:\n$${formattedStampDuty(coverage.Policy.GovernmentLevy)}`, 10, 'normal')
-      addText(textX + columnWidth * 3, financialDetailsY, `Premium:\n$${formattedStampDuty(coverage.Policy.PremiumAmount)}`, 10, 'normal')
+      addText(textX + columnWidth, financialDetailsY, `Continent:\n${coverage.continent}`, 10, 'normal')
+      addText(textX + columnWidth * 2, financialDetailsY, `Country:\n${travelData.destination}`, 10, 'normal')
+      addText(textX + columnWidth * 3, financialDetailsY, `Period Range:\n${coverage.periodRange} days`, 10, 'normal')
+      addText(textX + columnWidth * 4, financialDetailsY, `Amount:\n$${coverage.amount}`, 10, 'normal')
     
       // Update lastY for the next iteration
       lastY = borderY + borderHeight

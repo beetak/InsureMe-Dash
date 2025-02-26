@@ -430,6 +430,22 @@ export default function QuotationModal({ setModal }) {
         setStatusMessage("Payment failed: " + error)
     }, [])
 
+    const formatPhoneNumber = (phoneNumber) => {
+        if (phoneNumber.startsWith('0')) {
+            // Replace leading 0 with +263
+            return `263${phoneNumber.slice(1)}`;
+        } else if (phoneNumber.startsWith('+263')) {
+            // Prepend + if it starts with 263
+            return phoneNumber.substring(1);
+        } else if (phoneNumber.startsWith('263')) {
+            // Leave it as is
+            return phoneNumber;
+        } else {
+            // Optionally handle other cases, e.g., return null or an error message
+            return null; // or return phoneNumber to keep it unchanged
+        }
+    };
+
     const mobilePayment = useCallback(
         async (merchantRef, mobile, quotation) => {
           console.log("mobile number: ", mobile)
@@ -440,7 +456,7 @@ export default function QuotationModal({ setModal }) {
             password: "InnoEco@15022023#",
           }
           const paymentBody = {
-            customerMobileNumber: mobile ? `+263${mobile}` : userData.phoneNumber,
+            customerMobileNumber: mobile ? `+263${mobile}` : formatPhoneNumber(userData.phoneNumber),
             merchantRef,
             amount: 0.01,
             transactionDescription: "Insurance Payment",
@@ -584,7 +600,7 @@ export default function QuotationModal({ setModal }) {
             productDescription: `${getInsuranceType(quotation.Policy.InsuranceType)}`,
             transactionDescription: JSON.stringify(transactionDescription),
             referenceNumber: quotation.merchantRef,
-            mobileNumber: userData.phoneNumber,
+            mobileNumber: formatPhoneNumber(userData.phoneNumber),
             paymentStatus: "PENDING",
             paymentMethod: method,
             amount: quotation.amount,

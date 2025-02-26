@@ -268,26 +268,26 @@ export default function UserProfile() {
           {(user.role === "ADMIN" || user.role === "SALES_AGENT") && (
             <div className="flex mt-8 space-x-3">
                 {accountInfo.userShops && accountInfo.userShops.length > 0 ? (
-                    <p className="flex flex-col text-xs font-semibold">
-                        Assigned Region
-                        <span className="text-2xl text-main-color">
-                            {accountInfo.userShops[0].regionName}
-                        </span>
-                    </p>
-                ) : accountInfo.userShops && accountInfo.userShops.length > 0 ? (
-                    <p className="flex flex-col text-xs font-semibold">
+                    <>
+                      <p className="flex flex-col text-xs font-semibold">
+                          Assigned Region
+                          <span className="text-2xl text-main-color">
+                              {accountInfo.userShops[0].regionName}
+                          </span>
+                      </p>
+                      <p className="flex flex-col text-xs font-semibold">
                         Assigned Town
                         <span className="text-2xl text-main-color">
                             {accountInfo.userShops[0].townName}
                         </span>
-                    </p>
-                ) : accountInfo.userShops && accountInfo.userShops.length > 0 ? (
-                    <p className="flex flex-col text-xs font-semibold">
+                      </p>
+                      <p className="flex flex-col text-xs font-semibold">
                         Assigned Shop
                         <span className="text-2xl text-main-color">
                             {accountInfo.userShops[0].shopName}
                         </span>
-                    </p>
+                      </p>
+                    </>
                 ) : (
                     <p className="flex flex-col text-xs font-semibold">
                         Overall Access

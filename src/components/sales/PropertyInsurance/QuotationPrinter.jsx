@@ -8,7 +8,8 @@ import { StepperContext } from '../../../context/StepperContext'
 import insuranceTypes from '../../insuranceTypes.json'
 
 const QuotationPrinter = ({ data }) => {
-  const { travelData } = useContext(StepperContext)
+  console.log("Quotation data", data)
+  const { propertyData, userData } = useContext(StepperContext)
   const [isPrinting, setIsPrinting] = useState(false)
 
   const formatPhoneNumber = useCallback((phoneNumber) => {
@@ -37,6 +38,28 @@ const QuotationPrinter = ({ data }) => {
     const current = new Date(date)
     return current.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
   }, [])
+
+  function formatPolicyName(policy) {
+    if(policy==="DOMESTIC_COMBINED_STANDARD_CONSTRUCTION")
+      return "Domestic Combined Standard Construction"
+    else if(policy==="DOMESTIC_COMBINED_NON_STANDARD_CONSTRUCTION")
+      return "Domestic Combined Non Standard Construction"
+    else{
+      return policy
+    }
+  }
+
+  function formatPolicyType(policy) {
+    if(policy==="HOME_OWNERS")
+      return "Home Owners"
+    else if(policy==="HOUSE_HOLDERS")
+      return "House Holders"
+    else if(policy==="ALL_RISKS")
+      return "All risks"
+    else{
+      return policy
+    }
+  }
 
   const printCoverNote = useCallback(() => {
     setIsPrinting(true)
@@ -83,52 +106,51 @@ const QuotationPrinter = ({ data }) => {
 
     // Policy details
     addText(50, 140, 'Policy Details', 12, 'bold')
-    addText(50, 150, `Travel Plan:\nIssue Date:`, 10, 'normal')
-    addText(130, 150, `${getInsuranceType(data[0].planName)}\n${formattedDate} ${curTime}}`, 10, 'normal')
+    addText(50, 150, `Cover Policy:\nIssue Date:`, 10, 'normal')
+    addText(130, 150, `${formatPolicyName(data[0].policy)}\n${formattedDate} ${curTime}}`, 10, 'normal')
 
     // Insured details
     addText(50, 180, 'Insured Details', 12, 'bold')
     addText(50, 190, `Name:\nAddress:\nPhone:\nEmail:`, 10, 'normal')
-    addText(130, 190, `${travelData.fullname}\n123 Harare\n${formatPhoneNumber(travelData.phoneNumber)}\n${travelData.email}`, 10, 'normal')
+    addText(130, 190, `${userData.fullName}\n123 Harare\n${formatPhoneNumber(userData.phoneNumber)}\n${userData.email}`, 10, 'normal')
 
-    // Vehicle details
-    addText(50, 230, 'Vehicle Details', 12, 'bold')
-    addText(50, 240, `Make:\nModel:\nYear:\nRegistration:`, 10, 'normal')
-    addText(130, 240, `${travelData.make}\n${travelData.model}\n${travelData.YearManufacture}\n${travelData.VRN}`, 10, 'normal')
+    // // Vehicle details
+    // addText(50, 230, 'Vehicle Details', 12, 'bold')
+    // addText(50, 240, `Make:\nModel:\nYear:\nRegistration:`, 10, 'normal')
+    // addText(130, 240, `${propertyData.make}\n${propertyData.model}\n${propertyData.YearManufacture}\n${propertyData.VRN}`, 10, 'normal')
 
-    // Notes
-    addText(45, 280, 'Notes', 12, 'bold')
-    addText(45, 290, `Vehicle Registration Number: ${travelData.VRN} is hereby insured against loss subject to the usual conditions of the \nFTP Cover until 31 December 2024 unless Notice of cancellation has been given`, 10, 'normal')
+    // // Notes
+    // addText(45, 280, 'Notes', 12, 'bold')
+    // addText(45, 290, `Vehicle Registration Number: ${propertyData.VRN} is hereby insured against loss subject to the usual conditions of the \nFTP Cover until 31 December 2024 unless Notice of cancellation has been given`, 10, 'normal')
 
     // Coverage data
     let lastY = 300
-    data.forEach((coverage, index) => {
+    data.forEach((item, index) => {
       // Calculate positions and dimensions
       const borderY = lastY + 5
       const borderWidth = pageWidth - 80
       const borderHeight = 35  // Increased for better spacing
       const cornerRadius = 5
-      const logoUrl = coverage.insurerLogo || '/images/questionmark.png'
+      const logoUrl = data[0].insurerLogo || '/images/questionmark.png'
     
-      // Draw rounded rectangle for the coverage
+      // Draw rounded rectangle for the item
       doc.setDrawColor(0, 0, 0)
       doc.roundedRect(45, borderY, borderWidth, borderHeight, cornerRadius, cornerRadius)
     
       // Add insurer logo
       doc.addImage(logoUrl, 'PNG', 55, borderY + 7.5, 35, 25)  // Adjusted size and position
     
-      // Add coverage details
+      // Add policy details
       const textX = 120  // Adjusted for better alignment with logo
       const lineHeight = 10
-      addText(textX, borderY + 10, `${coverage.insurerName}`, 10, 'bold')
-      addText(textX, borderY + 10 + lineHeight, `Cover Period: \n${coverage.Policy.DurationMonths} months`, 10, 'normal')
+      addText(textX, borderY + 10, `${item.insurerName}`, 10, 'bold')
+      addText(textX, borderY + 10 + lineHeight, `Policy: \n${formatPolicyType(item.policyType)}`, 10, 'normal')
     
       // Add financial details
-      const columnWidth = 70
+      const columnWidth = 80
       const financialDetailsY = borderY + 10 + lineHeight
-      addText(textX + columnWidth, financialDetailsY, `Stamp Duty:\n$${formattedStampDuty(coverage.Policy.StampDuty)}`, 10, 'normal')
-      addText(textX + columnWidth * 2, financialDetailsY, `Govt Levy:\n$${formattedStampDuty(coverage.Policy.GovernmentLevy)}`, 10, 'normal')
-      addText(textX + columnWidth * 3, financialDetailsY, `Premium:\n$${formattedStampDuty(coverage.Policy.PremiumAmount)}`, 10, 'normal')
+      addText(textX + columnWidth, financialDetailsY, `Price:\n$${item.calculatedPrice}`, 10, 'normal')
+      addText(textX + columnWidth * 2, financialDetailsY, `Govt Levy:\n$${item.insurerEmail}`, 10, 'normal')
     
       // Update lastY for the next iteration
       lastY = borderY + borderHeight
@@ -142,7 +164,7 @@ const QuotationPrinter = ({ data }) => {
 
     doc.save('insurance_cover_note.pdf')
     setIsPrinting(false)
-  }, [data, travelData, travelData, formatPhoneNumber, getInsuranceType, formattedStampDuty, getDates])
+  }, [data, propertyData, propertyData, formatPhoneNumber, getInsuranceType, formattedStampDuty, getDates])
 
   return (
     <motion.div variants={buttonVariants}>

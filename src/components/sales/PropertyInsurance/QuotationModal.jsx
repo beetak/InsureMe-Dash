@@ -60,6 +60,7 @@ export default function QuotationModal({ setModal }) {
         }
         setIsSending(false)
     }
+
     const sendNote = async ()=>{
         setIsSending(true)
         try{
@@ -134,7 +135,7 @@ export default function QuotationModal({ setModal }) {
                 const modifiedPropertyData = {
                     ...restPropertyData,
                     coverType: coverType || 'undefined', // Default value if none applies
-                    ...(propertyValue && { propertyValue }) // Include if not empty
+                    value: (Number(propertyData.value) || 0) + (Number(propertyValue) || 0)
                 };
                 const response = await InsuranceApi.post(`property-details`, modifiedPropertyData)
                 console.log(response)
@@ -187,6 +188,22 @@ export default function QuotationModal({ setModal }) {
         setStatusMessage("Payment failed: " + error)
     }, [])
 
+    const formatPhoneNumber = (phoneNumber) => {
+        if (phoneNumber.startsWith('0')) {
+          // Replace leading 0 with +263
+          return `263${phoneNumber.slice(1)}`;
+        } else if (phoneNumber.startsWith('+263')) {
+          // Prepend + if it starts with 263
+          return phoneNumber.substring(1);
+        } else if (phoneNumber.startsWith('263')) {
+          // Leave it as is
+          return phoneNumber;
+        } else {
+          // Optionally handle other cases, e.g., return null or an error message
+          return null; // or return phoneNumber to keep it unchanged
+        }
+    };
+
     const mobilePayment = useCallback(
         async (merchantRef, mobile, quotation) => {
           console.log("mobile number: ", mobile)
@@ -197,7 +214,7 @@ export default function QuotationModal({ setModal }) {
             password: "InnoEco@15022023#",
           }
           const paymentBody = {
-            customerMobileNumber: mobile ? `+263${mobile}` : propertyData.phoneNumber,
+            customerMobileNumber: mobile ? `+263${mobile}` : formatPhoneNumber(propertyData.phoneNumber),
             merchantRef,
             amount: quotation.calculatedPrice,
             transactionDescription: "Insurance Payment",
@@ -325,7 +342,7 @@ export default function QuotationModal({ setModal }) {
             productDescription: `property insurance`,
             transactionDescription: JSON.stringify(transactionDescription),
             referenceNumber: quotation.merchantRef,
-            mobileNumber: userData.phoneNumber,
+            mobileNumber: formatPhoneNumber(userData.phoneNumber),
             paymentStatus: "ACCEPTED",
             paymentMethod: method,
             amount: quotation.calculatedPrice,
