@@ -116,6 +116,8 @@ export default function PropertyInsuranceTable() {
       { key: "item", label: "#", width: "1" },
       { key: "policy", label: "Policy" },
       { key: "policyType", label: "Policy Type" },
+      { key: "rate", label: "Rate %" },
+      { key: "insurer", label: "Broker Name" },
       { key: "action", label: "Action" },
     ]
 
@@ -147,6 +149,16 @@ export default function PropertyInsuranceTable() {
     )
   }
 
+  function formatPolicyName(policy) {
+    if(policy==="DOMESTIC_COMBINED_STANDARD_CONSTRUCTION")
+      return "DCSC"
+    else if(policy==="DOMESTIC_COMBINED_NON_STANDARD_CONSTRUCTION")
+      return "DCNSC"
+    else{
+      return policy
+    }
+  }
+
   const renderTableRows = () => {
     if (!propertyInsurance || propertyInsurance.length === 0) {
       return (
@@ -170,8 +182,10 @@ export default function PropertyInsuranceTable() {
         <td className="font-bold text-blue-500 justify-center items-center w-7">
           <div className="w-full justify-center flex items-center">{index + 1 + (currentPage - 1) * itemsPerPage}</div>
         </td>
-        <td>{item.policy}</td>
+        <td>{formatPolicyName(item.policy)}</td>
         <td>{item.policyType}</td>
+        <td>{item.rate}</td>
+        <td>{item.insurerName}</td>
         <td className="py-1 space-x-0 justify-center">
           <div className="w-full justify-center flex items-center">
             <button
@@ -325,6 +339,13 @@ export default function PropertyInsuranceTable() {
                 )}
               </select>
             </div>
+          </div>
+        </div>
+        <div className="flex mb-2">
+          <div className="w-1/2">
+            <h1 className="text-xs text-gray-600">Policy Type Abbreviations</h1>
+            <p>DCSC: <span>Domestic Combined Standard Combined</span></p>
+            <p>DCNSC: <span>Domestic Combined Non Standard Combined</span></p>
           </div>
         </div>
         <div className="overflow-auto rounded:xl shadow-md">

@@ -123,6 +123,16 @@ export default function InsurancePolicyTable() {
       </td>
     </tr>
   }
+
+  function formatPolicyName(policy) {
+    if(policy==="DOMESTIC_COMBINED_STANDARD_CONSTRUCTION")
+      return "Domestic Combined Standard Construction"
+    else if(policy==="DOMESTIC_COMBINED_NON_STANDARD_CONSTRUCTION")
+      return "Domestic Combined Non Standard Construction"
+    else{
+      return policy
+    }
+  }
   
   const renderTableRows = () => {
     return products?products.map((item, index) => (

@@ -40,6 +40,14 @@ export default function InsuranceCategory() {
     setActiveTab(tabIndex);
   };
 
+    useEffect(() => {
+      const params = new URLSearchParams(location.search)
+      const polTab = params.get('insuranceTab')
+      if (polTab) {
+          setActiveTab(userRole==='INSURER_ADMIN' ? 1 : 2)
+      }
+    }, [location])
+
   return (
     <>
       <DisplayLayout>

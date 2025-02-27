@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import WindowCard from '../../components/windowCard/WindowCard'
-import SideBar from '../../components/navigation/sideBar/SideBar';
-import TopBar from '../../components/navigation/topBar/TopBar';
 import PolicyForm from '../../components/policy/PolicyForm';
 import PolicyTable from '../../components/policy/PolicyTable';
 import { fetchAsyncCategory } from '../../store/category-store';

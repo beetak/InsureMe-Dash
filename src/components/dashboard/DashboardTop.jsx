@@ -87,7 +87,7 @@ export default function DashboardTop() {
     };
 
     const navigateToPolicies = () => {
-        navigate('/policy?policyTab=true');
+        navigate('/insurance-type?insuranceTab=true');
     };
 
     const navigateToQuotes = () => {
