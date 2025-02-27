@@ -39,10 +39,10 @@ export default function SideBar({ isOpen, setIsOpen }) {
             ]
         },
         // { title: "Insurers", src: "/insurers", icon: "fas fa-users", tab:"partner"},
-        { title: "Revenue", icon: "fas fa-bank", tab:"revenue", dropdown: true,
+        { title: "Reports", icon: "fas fa-bank", tab:"reports", dropdown: true,
             submenuItems: [,
-                { title: "Commisions", src: "/commissions", icon: "fas fa-user", tab:"revenue"},
-                { title: "Reports", src: "/reports", icon: "fas fa-file-alt", tab:"revenue"},
+                { title: "Commisions", src: "/commissions", icon: "fas fa-user", tab:"reports"},
+                { title: "Revenue", src: "/revenue", icon: "fas fa-file-alt", tab:"reports"},
                 // { title: "Cover Notes", src: "/notes", icon: "fas fa-shield", tab:"revenue"},
                 // { title: "Claims", src: "/claims", icon: "fas fa-chart-bar", tab:"revenue"},
             ]
@@ -96,13 +96,13 @@ export default function SideBar({ isOpen, setIsOpen }) {
         if (menu.title === "Insurance" && (userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN")) {
           return true;
         } 
-        if (menu.title === "Revenue" && (userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN" || userRole === "SALES_AGENT" || userRole === "INSURER_ADMIN" || userRole === "IT_ADMIN" || userRole === "PRODUCT_MANAGER" || userRole === "IT_SUPPORT" || userRole === "MANAGER" || userRole === "TREASURY_ACCOUNTANT")) {
+        if (menu.title === "Reports" && (userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN" || userRole === "SALES_AGENT" || userRole === "INSURER_ADMIN" || userRole === "IT_ADMIN" || userRole === "PRODUCT_MANAGER" || userRole === "IT_SUPPORT" || userRole === "MANAGER" || userRole === "TREASURY_ACCOUNTANT")) {
             const filteredSubmenuItems = menu.submenuItems.filter((submenu) => {
                 // Submenu filtering logic based on userRole
                 if (submenu.title === "Commissions" &&(userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN")) {
                     return true;
                 }
-                if (submenu.title === "Reports" &&(userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN" || userRole === "INSURER_ADMIN" || userRole === "SALES_AGENT" || userRole === "IT_ADMIN" || userRole === "PRODUCT_MANAGER" || userRole === "IT_SUPPORT" || userRole === "MANAGER" || userRole === "TREASURY_ACCOUNTANT")) {
+                if (submenu.title === "Revenue" &&(userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN" || userRole === "INSURER_ADMIN" || userRole === "SALES_AGENT" || userRole === "IT_ADMIN" || userRole === "PRODUCT_MANAGER" || userRole === "IT_SUPPORT" || userRole === "MANAGER" || userRole === "TREASURY_ACCOUNTANT")) {
                     return true;
                 }    
                 if (submenu.title === "Cover Notes" &&(userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN" || userRole === "INSURER_ADMIN" || userRole === "IT_ADMIN" || userRole === "PRODUCT_MANAGER" || userRole === "IT_SUPPORT" || userRole === "MANAGER" || userRole === "TREASURY_ACCOUNTANT")) {

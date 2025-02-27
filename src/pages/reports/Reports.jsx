@@ -49,7 +49,7 @@ export default function Reports() {
     // { title: "Commission", icon: "fas fa-book", tab:4 },
     { title: "Agent Sales", icon: "fas fa-book", tab:(userRole==='ADMIN' || userRole==='SALES_AGENT')?1:3 },
     // { title: "Tax", icon: "fas fa-book", tab:5 },
-    { title: "Shop Sales", icon: "fas fa-book", tab:5 },
+    { title: "National Sales", icon: "fas fa-book", tab:5 },
     // { title: "Policy", icon: "fas fa-book", tab:6 },
     { title: "Insurer", icon: "fas fa-book", tab:7 },
     // { title: "Sales", icon: "fas fa-book", tab:userRole==='INSURER_ADMIN'?2:'' },
@@ -68,7 +68,7 @@ export default function Reports() {
     if (menu.title === "Policy" && (userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN")) {
       return true;
     }
-    if (menu.title === "Shop Sales" && (userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN")) {
+    if (menu.title === "National Sales" && (userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN")) {
       return true;
     }
     if (menu.title === "Insurer" && (userRole === "SUPER_ADMINISTRATOR" || userRole === "ADMIN")) {

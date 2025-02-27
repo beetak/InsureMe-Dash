@@ -117,13 +117,13 @@ export default function ShopSales() {
         setMessage("No sales record found")
       }
     } catch (err) {
-        setLoading(false);
-        console.log("Error fetching resource: ", err);
-        if (err.response && err.response.status === 404) {
-            setMessage(err.response.data.message);
-        } else {
-            setMessage("Error Fetching Resource");
-        }
+      setLoading(false)
+      console.log("Error fetching resource: ", err)
+      if (err.response && err.response.status === 404) {
+        setMessage(err.response.data.message)
+      } else {
+        setMessage("Error Fetching Resource")
+      }
     } finally {
       setTimeout(() => {
         setLoading(false)
@@ -191,7 +191,7 @@ export default function ShopSales() {
   }
 
   const renderTableRows = () => {
-    if (!sales || !sales.data || !sales.data.TRAVEL) {
+    if (!sales || !sales.data) {
       return (
         <tr>
           <td colSpan={5} className="text-center py-4">
@@ -201,27 +201,27 @@ export default function ShopSales() {
       )
     }
 
-    return Object.entries(sales.data).map(([policyName, policyData], index) => (
-        <tr key={policyName} className={`p-3 text-sm text-gray-600 font-semibold ${index % 2 === 1 ? "bg-gray-50" : ""}`}>
-            <td className="font-bold text-blue-5 justify-center items-center w-7">
-                <div className="w-full justify-center flex items-center">{index + 1}</div>
-            </td>
-            <td>{policyName}</td>
-            <td>
-              <div className="flex w-full justify-around">
-                <div>{policyData.USD ? policyData.USD.toFixed(2) : "0.00"}</div>
-                <div>{policyData.ZWG ? policyData.ZWG.toFixed(2) : "0.00"}</div>
-              </div>
-            </td>
-            <td>
-              <div className="flex w-full justify-around">
-                <div>{policyData.USD_TAX ? policyData.USD_TAX.toFixed(2) : "0.00"}</div>
-                <div>{policyData.ZWG_TAX ? policyData.ZWG_TAX.toFixed(2) : "0.00"}</div>
-              </div>
-            </td>
-        </tr>
-      ))
-    }
+    return Object.entries(sales.data).map(([brokerName, brokerData], index) => (
+      <tr key={brokerName} className={`p-3 text-sm text-gray-600 font-semibold ${index % 2 === 1 ? "bg-gray-50" : ""}`}>
+        <td className="font-bold text-blue-5 justify-center items-center w-7">
+          <div className="w-full justify-center flex items-center">{index + 1}</div>
+        </td>
+        <td>{brokerName}</td>
+        <td>
+          <div className="flex w-full justify-around">
+            <div>{brokerData.USD ? brokerData.USD.toFixed(2) : "0.00"}</div>
+            <div>{brokerData.ZWG ? brokerData.ZWG.toFixed(2) : "0.00"}</div>
+          </div>
+        </td>
+        <td>
+          <div className="flex w-full justify-around">
+            <div>{brokerData.USD_TAX ? brokerData.USD_TAX.toFixed(2) : "0.00"}</div>
+            <div>{brokerData.ZWG_TAX ? brokerData.ZWG_TAX.toFixed(2) : "0.00"}</div>
+          </div>
+        </td>
+      </tr>
+    ))
+  }
 
   const getModal = (isOpen) => {
     setIsOpen(isOpen)
@@ -236,39 +236,40 @@ export default function ShopSales() {
     const pageHeight = doc.internal.pageSize.height
     const footerY = pageHeight - 40
     const pageWidth = doc.internal.pageSize.width
-    const text = "107 Kwame Nkrumah Avenue, Harare, Zimbabwe\nP.O Box CY 331, Causeway, Harare, Zimbabwe\n24 Hour Call Center - +263 0242 700950"
+    const text =
+      "107 Kwame Nkrumah Avenue, Harare, Zimbabwe\nP.O Box CY 331, Causeway, Harare, Zimbabwe\n24 Hour Call Center - +263 0242 700950"
     const textWidth = doc.getTextWidth(text)
     const centerX = (pageWidth - textWidth) / 2
     const textX = centerX - textWidth / -2
-  
+
     // Add logos
     doc.addImage(telone, "PNG", 45, 40, 72, 28)
     doc.addImage(img, "PNG", 340, 40, 72, 28)
-  
+
     // Add title
     doc.setFont("Times New Roman", "bold")
     doc.setFontSize(16)
     doc.setTextColor(15, 145, 209)
     doc.text(410, 95, `National Sales Report`, { align: "right" })
-  
+
     // Add horizontal line
     doc.setLineWidth(0.5)
     doc.line(45, 110, 410, 110)
-  
+
     // Add date
     const current = new Date()
     const formattedDate = current.toLocaleDateString("en-GB", {
       day: "numeric",
       month: "long",
       year: "numeric",
-      timeZone: "UTC"
+      timeZone: "UTC",
     })
 
     doc.setFont("Times New Roman", "bold")
     doc.setFontSize(12)
     doc.setTextColor(15, 145, 209)
     doc.text(45, 125, formattedDate)
-  
+
     // Add report details
     doc.setFont("Times New Roman", "medium")
     doc.setTextColor(0, 0, 0)
@@ -276,44 +277,38 @@ export default function ShopSales() {
     // doc.text(45, 140, `Region: ${getLocationInfo()}`)
     doc.text(45, 155, `Start Date: ${startDate.toLocaleDateString()}`)
     doc.text(45, 165, `End Date: ${endDate.toLocaleDateString()}`)
-  
+
     // Calculate totals
     const totals = Object.values(sales.data).reduce(
       (acc, item) => {
+        acc.USD += Number.parseFloat(item.USD) || 0
         acc.ZWG += Number.parseFloat(item.ZWG) || 0
         acc.USD_TAX += Number.parseFloat(item.USD_TAX) || 0
         acc.ZWG_TAX += Number.parseFloat(item.ZWG_TAX) || 0
         return acc
       },
-      { ZWG: 0, USD_TAX: 0, ZWG_TAX: 0 },
+      { USD: 0, ZWG: 0, USD_TAX: 0, ZWG_TAX: 0 },
     )
-  
+
     // Prepare table headers and data
     const headers = [
-      ["#", "Policy Name", "Revenue Collections", "", "Tax Collections", ""],
+      ["#", "Broker Name", "Revenue Collections", "", "Tax Collections", ""],
       ["", "", "USD", "ZWG", "USD Tax", "ZWG Tax"],
     ]
-  
+
     const tableRows = [
-      ...Object.entries(sales.data).map(([policyName, policyData], index) => [
+      ...Object.entries(sales.data).map(([brokerName, brokerData], index) => [
         index + 1,
-        policyName,
-        policyData.USD_TAX?.toFixed(2) || "0.00",
-        policyData.ZWG?.toFixed(2) || "0.00",
-        policyData.USD_TAX?.toFixed(2) || "0.00",
-        policyData.ZWG_TAX?.toFixed(2) || "0.00",
+        brokerName,
+        brokerData.USD?.toFixed(2) || "0.00",
+        brokerData.ZWG?.toFixed(2) || "0.00",
+        brokerData.USD_TAX?.toFixed(2) || "0.00",
+        brokerData.ZWG_TAX?.toFixed(2) || "0.00",
       ]),
       // Add totals row
-      [
-        "",
-        "Total",
-        totals.USD_TAX.toFixed(2),
-        totals.ZWG.toFixed(2),
-        totals.USD_TAX.toFixed(2),
-        totals.ZWG_TAX.toFixed(2),
-      ],
+      ["", "Total", totals.USD.toFixed(2), totals.ZWG.toFixed(2), totals.USD_TAX.toFixed(2), totals.ZWG_TAX.toFixed(2)],
     ]
-  
+
     // Generate table
     doc.autoTable({
       startY: 180,
@@ -358,24 +353,24 @@ export default function ShopSales() {
       },
       didDrawCell: (data) => {
         // Style the totals row
-        if (data.section === "body" && data.row.index === Object.keys(sales).length) {
+        if (data.section === "body" && data.row.index === Object.keys(sales.data).length) {
           doc.setFont("Times New Roman", "bold")
           doc.setFillColor(240, 240, 240)
         }
       },
     })
-  
+
     // Add footer line and text
     doc.setLineWidth(0.5)
     doc.line(45, footerY - 10, 410, footerY - 10)
-  
+
     doc.setFontSize(9)
     doc.setTextColor(112, 112, 112)
     doc.setFont("Times New Roman", "regular")
     doc.text(textX, footerY, text, { align: "center" })
-  
+
     // Save the PDF
-    doc.save("shop_sales_report.pdf")
+    doc.save("broker_sales_report.pdf")
   }
 
   return (

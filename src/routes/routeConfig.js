@@ -41,7 +41,7 @@ export const routes = [
     element: AccountManagement,
     roles: ["SUPER_ADMINISTRATOR", "SALES_AGENT", "ADMIN", "INSURER_ADMIN", "MANAGER", "MANAGER", "PRODUCT_MANAGER", "IT_SUPPORT"],
   },
-  { path: "reports", element: Reports, roles: ["SUPER_ADMINISTRATOR", "SALES_AGENT", "ADMIN", "INSURER_ADMIN", "MANAGER", "PRODUCT_MANAGER", "IT_SUPPORT"] },
+  { path: "revenue", element: Reports, roles: ["SUPER_ADMINISTRATOR", "SALES_AGENT", "ADMIN", "INSURER_ADMIN", "MANAGER", "PRODUCT_MANAGER", "IT_SUPPORT"] },
   { path: "policy", element: Policy, roles: ["SUPER_ADMINISTRATOR", "SALES_AGENT", "ADMIN", "INSURER_ADMIN", "MANAGER", "PRODUCT_MANAGER", "IT_SUPPORT"] },
 
   // Protected Routes for Super Admin, Insurer Admin, and System Admin
