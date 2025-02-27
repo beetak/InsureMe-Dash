@@ -13,6 +13,7 @@ import useAuth from '../../hooks/useAuth';
 import { useLocation } from 'react-router-dom';
 import { setupInterceptors } from '../../components/api/InsuranceApi';
 import DisplayLayout from '../../components/Layout/DisplayLayout';
+import InsurerDailySales from '../../components/reports/InsurerDailySales';
 
 export default function Reports() {
 
@@ -192,7 +193,7 @@ export default function Reports() {
                         {/* Tab 1 content */}
                         {activeTab === 1 && 
                           <div className="p-7 bg-white rounded-xs border border-gray-200 border-solid border-1">
-                            <DailySales/>
+                            <InsurerDailySales/>
                           </div>
                         }
                         {/* Tab 3 content */}

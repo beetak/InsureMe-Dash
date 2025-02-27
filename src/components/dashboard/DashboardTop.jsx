@@ -21,7 +21,8 @@ export default function DashboardTop() {
     useEffect(() => {
         setupInterceptors(() => user, setUser)
         getNewUsers()
-        getTotalPolicies()
+        // getTotalPolicies()
+        getActiveCategories()   
         getTotalInsurers()
         getUser()
     },[])
@@ -40,18 +41,36 @@ export default function DashboardTop() {
         }
     }
 
-    const getTotalPolicies = async () => {
+    // const getTotalPolicies = async () => {
+    //     try{
+    //         const response = await InsuranceApi.get(`/policy-types`)
+    //         if(response&&response.data.httpStatus==="OK"){
+    //           console.log("my response ", response)
+    //           if(response.data.data.length<1){
+    //             setTotalPolicies(0)
+    //           }
+    //           else{
+    //             setTotalPolicies(response.data.data.length)
+    //           }
+    //       }
+    //     }
+    //     catch(err){
+    //         console.log(error)
+    //     }
+    // }
+
+    const getActiveCategories = async () => {
         try{
-            const response = await InsuranceApi.get(`/policy-types`)
+            const response = await InsuranceApi.get(`/categories`)
             if(response&&response.data.httpStatus==="OK"){
-              console.log("my response ", response)
-              if(response.data.data.length<1){
-                setTotalPolicies(0)
-              }
-              else{
-                setTotalPolicies(response.data.data.length)
-              }
-          }
+                console.log("my response ", response)
+                if(response.data.data.length<1){
+                    setTotalPolicies(0)
+                }
+                else{
+                    setTotalPolicies(response.data.data.length)
+                }
+            }
         }
         catch(err){
             console.log(error)
@@ -128,14 +147,14 @@ export default function DashboardTop() {
                             <div className="w-[1px] bg-white h-16 m-0 bg-gradient-to-b from-[#656E70] to-[rgba(255,255,255,1)]"/>
                             <div className="flex flex-col p-4 space-y-4">
                                 <h1 className='text-white text-sm font-bold'>
-                                    <span className='fas fa-file-alt mr-2'/>Active Policies
+                                    <span className='fas fa-file-alt mr-2'/>Active Policy Category
                                 </h1>
                                 <h1 className='text-4xl font-bold text-white'>{totalPolicies||0}</h1>
                                 <button 
                                     className="rounded-full border border-white text-white py-1 px-4"
                                     onClick={navigateToPolicies}
                                 >
-                                    view policies
+                                    view categories
                                 </button>
                             </div>
                             {/* <div className="w-[1px] bg-white h-16 m-0 bg-gradient-to-b from-[#656E70] to-[rgba(255,255,255,1)]"/>
@@ -147,7 +166,7 @@ export default function DashboardTop() {
                                 <button className="rounded-full border border-white text-white py-1 px-4">
                                     view quotes
                                 </button>
-                            </div>                         */}
+                            </div> */}
                         </div>
                         <SalesCharts/>
                     </div>
