@@ -21,6 +21,7 @@ export default function Sales() {
 
   const invoiceState = useSelector(getInvoiceStatus)
   const quoteState = useSelector(getQuoteStatus)
+  const [activeTab, setActiveTab] = useState("");
 
   const [menus, setMenus] = useState([]);
   const [loading, setLoading] = useState(false)
@@ -46,6 +47,10 @@ export default function Sales() {
           };
         });
         setMenus(updatedMenus);
+        // Set activeTab to the first tab if there are available menus
+        if (updatedMenus.length > 0) {
+          setActiveTab(updatedMenus[0].tab);
+        }
       }
     }
     catch(err){
@@ -68,8 +73,6 @@ export default function Sales() {
     infinite: true,
     // dots: true,
   };
-
-  const [activeTab, setActiveTab] = useState("Motor Vehicle Insurance");
 
   const handleTabClick = (tabIndex) => {
     setActiveTab(tabIndex);
@@ -111,6 +114,9 @@ export default function Sales() {
               <div className="flex-1">
                 {/* Tab content */}
                 <div>
+                {
+                  menus.length > 0 ? (
+                    <div>
                   {/* Tab 1 content */}
                   {
                     activeTab === "Motor Vehicle Insurance" && 
@@ -137,62 +143,34 @@ export default function Sales() {
                       }
                     </div>
                   }
-                  {/* Tab 4 content */}
-                  {activeTab === 4 && 
-                    <div className="p-7 bg-white rounded-xs border border-gray-200 border-solid border-1">
-                      {
-                        invoiceState?<SalesInvoice/>:<SalesForm/>
+                  {activeTab === "Life Insurance" && 
+                        <div className="p-7 flex justify-center bg-white rounded-xs border border-gray-200 border-solid border-1">
+                          Coming Soon
+                        </div>
                       }
-                    </div>
-                  }
-                  {/* Tab 5 content */}
-                  {activeTab === 5 && 
-                    <div className="p-7 bg-white rounded-xs border border-gray-200 border-solid border-1">
-                      {
-                        invoiceState?<SalesInvoice/>:<SalesForm/>
+                      {activeTab === "Funeral Cover" && 
+                        <div className="p-7 flex justify-center bg-white rounded-xs border border-gray-200 border-solid border-1">
+                          Coming Soon
+                        </div>
                       }
-                    </div>
-                  }
-                  {/* Tab 6 content */}
-                  {activeTab === 6 && 
-                    <div className="p-7 bg-white rounded-xs border border-gray-200 border-solid border-1">
-                      {
-                        invoiceState?<SalesInvoice/>:<SalesForm/>
+                      {activeTab === "Health Insurance" && 
+                        <div className="p-7 flex justify-center bg-white rounded-xs border border-gray-200 border-solid border-1">
+                          Coming Soon
+                        </div>
                       }
-                    </div>
-                  }
-                  {/* Tab 7 content */}
-                  {activeTab === 7 && 
-                    <div className="p-7 bg-white rounded-xs border border-gray-200 border-solid border-1">
-                      {
-                        invoiceState?<SalesInvoice/>:<SalesForm/>
-                      }
-                    </div>
-                  }
-                  {/* Tab 8 content */}
-                  {activeTab === 8 && 
-                    <div className="p-7 bg-white rounded-xs border border-gray-200 border-solid border-1">
-                      {
-                        invoiceState?<SalesInvoice/>:<LifeInsuranceSales/>
-                      }
-                    </div>
-                  }
-                  {/* Tab 9 content */}
-                  {activeTab === 9 && 
-                    <div className="p-7 bg-white rounded-xs border border-gray-200 border-solid border-1">
-                      {
-                        invoiceState?<SalesInvoice/>:<SalesForm/>
-                      }
-                    </div>
-                  }
-                  {/* Tab 10 content */}
-                  {activeTab === 10 && 
-                    <div className="p-7 bg-white rounded-xs border border-gray-200 border-solid border-1">
-                      {
-                        invoiceState?<SalesInvoice/>:<SalesForm/>
-                      }
-                    </div>
-                  }
+                      {/* Default content */}
+                      {activeTab !== "Property Insurance" && 
+                        activeTab !== "Travel Insurance" &&
+                        activeTab !== "Motor Vehicle Insurance" &&
+                        <div className="p-7 flex justify-center bg-white rounded-xs border border-gray-200 border-solid border-1">
+                          Coming Soon
+                        </div>
+                      }  </div>
+                    ) : (
+                      <div className="p-7 bg-white flex justify-center rounded-xs border border-gray-200 border-solid border-1">
+                        Reload Page
+                      </div>
+                    )}
                 </div>
               </div>
             </div>

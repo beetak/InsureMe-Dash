@@ -799,12 +799,12 @@ export default function QuotationModal({ setModal }) {
                                     >
                                         Mobile Payment
                                     </button>
-                                    {/* <button
+                                    <button
                                         className="w-full px-4 py-2 text-left hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
-                                        onClick={() => handlePaymentOption('swipe', quotation.InsuranceID)}
+                                        onClick={() => handlePaymentOption('swipe', quotationId)}
                                     >
                                         Swipe Payment
-                                    </button> */}
+                                    </button>
                                 </div>
                             )}
                         </div>

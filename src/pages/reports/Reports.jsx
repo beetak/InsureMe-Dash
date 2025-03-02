@@ -35,15 +35,7 @@ export default function Reports() {
       setActiveTab((userRole === 'INSURER_ADMIN' || userRole === "IT_ADMIN" || userRole === "PRODUCT_MANAGER" || userRole === "IT_SUPPORT" || userRole === "MANAGER" || userRole === "TREASURY_ACCOUNTANT") ? 2 :  userRole === 'SALES_AGENT' ? 3 :9);
     }
   }, [location]);
-  
-  const getFirstValidTab = () => {
-    for (const menu of menus) {
-      if (menu.tab) {
-        return menu.tab; // Return the first valid tab
-      }
-    }
-    return 1; // Fallback to 1 if no valid tab is found
-  };  
+ 
 
   const menus = [
     // { title: "National Sales", icon: "fas fa-pen-nib", tab:1 },

@@ -1,6 +1,4 @@
-"use client"
-
-import { createContext, useContext, useState, useEffect, useCallback, useNavigate } from "react"
+import { createContext, useContext, useState, useEffect, useCallback } from "react"
 import axiosInstance from "../components/api/AuthApi"
 import { decodeToken } from "../pages/login/tokenUtils"
 import { useColors } from "./ColorProvider"
@@ -11,7 +9,30 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [userDetails, setUserDetails] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [tokenRefreshInProgress, setTokenRefreshInProgress] = useState(false)
   const colorContext = useColors()
+
+  // Centralized token management
+  const getAccessToken = useCallback(() => localStorage.getItem("access_token"), [])
+  const getRefreshToken = useCallback(() => localStorage.getItem("refresh_token"), [])
+
+  const setTokens = useCallback((accessToken, refreshToken = null) => {
+    if (accessToken) {
+      localStorage.setItem("access_token", accessToken)
+      axiosInstance.defaults.headers["Authorization"] = `Bearer ${accessToken}`
+    } else {
+      localStorage.removeItem("access_token")
+      delete axiosInstance.defaults.headers["Authorization"]
+    }
+
+    if (refreshToken !== null) {
+      if (refreshToken) {
+        localStorage.setItem("refresh_token", refreshToken)
+      } else {
+        localStorage.removeItem("refresh_token")
+      }
+    }
+  }, [])
 
   const fetchUserDetails = useCallback(async (userId, role) => {
     try {
@@ -38,15 +59,50 @@ export function AuthProvider({ children }) {
     }
   }, [])
 
+  // Improved token refresh logic with mutex to prevent multiple refresh attempts
+  const refreshAccessToken = useCallback(async () => {
+    if (tokenRefreshInProgress) return null
+
+    try {
+      setTokenRefreshInProgress(true)
+      const refreshToken = getRefreshToken()
+
+      if (!refreshToken) {
+        throw new Error("No refresh token available")
+      }
+
+      const response = await axiosInstance.post("/auth/refresh-token", { refreshToken })
+
+      if (response?.data?.data?.access_token) {
+        const newAccessToken = response.data.data.access_token
+        const newRefreshToken = response.data.data.refresh_token || refreshToken
+
+        setTokens(newAccessToken, newRefreshToken)
+        return newAccessToken
+      } else {
+        throw new Error("Invalid refresh token response")
+      }
+    } catch (error) {
+      console.error("Token refresh failed:", error)
+      // Clear tokens on refresh failure
+      setTokens(null, null)
+      setUser(null)
+      setUserDetails(null)
+      return null
+    } finally {
+      setTokenRefreshInProgress(false)
+    }
+  }, [tokenRefreshInProgress, getRefreshToken, setTokens])
+
   const verifyToken = useCallback(async () => {
     try {
-      const accessToken = localStorage.getItem("access_token")
+      const accessToken = getAccessToken()
       console.log("Verifying token:", accessToken ? "Token exists" : "No token found")
 
       if (!accessToken) return null
 
       // For insurer users (no refresh token)
-      if (!localStorage.getItem("refresh_token")) {
+      if (!getRefreshToken()) {
         console.log("Insurer user detected (no refresh token)")
         const decodedToken = decodeToken(accessToken)
         console.log("Decoded token:", decodedToken)
@@ -61,55 +117,59 @@ export function AuthProvider({ children }) {
       // For regular users
       console.log("Regular user detected (has refresh token)")
       try {
-        const response = await axiosInstance.post("/auth/refresh-token")
-        console.log("Token verification response:", response.data)
-        return response.data
-      } catch (error) {
-        console.log("Server token verification failed:", error.message)
-        // Try decoding token as fallback
+        // Try to use the token first
         const decodedToken = decodeToken(accessToken)
         if (decodedToken && decodedToken.exp * 1000 > Date.now()) {
           return decodedToken
         }
+
+        // If token is expired, try to refresh it
+        const newToken = await refreshAccessToken()
+        if (newToken) {
+          return decodeToken(newToken)
+        }
+        return null
+      } catch (error) {
+        console.log("Server token verification failed:", error.message)
         return null
       }
     } catch (error) {
       console.error("Token verification failed:", error)
       return null
     }
-  }, [])
+  }, [getAccessToken, getRefreshToken, refreshAccessToken])
 
   const logout = useCallback(() => {
     console.log("Logout called - Clearing auth state")
     // Check if we actually have tokens before logging out
-    const hasTokens = localStorage.getItem("access_token") || localStorage.getItem("refresh_token")
+    const hasTokens = getAccessToken() || getRefreshToken()
     if (!hasTokens) {
       console.log("No tokens found, skipping logout")
       return false
     }
 
-    localStorage.removeItem("access_token")
-    localStorage.removeItem("refresh_token")
+    // Clear tokens
+    setTokens(null, null)
     localStorage.removeItem("userNum")
     setUser(null)
     setUserDetails(null)
 
-     // Clear color context data
+    // Clear color context data
     if (colorContext) {
       console.log("Clearing color context data", colorContext.companyDetails)
       colorContext.setCompanyDetails(null)
       colorContext.updateColors(null)
     }
-    delete axiosInstance.defaults.headers["Authorization"]
+
     console.log("Logout completed")
     return true
-  }, [])
+  }, [getAccessToken, getRefreshToken, setTokens, colorContext])
 
   // Initialize auth state
   useEffect(() => {
     const initAuth = async () => {
       try {
-        const accessToken = localStorage.getItem("access_token")
+        const accessToken = getAccessToken()
         console.log("Init auth - Access token:", accessToken ? "exists" : "not found")
 
         if (!accessToken) {
@@ -128,24 +188,13 @@ export function AuthProvider({ children }) {
           setUser(userData)
           // Fetch user details if we have user data
           if (userData) {
-          // if (userData.userId && userData.role) {
+            // if (userData.userId && userData.role) {
             // await fetchUserDetails(userData.userId, userData.role)
             await fetchUserDetails(1007, "ADMIN")
           }
         } else {
-          console.log("Token verification failed, checking token expiration")
-          // Only logout if token is actually expired
-          const decodedToken = decodeToken(accessToken)
-          if (!decodedToken || decodedToken.exp * 1000 <= Date.now()) {
-            console.log("Token expired, logging out")
-            logout()
-          } else {
-            console.log("Token still valid, maintaining session")
-            setUser(decodedToken)
-            if (decodedToken.userId && decodedToken.role) {
-              await fetchUserDetails(decodedToken.userId, decodedToken.role)
-            }
-          }
+          console.log("Token verification failed, logging out")
+          logout()
         }
       } catch (error) {
         console.error("Auth initialization failed:", error)
@@ -160,7 +209,45 @@ export function AuthProvider({ children }) {
     }
 
     initAuth()
-  }, [fetchUserDetails, logout, verifyToken])
+  }, [fetchUserDetails, logout, verifyToken, getAccessToken])
+
+  // Set up axios interceptor for token refresh
+  useEffect(() => {
+    const interceptor = axiosInstance.interceptors.response.use(
+      (response) => response,
+      async (error) => {
+        const originalRequest = error.config
+
+        // Only try to refresh if we get a 401 and haven't tried refreshing yet
+        if (error.response?.status === 401 && !originalRequest._retry && getRefreshToken()) {
+          originalRequest._retry = true
+
+          try {
+            const newAccessToken = await refreshAccessToken()
+
+            if (newAccessToken) {
+              // Retry the original request with the new token
+              originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`
+              return axiosInstance(originalRequest)
+            } else {
+              throw new Error("Token refresh failed")
+            }
+          } catch (refreshError) {
+            console.error("Token refresh failed:", refreshError)
+            logout()
+            return Promise.reject(refreshError)
+          }
+        }
+
+        return Promise.reject(error)
+      },
+    )
+
+    // Clean up interceptor on unmount
+    return () => {
+      axiosInstance.interceptors.response.eject(interceptor)
+    }
+  }, [refreshAccessToken, getRefreshToken, logout])
 
   const login = useCallback(
     async (email, password) => {
@@ -186,8 +273,7 @@ export function AuthProvider({ children }) {
               if (decodedToken.active) {
                 const { role, userId, firstName, lastName, companyId, companyName } = decodedToken
 
-                localStorage.setItem("access_token", accessToken)
-                axiosInstance.defaults.headers["Authorization"] = `Bearer ${accessToken}`
+                setTokens(accessToken)
 
                 const userInfo = {
                   accessToken,
@@ -201,7 +287,7 @@ export function AuthProvider({ children }) {
                 }
 
                 setUser(userInfo)
-                await fetchUserDetails(userId, role) // Add this line
+                await fetchUserDetails(userId, role)
                 return {
                   success: true,
                   data: userInfo,
@@ -226,11 +312,8 @@ export function AuthProvider({ children }) {
         if (response?.data.code === "CREATED") {
           const { access_token, refresh_token, role, id, firstName, lastName } = response.data.data
 
-          localStorage.setItem("access_token", access_token)
-          localStorage.setItem("refresh_token", refresh_token)
+          setTokens(access_token, refresh_token)
           localStorage.setItem("userNum", id)
-
-          axiosInstance.defaults.headers["Authorization"] = `Bearer ${access_token}`
 
           const userInfo = {
             accessToken: access_token,
@@ -242,7 +325,7 @@ export function AuthProvider({ children }) {
           }
 
           setUser(userInfo)
-          await fetchUserDetails(id, role) // Add this line
+          await fetchUserDetails(id, role)
           return {
             success: true,
             data: userInfo,
@@ -268,7 +351,7 @@ export function AuthProvider({ children }) {
         }
       }
     },
-    [fetchUserDetails],
+    [fetchUserDetails, setTokens],
   )
 
   return (
@@ -279,6 +362,8 @@ export function AuthProvider({ children }) {
         loading,
         login,
         logout,
+        refreshToken: refreshAccessToken, // Expose refresh token function
+        isAuthenticated: !!user,
       }}
     >
       {children}
@@ -295,3 +380,4 @@ export function useAuth() {
 }
 
 export default AuthContext
+

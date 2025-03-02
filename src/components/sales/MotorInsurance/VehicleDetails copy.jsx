@@ -14,7 +14,6 @@ export default function VehicleDetails() {
     },[vehicleData])
 
     const handleChange = (e) => {
-        setSearchStatus(false)
         const { name, value } = e.target
         setVehicleData({...vehicleData, [name] : value})
         if (name === 'VRN') {
@@ -226,110 +225,154 @@ export default function VehicleDetails() {
 
     return (
         <>
-            <div className="flex w-full items-center justify-between rounded-full border border-gray-400 gap-2 relative">
-                <div className="z-10 flex rounded-full p-1 px-2 border-r border-gray-400 bg-blue-500 text-white pr-10">
-                    <label htmlFor="VRN" className="bg-inherit rounded-xs cursor-pointer pl-2">
-                        Registration Number
-                    </label>
-                </div>
-                <input
+            <div className="sm:col-span-3 flex items-center">
+                <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900 w-1/6">
+                    Registration Number
+                </label>
+                <div className="mt-2 flex-1">
+                    <input
                     type="text"
                     name="VRN"
                     id="VRN"
                     autoComplete="family-name"
-                    placeholder="Registration Number"
+                    placeholder='Registration Number'
                     onChange={handleChange}
                     value={vehicleData["VRN"] || ""}
-                    className="uppercase text-gray-700 pl-5 absolute right-32 left-44 z-20 h-full w-[calc(100%-320px)] -translate-x-[5px] rounded-full p-1 px-2 border border-blue-500 bg-white"
-                />
-                <div
-                    className={`pl-14 w-48 z-10 flex rounded-full p-1 px-2 border-r border-gray-400 cursor-pointer shadow-[0_0_10px_0_rgba(0,0,0,0.8)] text-white ${searchStatus ? "bg-green-500" : "bg-blue-500"}`}
+                    className="uppercase block w-full rounded-xs border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
+                    />
+                </div>
+                <button
+                    className={`border border-gray-300 rounded-sm px-4 mt-2 py-1.5 ml-2 ${searchStatus?'bg-green-500':'bg-blue-500'} text-gray-100 w-40`}
                     onClick={vehicleTPIQuote}
                 >
-                    {loading ? (
-                    <>
-                        Checking
-                        <PulseLoader
-                        color={"#fff"}
-                        loading={loading}
-                        cssOverride={override}
-                        size={3}
-                        aria-label="Loading Spinner"
-                        data-testid="loader"
-                        />
-                    </>
-                    ) : searchStatus ? (
-                    "Record Found"
-                    ) : (
-                    "Check Availability"
-                    )}
+                    {
+                        loading?
+                        <>
+                            Checking
+                            <PulseLoader
+                                color={'#fff'}
+                                loading={loading}
+                                cssOverride={override}
+                                size={3} // Adjust the size as needed
+                                aria-label="Loading Spinner"
+                                data-testid="loader"
+                            />
+                        </>:
+                        searchStatus? "Record Found":
+                        "Check Availability"
+                    }
+                </button>
+            </div>
+            <div className="sm:col-span-3 flex items-center">
+                <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900 w-1/6">
+                    Tax Class
+                </label>
+                <div className="mt-2 flex-1">
+                    <input
+                    type="text"
+                    name="taxClass"
+                    id="taxClass"
+                    autoComplete="family-name"
+                    placeholder="Vehicle Tax Class"
+                    onChange={handleChange}
+                    value={vehicleData["taxClass"] || ""}
+                    className="block w-full rounded-xs border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
+                    />
                 </div>
             </div>
-            <div className="flex-col space-y-2 mt-2">
-                <div className="flex w-full items-center justify-between rounded-full border border-gray-400 gap-2 relative">
-                    <div className="z-10 flex rounded-full p-1 px-2 border-r border-gray-400 bg-blue-500 text-white pr-10 w-56">
-                        <label htmlFor="Tax_class" className="bg-inherit rounded-xs cursor-pointer pl-2">
-                            Tax class
-                        </label>
-                    </div>
-                    <p
-                        id='Tax_class'
-                        className="uppercase text-gray-700 pl-5 absolute right-32 left-44 z-20 h-full w-[calc(100%-170px)] -translate-x-[5px] rounded-full p-1 px-2 border border-blue-500 bg-white"
-                    >
-                        {vehicleData.taxClass}
-                    </p>
+            <div className="sm:col-span-3 flex items-center">
+                <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900 w-1/6">
+                    Make
+                </label>
+                <div className="mt-2 flex-1">
+                    <input
+                    type="text"
+                    name="vehicleMake"
+                    id="vehicleMake"
+                    autoComplete="family-name"
+                    placeholder="Vehicle Make"
+                    onChange={handleChange}
+                    value={vehicleData["make"] || ""}
+                    className="block w-full rounded-xs border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
+                    />
                 </div>
-                <div className="flex w-full items-center justify-between rounded-full border border-gray-400 gap-2 relative">
-                    <div className="z-10 flex rounded-full p-1 px-2 border-r border-gray-400 bg-blue-500 text-white pr-10 w-56">
-                        <label htmlFor="Tax_class" className="bg-inherit rounded-xs cursor-pointer pl-2">
-                            Make & Model
-                        </label>
-                    </div>
-                    <p
-                        id='Tax_class'
-                        className="uppercase text-gray-700 pl-5 absolute right-32 left-44 z-20 h-full w-[calc(100%-170px)] -translate-x-[5px] rounded-full p-1 px-2 border border-blue-500 bg-white"
-                    >
-                        {vehicleData.make} {vehicleData.model}
-                    </p>
+            </div>
+            <div className="sm:col-span-3 flex items-center">
+                <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900 w-1/6">
+                    Model
+                </label>
+                <div className="mt-2 flex-1">
+                    <input
+                    type="text"
+                    name="vehicleModel"
+                    id="vehicleModel"
+                    autoComplete="family-name"
+                    placeholder='Vehicle Model'
+                    onChange={handleChange}
+                    value={vehicleData["model"] || ""}
+                    className="block w-full rounded-xs border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6"
+                    />
                 </div>
-                <div className="flex w-full items-center justify-between rounded-full border border-gray-400 gap-2 relative">
-                    <div className="z-10 flex rounded-full p-1 px-2 border-r border-gray-400 bg-blue-500 text-white pr-10 w-56">
-                        <label htmlFor="Tax_class" className="bg-inherit rounded-xs cursor-pointer pl-2">
-                            Year of Manufacture
-                        </label>
-                    </div>
-                    <p
-                        id='Tax_class'
-                        className="uppercase text-gray-700 pl-5 absolute right-32 left-44 z-20 h-full w-[calc(100%-170px)] -translate-x-[5px] rounded-full p-1 px-2 border border-blue-500 bg-white"
+            </div>
+            <div className="sm:col-span-3 flex items-center">
+                <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900 w-1/6">
+                    Year Of Manufacture
+                </label>
+                <div className="mt-2 flex-1">
+                    <select
+                        id="YearManufacture"
+                        name="YearManufacture"
+                        onChange={handleChange}
+                        value={vehicleData["YearManufacture"] || ""}
+                        className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
                     >
-                        {vehicleData.YearManufacture}
-                    </p>
+                        <option className="font-bold text-gray-600">{vehicleData["YearManufacture"] ||"Select Year"}</option>
+                        {generateYearOptions().map((year) => (
+                            <option key={year} value={year}>
+                            {year}
+                            </option>
+                        ))}
+                    </select>
                 </div>
-                <div className="flex w-full items-center justify-between rounded-full border border-gray-400 gap-2 relative">
-                    <div className="z-10 flex rounded-full p-1 px-2 border-r border-gray-400 bg-blue-500 text-white pr-10 w-56">
-                        <label htmlFor="Tax_class" className="bg-inherit rounded-xs cursor-pointer pl-2">
-                            Usage
-                        </label>
-                    </div>
-                    <p
-                        id='Tax_class'
-                        className="uppercase text-gray-700 pl-5 absolute right-32 left-44 z-20 h-full w-[calc(100%-170px)] -translate-x-[5px] rounded-full p-1 px-2 border border-blue-500 bg-white"
+            </div>
+            <div className="sm:col-span-3 flex items-center">
+                <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900 w-1/6">
+                    Vehicle Use
+                </label>
+                <div className="mt-2 flex-1">
+                    <select
+                        id="usage"
+                        name="usage"
+                        onChange={handleChange}
+                        value={vehicleData["usage"] || ""}
+                        className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
                     >
-                        {vehicleData.usage}
-                    </p>
+                        <option className="font-bold text-gray-600">{vehicleData["usage"] ||"Select Usage"}</option>
+                        <option value="Private">Private Use</option>
+                        <option value="Driving School">Driving School</option>
+                        <option value="Commutting">Commutting</option>
+                    </select>
                 </div>
-                <div className="flex w-full items-center justify-between rounded-full border border-gray-400 gap-2 relative">
-                    <div className="z-10 flex rounded-full p-1 px-2 border-r border-gray-400 bg-blue-500 text-white pr-10 w-56">
-                        <label htmlFor="Tax_class" className="bg-inherit rounded-xs cursor-pointer pl-2">
-                            Usage
-                        </label>
-                    </div>
-                    <p
-                        id='Tax_class'
-                        className="uppercase text-gray-700 pl-5 absolute right-32 left-44 z-20 h-full w-[calc(100%-170px)] -translate-x-[5px] rounded-full p-1 px-2 border border-blue-500 bg-white"
+            </div>
+            <div className="sm:col-span-3 flex items-center">
+                <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900 w-1/6">
+                    Vehicle Type
+                </label>
+                <div className="mt-2 flex-1">
+                    <select
+                        id="vehicleType"
+                        name="vehicleType"
+                        onChange={handleChange}
+                        value={vehicleData["vehicleType"] || ""}
+                        className="border border-gray-300 bg-inherit rounded-xs px-3 py-2 w-full"
                     >
-                        {vehicleData.vehicleType}
-                    </p>
+                        <option className="font-bold text-gray-600">{vehicleData["vehicleType"] || "Select Vehicle Type"}</option>
+                        <option value="Motor Bike">Motor Bike</option>
+                        <option value="Motor">Motor</option>
+                        <option value="Minibus">Minibus</option>
+                        <option value="Bus">Bus</option>
+                        <option value="Truck">Truck</option>
+                    </select>
                 </div>
             </div>
         </>

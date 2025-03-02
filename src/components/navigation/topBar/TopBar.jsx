@@ -59,7 +59,7 @@ export default function TopBar({isOpen}) {
 
     const handleSearch = () => {
         if(inputValue.trim()){
-            navigate(`/reports?referenceId=${encodeURIComponent(inputValue.trim())}`)
+            navigate(`/revenue?referenceId=${encodeURIComponent(inputValue.trim())}`)
         }
     }
 

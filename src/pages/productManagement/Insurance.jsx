@@ -32,7 +32,7 @@ export default function Insurance() {
             icon: item.iconUrl,
             tab: item.categoryName,
           }))
-          .filter(item => item.title !== "Motor Vehicle Insurance"); // Filter out the specific title
+          .filter(item => item.title !== "Motor Vehicle Insurance");
 
         setMenus(updatedMenus);
 

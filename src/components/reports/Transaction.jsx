@@ -53,7 +53,9 @@ export default function Transaction() {
     setMessage("Loading, Please wait a moment")
 
     try {
-      const response = await InsuranceApi.get(`/product-payments/by-reference-number?referenceNumber=${searchRefId}`)
+      const url = (user.role === "INSURER_ADMIN"||user.role==="IT_ADMIN"||user.role==="TREASURY_ACCOUNTANT"||user.role==="IT_SUPPORT"||user.role==="MANAGER"||user.role==="PRODUCT_MANAGER") ? `/product-payments/by-reference-number?referenceNumber=${searchRefId}/${user.companyId}` : `/product-payments/by-reference-number?referenceNumber=${searchRefId}`
+      const response = await InsuranceApi.get(url)
+      // const response = await InsuranceApi.get(`/product-payments/by-reference-number?referenceNumber=${searchRefId}`)
 
       if (response.data.code === "OK") {
         if (response.data.data.length > 0) {
